@@ -8,6 +8,7 @@ const LINT_ERROR = {
   rule: 'lint/a11y/useAltText',
   message: 'Provide a text alternative.',
 }
+const FAILING_TEST = { name: 'Form > names the email field', message: 'Unable to find the textbox' }
 const readFeedback = (feedback: string | null) => (feedback === null ? null : JSON.parse(feedback))
 
 describe('formatFeedback', () => {
@@ -17,6 +18,12 @@ describe('formatFeedback', () => {
 
   it('reports a lint error', () => {
     const results = { ...NO_RESULTS, lintErrors: [LINT_ERROR] }
+
+    expect(readFeedback(formatFeedback(results))).toEqual(results)
+  })
+
+  it('reports a failing test', () => {
+    const results = { ...NO_RESULTS, failingTests: [FAILING_TEST] }
 
     expect(readFeedback(formatFeedback(results))).toEqual(results)
   })
