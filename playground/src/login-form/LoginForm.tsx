@@ -1,8 +1,10 @@
-import { useId, useState } from 'react'
+import { type SubmitEvent, useId, useState } from 'react'
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle'
 
+const EMAIL_FIELD_NAME = 'email'
 const EMAIL_LABEL = 'Adresse e-mail'
 const EMAIL_AUTOCOMPLETE = 'email'
+const PASSWORD_FIELD_NAME = 'password'
 const PASSWORD_LABEL = 'Mot de passe'
 const PASSWORD_AUTOCOMPLETE = 'current-password'
 const SUBMIT_LABEL = 'Se connecter'
@@ -23,8 +25,12 @@ export function LoginForm() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
 
-  function handleSubmit() {
-    setErrors({ email: EMAIL_REQUIRED_ERROR, password: PASSWORD_REQUIRED_ERROR })
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    const formData = new FormData(event.currentTarget)
+    setErrors({
+      email: formData.get(EMAIL_FIELD_NAME) ? undefined : EMAIL_REQUIRED_ERROR,
+      password: formData.get(PASSWORD_FIELD_NAME) ? undefined : PASSWORD_REQUIRED_ERROR,
+    })
   }
 
   return (
@@ -34,6 +40,7 @@ export function LoginForm() {
       <input
         id={emailFieldId}
         type="email"
+        name={EMAIL_FIELD_NAME}
         autoComplete={EMAIL_AUTOCOMPLETE}
         aria-describedby={emailErrorId}
       />
@@ -42,6 +49,7 @@ export function LoginForm() {
       <input
         id={passwordFieldId}
         type={isPasswordVisible ? 'text' : 'password'}
+        name={PASSWORD_FIELD_NAME}
         autoComplete={PASSWORD_AUTOCOMPLETE}
         aria-describedby={passwordErrorId}
       />
