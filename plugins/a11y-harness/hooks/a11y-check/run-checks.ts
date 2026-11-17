@@ -48,6 +48,6 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
   return {
     lintErrors: lint.ok ? readBiomeReport(lint.stdout) : [],
     failingTests: tests.ok ? readVitestReport(await tools.readText(tools.reportFile)) : [],
-    toolFailures: [...failures(lint, BIOME_TOOL), ...failures(tests, VITEST_TOOL)],
+    toolFailures: [failures(lint, BIOME_TOOL), failures(tests, VITEST_TOOL)].flat(),
   }
 }
