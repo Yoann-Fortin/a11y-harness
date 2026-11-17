@@ -1,32 +1,53 @@
 import { execFile } from 'node:child_process'
+import { mkdtemp, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { describe, expect, it } from 'vitest'
 
 const execFileAsync = promisify(execFile)
-const LOOKUP = join(import.meta.dirname, 'main.ts')
-const NOT_FOUND_EXIT_CODE = 1
+const SCRIPTS = join(import.meta.dirname, 'main.ts')
+const FAILURE_EXIT_CODE = 1
+const LABELS_TITLE = 'Labels or instructions are provided when content requires user input.'
 
-const lookUp = async (standard: string, id: string) => {
-  const { stdout } = await execFileAsync(process.execPath, [LOOKUP, standard, id])
+const run = async (...args: string[]) => {
+  const { stdout } = await execFileAsync(process.execPath, [SCRIPTS, ...args])
   return JSON.parse(stdout)
 }
 
-describe('criterion lookup, on the official reference files', () => {
+const writeReport = async (finding: object) => {
+  const path = join(await mkdtemp(join(tmpdir(), 'a11y-report-')), 'report.json')
+  await writeFile(path, JSON.stringify({ standard: 'wcag-2.2', findings: [finding] }))
+  return path
+}
+
+describe('skill scripts, on the official reference files', () => {
   it('quotes the official title and level of a WCAG 2.2 success criterion', async () => {
-    expect(await lookUp('wcag-2.2', '3.3.2')).toMatchObject({
-      title: 'Labels or instructions are provided when content requires user input.',
-      level: 'A',
-    })
+    expect(await run('lookup', 'wcag-2.2', '3.3.2')).toMatchObject({ title: LABELS_TITLE, level: 'A' })
   })
 
   it('quotes the official tests of an RGAA 4.1.2 criterion', async () => {
-    const criterion = await lookUp('rgaa-4.1.2', '11.10')
+    const criterion = await run('lookup', 'rgaa-4.1.2', '11.10')
 
     expect(criterion.tests['11.10.1'][0]).toMatch(/^Les \[indications du caractère obligatoire\]/)
   })
 
   it('fails on a criterion that does not exist', async () => {
-    await expect(lookUp('rgaa-4.1.2', '99.1')).rejects.toMatchObject({ code: NOT_FOUND_EXIT_CODE, stdout: 'null' })
+    await expect(run('lookup', 'rgaa-4.1.2', '99.1')).rejects.toMatchObject({ code: FAILURE_EXIT_CODE, stdout: 'null' })
+  })
+
+  it('accepts a report whose findings match the official criteria', async () => {
+    const report = await writeReport({ criterion: '3.3.2', level: 'A', quote: LABELS_TITLE })
+
+    expect(await run('validate', report)).toEqual([])
+  })
+
+  it('rejects a report that misstates a criterion', async () => {
+    const report = await writeReport({ criterion: '3.3.2', level: 'AA', quote: LABELS_TITLE })
+
+    await expect(run('validate', report)).rejects.toMatchObject({
+      code: FAILURE_EXIT_CODE,
+      stdout: JSON.stringify([{ criterion: '3.3.2', problem: 'wrong-level' }]),
+    })
   })
 })
