@@ -9,6 +9,7 @@ const VISIBILITY_TOGGLE_NAME = /afficher le mot de passe/i
 
 type User = ReturnType<typeof userEvent.setup>
 
+const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
 const visibilityToggle = () => screen.getByRole('button', { name: VISIBILITY_TOGGLE_NAME })
 
@@ -32,6 +33,11 @@ const TOGGLE_ACTIVATIONS = [
       await user.keyboard(' ')
     },
   ],
+] as const
+
+const AUTOCOMPLETE_TOKENS = [
+  ['email', emailField, 'email'],
+  ['password', passwordField, 'current-password'],
 ] as const
 
 describe('LoginForm', () => {
@@ -76,5 +82,11 @@ describe('LoginForm', () => {
     await user.click(toggle)
 
     expect(toggle.innerHTML).not.toBe(iconWhileHidden)
+  })
+
+  it.each(AUTOCOMPLETE_TOKENS)('identifies the purpose of the %s field', (_, field, token) => {
+    render(<LoginForm />)
+
+    expect(field()).toHaveAttribute('autocomplete', token)
   })
 })
