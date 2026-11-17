@@ -11,11 +11,14 @@ const ACT_FILE = 'act-rules.json'
 const TEXT_ENCODING = 'utf8'
 const SUCCESS_EXIT_CODE = 0
 const FAILURE_EXIT_CODE = 1
+const INLINE_REPORT_START = '{'
 
 type Outcome = { output: unknown; failed: boolean }
 
 const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
 const readReference = (file: string) => readJson(join(REFERENCE_DIR, file))
+const readReport = (argument: string) =>
+  argument.startsWith(INLINE_REPORT_START) ? JSON.parse(argument) : readJson(argument)
 
 const FINDERS: Record<string, (id: string) => object[]> = {
   'wcag-2.2': (id) => findWcagCriteria(readReference(WCAG_FILE), id),
@@ -31,9 +34,9 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
   return { output: criterion, failed: criterion === null }
 }
 
-const validate = ([reportPath = '']: string[]): Outcome => {
+const validate = ([report = '']: string[]): Outcome => {
   const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }
-  const problems = validateReport(readJson(reportPath), references)
+  const problems = validateReport(readReport(report), references)
   return { output: problems, failed: problems.length > 0 }
 }
 
