@@ -59,4 +59,10 @@ describe('validateReport', () => {
   ])('checks %s against RGAA 4.1.2', (_, finding, expected) => {
     expect(validateReport({ standard: 'rgaa-4.1.2', findings: [finding] }, REFERENCES)).toEqual(expected)
   })
+
+  it('accepts a finding left for manual review without a criterion', () => {
+    const report = { standard: 'wcag-2.2', findings: [{ quote: '' }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([])
+  })
 })
