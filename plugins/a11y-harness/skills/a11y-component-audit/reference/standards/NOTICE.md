@@ -14,6 +14,12 @@ These files are copied unmodified from their official sources. They let the skil
 - Machine-readable file: https://github.com/DISIC/accessibilite.numerique.gouv.fr/blob/main/RGAA/criteres.json, downloaded on 2026-11-17
 - Published under the Licence Ouverte 2.0 (Etalab): https://www.etalab.gouv.fr/licence-ouverte-open-licence/
 
+## rgaa-4.1.2-methodologies.json
+
+- Official test methodology of the RGAA 4.1.2, one entry per test, Direction interministérielle du numérique (DINUM): https://accessibilite.numerique.gouv.fr/
+- Machine-readable file: https://github.com/DISIC/accessibilite.numerique.gouv.fr/blob/main/RGAA/methodologies.json, downloaded on 2026-11-17
+- Published under the Licence Ouverte 2.0 (Etalab): https://www.etalab.gouv.fr/licence-ouverte-open-licence/
+
 ## act-rules.json
 
 - WCAG Conformance Test Rules (ACT Rules), W3C Web Accessibility Initiative: https://www.w3.org/WAI/standards-guidelines/act/rules/
