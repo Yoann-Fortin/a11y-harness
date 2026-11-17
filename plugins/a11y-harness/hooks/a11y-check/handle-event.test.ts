@@ -40,4 +40,10 @@ describe('handleEvent', () => {
 
     expect(JSON.parse(output)).toEqual({ decision: 'block', reason: JSON.stringify(FINDINGS) })
   })
+
+  it('stays silent on a Write event without a file path', async () => {
+    const input = JSON.stringify({ tool_name: 'Write', tool_input: {}, cwd: SESSION_DIR })
+
+    await expect(handleEvent(input, undefined, fakePorts(FINDINGS))).resolves.toBe('')
+  })
 })
