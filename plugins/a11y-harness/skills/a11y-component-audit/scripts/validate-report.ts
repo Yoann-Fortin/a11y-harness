@@ -72,7 +72,10 @@ const rgaaProblems = (rgaa: RgaaReference) => (finding: CheckedFinding): Issue[]
   if (official === null) {
     return issues(UNKNOWN_CRITERION)
   }
-  return issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH]))
+  return [
+    ...issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH])),
+    ...(finding.evidence ?? []).map((item) => ({ problem: UNRELATED_EVIDENCE, evidence: item })),
+  ]
 }
 
 export function validateReport(report: Report, references: References): Problem[] {
