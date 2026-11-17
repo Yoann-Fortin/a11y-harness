@@ -13,4 +13,15 @@ describe('runCommand', () => {
 
     expect(result).toEqual({ ok: true, stdout: WORKING_DIR })
   })
+
+  it('keeps the output of a command that exits with an error code', async () => {
+    const result = await runCommand(
+      NODE,
+      ['-e', 'process.stdout.write("report"); process.exit(1)'],
+      WORKING_DIR,
+      TIME_LIMIT_MS,
+    )
+
+    expect(result).toEqual({ ok: true, stdout: 'report' })
+  })
 })
