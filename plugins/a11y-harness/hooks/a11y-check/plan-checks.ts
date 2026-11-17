@@ -1,3 +1,5 @@
+const WRITE_TOOL = 'Write'
+
 export type ToolEvent = {
   tool_name: string
   tool_input: { file_path: string }
@@ -11,5 +13,5 @@ export type CheckPlan = {
 
 export function planChecks(event: ToolEvent): CheckPlan | null {
   const filePath = event.tool_input.file_path
-  return { filePath, cwd: event.cwd }
+  return event.tool_name === WRITE_TOOL ? { filePath, cwd: event.cwd } : null
 }
