@@ -1,15 +1,35 @@
-import type { CheckResults } from './format-feedback.ts'
-import type { CheckPlan } from './plan-checks.ts'
+import { type CheckResults, formatFeedback } from './format-feedback.ts'
+import { type CheckPlan, planChecks, type ToolEvent } from './plan-checks.ts'
+
+const SILENCE = ''
+const BLOCK_DECISION = 'block'
 
 export type HookPorts = {
   packageRootOf: (filePath: string) => string | null
   check: (plan: CheckPlan) => Promise<CheckResults>
 }
 
+const parseEvent = (rawInput: string): ToolEvent | null => {
+  try {
+    return JSON.parse(rawInput)
+  } catch {
+    return null
+  }
+}
+
 export async function handleEvent(
-  _rawInput: string,
+  rawInput: string,
   _requestedStandard: string | undefined,
-  _ports: HookPorts,
+  ports: HookPorts,
 ): Promise<string> {
-  return ''
+  const event = parseEvent(rawInput)
+  if (event === null) {
+    return SILENCE
+  }
+  const plan = planChecks({ ...event, cwd: event.cwd })
+  if (plan === null) {
+    return SILENCE
+  }
+  const feedback = formatFeedback(await ports.check(plan))
+  return JSON.stringify({ decision: BLOCK_DECISION, reason: feedback })
 }
