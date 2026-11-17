@@ -2,6 +2,7 @@ import { type ExecFileException, execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 
 const execFileAsync = promisify(execFile)
+const COLOURLESS_ENV = { NO_COLOR: '1' }
 
 export type CommandResult = { ok: true; stdout: string } | { ok: false; failure: string }
 
@@ -12,7 +13,11 @@ export async function runCommand(
   timeoutMs: number,
 ): Promise<CommandResult> {
   try {
-    const { stdout } = await execFileAsync(command, args, { cwd, timeout: timeoutMs })
+    const { stdout } = await execFileAsync(command, args, {
+      cwd,
+      timeout: timeoutMs,
+      env: { ...process.env, ...COLOURLESS_ENV },
+    })
     return { ok: true, stdout }
   } catch (error) {
     const failure = error as ExecFileException & { stdout: string }

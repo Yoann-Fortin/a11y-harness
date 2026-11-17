@@ -11,5 +11,5 @@ All notable changes to this project are documented here. The format follows [Kee
 - `CLAUDE.md` with the project layout and commands, and a rule file scoped to the playground tests.
 - MIT licence.
 - Root pnpm workspace with the plugin's development tools (Vitest, Stryker, Biome, TypeScript), a single lockfile and a single Biome configuration.
-- `a11y-check` hook (PostToolUse on Write and Edit of `.tsx` and `.jsx` files): runs Biome and the related Vitest tests from the component's package, leaves out the tests of the other standard, and asks Claude to fix the findings through `decision: "block"` with a JSON report. Runs on Node 22.18 or later, without a build step.
+- `a11y-check` hook (PostToolUse on Write and Edit of `.tsx` and `.jsx` files): runs Biome and the related Vitest tests from the component's package, leaves out the tests of the other standard, and asks Claude to fix the findings through `decision: "block"` with a JSON report, free of colour codes. Runs on Node 22.18 or later, without a build step.
 - `standard` plugin option: `wcag-2.2` (default) or `rgaa-4.1.2`.
