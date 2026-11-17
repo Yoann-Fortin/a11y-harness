@@ -117,4 +117,10 @@ describe('validateReport', () => {
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '11.10', problem: 'unrelated-evidence', evidence }])
   })
+
+  it('accepts the tests of the RGAA criterion as evidence', () => {
+    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['11.10.1'] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([])
+  })
 })
