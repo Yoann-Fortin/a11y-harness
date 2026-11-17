@@ -5,7 +5,12 @@ import { LoginForm } from './LoginForm'
 
 const EMAIL_FIELD_NAME = /adresse e-mail/i
 const PASSWORD_FIELD_LABEL = /^mot de passe/i
-const VISIBLE_REQUIRED_INDICATION = /obligatoire|requis|\*/i
+const REQUIRED_WORDING = /obligatoire|requis/i
+const REQUIRED_SYMBOL = '*'
+const REQUIRED_ATTRIBUTE = 'required'
+const ARIA_REQUIRED_ATTRIBUTE = 'aria-required'
+const ARIA_TRUE = 'true'
+const ANY_ELEMENT = '*'
 
 const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
@@ -15,13 +20,44 @@ const REQUIRED_FIELDS = [
   ['password', passwordField],
 ] as const
 
+const isMarkedRequired = (field: HTMLElement) =>
+  field.hasAttribute(REQUIRED_ATTRIBUTE) || field.getAttribute(ARIA_REQUIRED_ATTRIBUTE) === ARIA_TRUE
+
+const textsAround = (field: HTMLElement) =>
+  Array.from(document.body.querySelectorAll(ANY_ELEMENT)).filter((element) => !element.contains(field))
+
+const precedes = (element: Element, field: HTMLElement) =>
+  (element.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
+
+const explainsSymbolBefore = (field: HTMLElement) =>
+  textsAround(field).some((element) => {
+    const text = element.textContent ?? ''
+    return precedes(element, field) && text.includes(REQUIRED_SYMBOL) && REQUIRED_WORDING.test(text)
+  })
+
+const indicates = (text: string, field: HTMLElement) =>
+  REQUIRED_WORDING.test(text) || (text.includes(REQUIRED_SYMBOL) && explainsSymbolBefore(field))
+
+const namesAsRequiredElsewhere = (field: HTMLElement) => {
+  const name = namingText(field).replace(REQUIRED_SYMBOL, '').trim().toLowerCase()
+  return textsAround(field).some((element) => {
+    const text = element.textContent ?? ''
+    return text.toLowerCase().includes(name) && REQUIRED_WORDING.test(text)
+  })
+}
+
+const showsRequiredBeforeSubmission = (field: HTMLElement) =>
+  isMarkedRequired(field)
+    ? indicates(`${namingText(field)} ${describingText(field)}`, field)
+    : indicates(namingText(field), field) || namesAsRequiredElsewhere(field)
+
 describe('LoginForm, RGAA 4.1.2 only', () => {
   it.each(REQUIRED_FIELDS)(
-    'RGAA 11.10.1 and 11.10.2: shows that the %s field is required before submission, in its label or its linked text',
+    'RGAA 11.10.1 and 11.10.2: shows that the %s field is required before submission, in its label or linked text when it has a required attribute, by name otherwise',
     (_, field) => {
       render(<LoginForm />)
 
-      expect(`${namingText(field())} ${describingText(field())}`).toMatch(VISIBLE_REQUIRED_INDICATION)
+      expect(showsRequiredBeforeSubmission(field())).toBe(true)
     },
   )
 })
