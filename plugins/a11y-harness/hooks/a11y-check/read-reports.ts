@@ -31,11 +31,12 @@ export function readBiomeReport(report: string): LintError[] {
 
 export function readVitestReport(report: string): FailingTest[] {
   const { testResults }: VitestReport = JSON.parse(report)
-  return testResults
-    .flatMap((file) => file.assertionResults)
-    .filter((assertion) => assertion.status === FAILED_STATUS)
-    .map((assertion) => ({
-      name: assertion.fullName,
-      message: assertion.failureMessages[0].split(LINE_BREAK)[0],
-    }))
+  return testResults.flatMap((file) =>
+    file.assertionResults
+      .filter((assertion) => assertion.status === FAILED_STATUS)
+      .map((assertion) => ({
+        name: assertion.fullName,
+        message: assertion.failureMessages.join(LINE_BREAK).split(LINE_BREAK)[0],
+      })),
+  )
 }
