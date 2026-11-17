@@ -74,7 +74,7 @@ const rgaaProblems = (rgaa: RgaaReference) => (finding: CheckedFinding): Issue[]
   }
   return [
     ...issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH])),
-    ...(finding.evidence ?? []).map((item) => ({ problem: UNRELATED_EVIDENCE, evidence: item })),
+    ...unrelatedEvidence(finding.evidence ?? [], (item) => Object.keys(official.tests).includes(item)),
   ]
 }
 
