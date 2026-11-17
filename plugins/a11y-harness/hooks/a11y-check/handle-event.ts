@@ -9,9 +9,14 @@ export type HookPorts = {
   check: (plan: CheckPlan) => Promise<CheckResults>
 }
 
-const parseEvent = (rawInput: string): ToolEvent | null => {
+const planFrom = (
+  rawInput: string,
+  requestedStandard: string | undefined,
+  packageRootOf: HookPorts['packageRootOf'],
+): CheckPlan | null => {
   try {
-    return JSON.parse(rawInput)
+    const event: ToolEvent = JSON.parse(rawInput)
+    return planChecks({ ...event, cwd: packageRootOf(event.tool_input.file_path) ?? event.cwd }, requestedStandard)
   } catch {
     return null
   }
@@ -22,11 +27,7 @@ export async function handleEvent(
   requestedStandard: string | undefined,
   ports: HookPorts,
 ): Promise<string> {
-  const event = parseEvent(rawInput)
-  if (event === null || typeof event.tool_input.file_path !== 'string') {
-    return SILENCE
-  }
-  const plan = planChecks({ ...event, cwd: ports.packageRootOf(event.tool_input.file_path) ?? event.cwd }, requestedStandard)
+  const plan = planFrom(rawInput, requestedStandard, ports.packageRootOf)
   if (plan === null) {
     return SILENCE
   }
