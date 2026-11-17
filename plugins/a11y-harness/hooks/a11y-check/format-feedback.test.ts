@@ -9,6 +9,7 @@ const LINT_ERROR = {
   message: 'Provide a text alternative.',
 }
 const FAILING_TEST = { name: 'Form > names the email field', message: 'Unable to find the textbox' }
+const TOOL_FAILURE = { tool: 'vitest', message: 'command not found' }
 const readFeedback = (feedback: string | null) => (feedback === null ? null : JSON.parse(feedback))
 
 describe('formatFeedback', () => {
@@ -24,6 +25,12 @@ describe('formatFeedback', () => {
 
   it('reports a failing test', () => {
     const results = { ...NO_RESULTS, failingTests: [FAILING_TEST] }
+
+    expect(readFeedback(formatFeedback(results))).toEqual(results)
+  })
+
+  it('reports a tool that could not run', () => {
+    const results = { ...NO_RESULTS, toolFailures: [TOOL_FAILURE] }
 
     expect(readFeedback(formatFeedback(results))).toEqual(results)
   })
