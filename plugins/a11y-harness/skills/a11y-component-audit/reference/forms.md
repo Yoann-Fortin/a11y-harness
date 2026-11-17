@@ -27,7 +27,11 @@ A button needs an accessible name: 4.1.2, ACT rule 97a4e1 "Button has non-empty 
 
 ### Status messages: 4.1.3 Status Messages (AA)
 
-A message announced without receiving focus must be exposed by a role or property: `role="status"`, `role="alert"`, `role="log"` or `aria-live`. WCAG accepts `role="status"` for an error summary (ARIA22); `role="alert"` is another sufficient technique (ARIA19).
+The success criterion requires that a status message "can be programmatically determined through role or properties", so that assistive technologies present it without it receiving focus. The documented failure, F103, concerns messages exposed by no role or property. An error summary in `role="status"` meets this text.
+
+The techniques depend on the kind of message (Understanding 4.1.3). ARIA22, `role="status"`, is documented for success and results (situation A). For errors (situation B), the W3C documents ARIA19, whose test requires `role="alert"` or `aria-live="assertive"`, and notes that "a role of "alert" is only necessary where a change of context does not take place".
+
+Report an error summary in `role="status"` as compliant with 4.1.3, and advise `role="alert"`.
 
 ## RGAA 4.1.2
 
