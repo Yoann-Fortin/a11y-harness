@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readBiomeReport } from './read-reports.ts'
+import { readBiomeReport, readVitestReport } from './read-reports.ts'
 
 const BIOME_REPORT = JSON.stringify({
   diagnostics: [
@@ -12,10 +12,33 @@ const BIOME_REPORT = JSON.stringify({
   ],
 })
 
+const VITEST_REPORT = JSON.stringify({
+  testResults: [
+    {
+      assertionResults: [
+        { fullName: 'Form names the email field', status: 'passed', failureMessages: [] },
+        {
+          fullName: 'Form names the password field',
+          status: 'failed',
+          failureMessages: ['Unable to find the label\n    at Form.test.tsx:12:5'],
+        },
+      ],
+    },
+  ],
+})
+
 describe('readBiomeReport', () => {
   it('turns each Biome diagnostic into a lint error', () => {
     expect(readBiomeReport(BIOME_REPORT)).toEqual([
       { file: 'src/Form.tsx', line: 3, rule: 'lint/a11y/useAltText', message: 'Provide a text alternative.' },
+    ])
+  })
+})
+
+describe('readVitestReport', () => {
+  it('keeps each failed test with the first line of its message', () => {
+    expect(readVitestReport(VITEST_REPORT)).toEqual([
+      { name: 'Form names the password field', message: 'Unable to find the label' },
     ])
   })
 })
