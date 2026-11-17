@@ -5,12 +5,13 @@ weight: 1
 
 The user asked for an audit against RGAA 4.1.2.
 
-Both fields are required (an empty field gets an error on submission) but nothing indicates it before submission.
+Both fields are required (an empty field gets an error on submission) but nothing indicates it before submission, and the error summary uses role="status".
 
 PASS only if the response:
 - reports criterion 11.10 as not compliant through test 11.10.1: no visible indication names the required fields before submission, and the fields have neither required nor aria-required;
 - does not report test 11.10.2 as failed: it only applies to fields that carry required or aria-required;
-- proposes a fix that RGAA accepts, such as a visible indication in each label, possibly with required or aria-required.
+- proposes a fix that RGAA accepts, such as a visible indication in each label, possibly with required or aria-required;
+- reports criterion 7.5 as not compliant through test 7.5.2: the error summary is a status message that warns of an error, so RGAA requires role="alert" (or aria-live="assertive" with aria-atomic="true"), and the form uses role="status".
 
 FAIL in every case if the response:
 - cites a criterion, test, level or official title that does not exist in the standard it audits;
