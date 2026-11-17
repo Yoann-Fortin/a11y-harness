@@ -8,6 +8,7 @@ const PASSWORD_AUTOCOMPLETE = 'current-password'
 const SUBMIT_LABEL = 'Se connecter'
 const EMAIL_REQUIRED_ERROR = 'Saisissez votre adresse e-mail'
 const PASSWORD_REQUIRED_ERROR = 'Saisissez votre mot de passe'
+const ERROR_SUMMARY = 'Le formulaire contient des erreurs'
 
 type FieldErrors = {
   email?: string
@@ -28,6 +29,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
+      <p role="status">{ERROR_SUMMARY}</p>
       <label htmlFor={emailFieldId}>{EMAIL_LABEL}</label>
       <input
         id={emailFieldId}
