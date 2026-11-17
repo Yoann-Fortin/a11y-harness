@@ -17,6 +17,16 @@ const BIOME_REPORT = JSON.stringify({
     },
   ],
 })
+const NO_DIAGNOSTICS = JSON.stringify({ diagnostics: [] })
+const VITEST_REPORT = JSON.stringify({
+  testResults: [
+    {
+      assertionResults: [
+        { fullName: 'Form names the field', status: 'failed', failureMessages: ['Unable to find the label'] },
+      ],
+    },
+  ],
+})
 const NO_FAILURES = JSON.stringify({ testResults: [] })
 const OUTPUT = (stdout: string): CommandResult => ({ ok: true, stdout })
 const CANNOT_RUN: CommandResult = { ok: false, failure: 'command not found' }
@@ -62,5 +72,36 @@ describe('runChecks', () => {
       failingTests: [],
       toolFailures: [{ tool: 'biome', message: 'command not found' }],
     })
+  })
+
+  it('runs the tests related to the planned file, leaving the RGAA-only tests out under WCAG', async () => {
+    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: OUTPUT('') }, VITEST_REPORT)
+
+    const results = await runChecks(WCAG_PLAN, tools)
+
+    expect(tools.calls).toContainEqual({
+      command: VITEST,
+      args: [
+        'related',
+        FILE,
+        '--run',
+        '--reporter=json',
+        `--outputFile=${REPORT_FILE}`,
+        '--passWithNoTests',
+        '--exclude',
+        '**/*.rgaa.test.tsx',
+      ],
+      cwd: PROJECT_DIR,
+    })
+    expect(results.failingTests).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+  })
+
+  it('reports Vitest as a tool failure when it cannot run', async () => {
+    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: CANNOT_RUN }, VITEST_REPORT)
+
+    const results = await runChecks(WCAG_PLAN, tools)
+
+    expect(results.failingTests).toEqual([])
+    expect(results.toolFailures).toEqual([{ tool: 'vitest', message: 'command not found' }])
   })
 })
