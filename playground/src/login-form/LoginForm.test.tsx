@@ -178,4 +178,15 @@ describe('LoginForm', () => {
 
     expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
   })
+
+  it('still announces the errors when only the password field is filled', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const regionsBeforeSubmission = liveRegions()
+
+    await user.type(passwordField(), FILLED_PASSWORD)
+    await user.click(submitButton())
+
+    expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+  })
 })
