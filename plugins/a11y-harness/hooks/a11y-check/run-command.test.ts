@@ -32,6 +32,17 @@ describe('runCommand', () => {
     expect(result).toEqual({ ok: false, failure: expect.any(String) })
   })
 
+  it('runs commands without colours so their reports stay readable', async () => {
+    const result = await runCommand(
+      NODE,
+      ['-e', 'process.stdout.write(process.env.NO_COLOR ?? "")'],
+      WORKING_DIR,
+      TIME_LIMIT_MS,
+    )
+
+    expect(result).toEqual({ ok: true, stdout: '1' })
+  })
+
   it('stops a command that runs past the time limit', async () => {
     const result = await runCommand(NODE, ['-e', 'setTimeout(() => {}, 10000)'], WORKING_DIR, SHORT_TIME_LIMIT_MS)
 
