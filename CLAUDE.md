@@ -16,7 +16,7 @@ Run `pnpm install` once at the root.
 
 - `pnpm test`, `pnpm test:mutation`, `pnpm lint`, `pnpm typecheck`: plugin tests, Stryker, Biome and TypeScript at the root
 - `pnpm --dir playground test`, `pnpm --dir playground test:mutation`, `pnpm --dir playground build`: the same checks for the sandbox, against WCAG 2.2
-- `pnpm --dir playground test:rgaa`: the sandbox tests against RGAA 4.1.2; the login form fails RGAA 11.10 and 7.5.2 on purpose, to show the two verdicts
+- `pnpm --dir playground test:rgaa`: the sandbox tests against RGAA 4.1.2; the login form fails RGAA 11.10 on purpose, to show the two verdicts
 - Stryker fails below a 100% mutation score in both places
 - `claude plugin validate .`: marketplace and plugin manifests
 

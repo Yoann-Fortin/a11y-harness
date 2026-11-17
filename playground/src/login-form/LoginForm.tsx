@@ -37,7 +37,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <p role="status">{hasErrors && ERROR_SUMMARY}</p>
+      <p role="alert">{hasErrors && ERROR_SUMMARY}</p>
       <label htmlFor={emailFieldId}>{EMAIL_LABEL}</label>
       <input
         id={emailFieldId}
