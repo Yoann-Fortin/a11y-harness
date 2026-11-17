@@ -155,4 +155,16 @@ describe('LoginForm', () => {
       expect(emptyField()).toHaveAccessibleDescription(emptyFieldError)
     },
   )
+
+  it('announces nothing once every field is filled', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const regionsBeforeSubmission = liveRegions()
+
+    await user.type(emailField(), FILLED_EMAIL)
+    await user.type(passwordField(), FILLED_PASSWORD)
+    await user.click(submitButton())
+
+    expect(announcesErrors(regionsBeforeSubmission)).toBe(false)
+  })
 })
