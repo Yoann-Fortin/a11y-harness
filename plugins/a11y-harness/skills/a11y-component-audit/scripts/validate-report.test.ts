@@ -108,4 +108,13 @@ describe('validateReport', () => {
 
     expect(validateReport({ standard: 'wcag-2.2', findings: [finding] }, REFERENCES)).toEqual([])
   })
+
+  it.each([
+    ['a test number that the criterion does not have', '11.10.9'],
+    ['a test of another criterion', '11.1.1'],
+  ])('flags %s as unrelated RGAA evidence', (_, evidence) => {
+    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: [evidence] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '11.10', problem: 'unrelated-evidence', evidence }])
+  })
 })
