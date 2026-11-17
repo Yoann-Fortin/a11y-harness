@@ -1,9 +1,25 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "testRunner": "vitest",
-  "plugins": ["@stryker-mutator/vitest-runner"],
-  "mutate": ["plugins/**/*.ts", "!plugins/**/*.test.ts"],
-  "reporters": ["clear-text", "json"],
-  "thresholds": { "high": 100, "low": 100, "break": 100 },
-  "tsconfigFile": "tsconfig.stryker-none.json"
+  "plugins": [
+    "@stryker-mutator/vitest-runner"
+  ],
+  "mutate": [
+    "plugins/**/*.ts",
+    "!plugins/**/*.test.ts",
+    "!plugins/**/main.ts"
+  ],
+  "reporters": [
+    "clear-text",
+    "json"
+  ],
+  "thresholds": {
+    "high": 100,
+    "low": 100,
+    "break": 100
+  },
+  "tsconfigFile": "tsconfig.stryker-none.json",
+  "vitest": {
+    "configFile": "vitest.mutation.config.ts"
+  }
 }
