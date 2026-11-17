@@ -5,7 +5,7 @@ weight: 1
 
 The user asked for a review against RGAA 4.1.2.
 
-The fixtures folder holds PhoneField.tsx (a field named only by title), ProductFilter.tsx (a field named only by aria-label) and PasswordField.tsx (a labelled password field with an icon-only toggle button, driven by JavaScript, that has no accessible name).
+The components folder holds PhoneField.tsx (a field named only by title), ProductFilter.tsx (a field named only by aria-label) and PasswordField.tsx (a labelled password field with an icon-only toggle button, driven by JavaScript, that has no accessible name).
 
 PASS only if the response:
 - reports PhoneField.tsx as compliant with criterion 11.1: RGAA accepts a title attribute as a label (tests 11.1.1 and 11.1.3);
