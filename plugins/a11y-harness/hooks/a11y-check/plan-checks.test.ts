@@ -6,6 +6,7 @@ const COMPONENT_PATH = '/project/src/LoginForm.tsx'
 const MODULE_PATH = '/project/src/format-date.ts'
 const JSX_COMPONENT_PATH = '/project/src/LoginForm.jsx'
 const WCAG_STANDARD = 'wcag-2.2'
+const RGAA_STANDARD = 'rgaa-4.1.2'
 
 describe('planChecks', () => {
   it('plans the checks of a component written with Write', () => {
@@ -42,5 +43,14 @@ describe('planChecks', () => {
     const plan = planChecks({ tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR })
 
     expect(plan?.standard).toBe(WCAG_STANDARD)
+  })
+
+  it('targets RGAA 4.1.2 when it is the chosen standard', () => {
+    const plan = planChecks(
+      { tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR },
+      RGAA_STANDARD,
+    )
+
+    expect(plan?.standard).toBe(RGAA_STANDARD)
   })
 })
