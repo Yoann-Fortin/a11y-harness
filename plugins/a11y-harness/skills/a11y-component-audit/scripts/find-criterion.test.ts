@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   type ActReference,
   findActRules,
-  findRgaaCriterion,
+  findRgaaCriteria,
   findRgaaMethodologies,
-  findWcagCriterion,
+  findWcagCriteria,
   type RgaaReference,
 } from './find-criterion.ts'
 
@@ -64,41 +64,45 @@ const RGAA_REFERENCE: RgaaReference = {
   ],
 }
 
-describe('findWcagCriterion', () => {
+describe('findWcagCriteria', () => {
   it.each([
     [
       '3.3.2',
-      {
-        standard: 'wcag-2.2',
-        id: '3.3.2',
-        handle: 'Labels or Instructions',
-        title: 'Labels or instructions are provided when content requires user input.',
-        level: 'A',
-        understanding: 'https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html',
-        techniques: LABELS_TECHNIQUES,
-      },
+      [
+        {
+          standard: 'wcag-2.2',
+          id: '3.3.2',
+          handle: 'Labels or Instructions',
+          title: 'Labels or instructions are provided when content requires user input.',
+          level: 'A',
+          understanding: 'https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html',
+          techniques: LABELS_TECHNIQUES,
+        },
+      ],
     ],
-    ['9.9.9', null],
-  ])('finds %s', (id, expected) => {
-    expect(findWcagCriterion(WCAG_REFERENCE, id)).toEqual(expected)
+    ['9.9.9', []],
+  ])('lists the criteria numbered %s', (id, expected) => {
+    expect(findWcagCriteria(WCAG_REFERENCE, id)).toEqual(expected)
   })
 })
 
-describe('findRgaaCriterion', () => {
+describe('findRgaaCriteria', () => {
   it.each([
     [
       '11.10',
-      {
-        standard: 'rgaa-4.1.2',
-        id: '11.10',
-        title: 'Required title',
-        tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] },
-        references: { wcag: REQUIRED_WCAG_REFERENCES, techniques: REQUIRED_TECHNIQUES },
-      },
+      [
+        {
+          standard: 'rgaa-4.1.2',
+          id: '11.10',
+          title: 'Required title',
+          tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] },
+          references: { wcag: REQUIRED_WCAG_REFERENCES, techniques: REQUIRED_TECHNIQUES },
+        },
+      ],
     ],
-    ['12.1', null],
-  ])('finds %s', (id, expected) => {
-    expect(findRgaaCriterion(RGAA_REFERENCE, id)).toEqual(expected)
+    ['12.1', []],
+  ])('lists the criteria numbered %s', (id, expected) => {
+    expect(findRgaaCriteria(RGAA_REFERENCE, id)).toEqual(expected)
   })
 })
 
