@@ -1,4 +1,4 @@
-const WRITE_TOOL = 'Write'
+const WATCHED_TOOLS = ['Write', 'Edit']
 
 export type ToolEvent = {
   tool_name: string
@@ -13,5 +13,5 @@ export type CheckPlan = {
 
 export function planChecks(event: ToolEvent): CheckPlan | null {
   const filePath = event.tool_input.file_path
-  return event.tool_name === WRITE_TOOL ? { filePath, cwd: event.cwd } : null
+  return WATCHED_TOOLS.includes(event.tool_name) ? { filePath, cwd: event.cwd } : null
 }
