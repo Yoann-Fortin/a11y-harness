@@ -1,4 +1,5 @@
 const WCAG_STANDARD = 'wcag-2.2'
+const WCAG_VERSION = '2.2'
 const UNDERSTANDING_URL = 'https://www.w3.org/WAI/WCAG22/Understanding/'
 const UNDERSTANDING_EXTENSION = '.html'
 const RGAA_STANDARD = 'rgaa-4.1.2'
@@ -13,6 +14,7 @@ type WcagSuccessCriterion = {
   handle: string
   title: string
   level: string
+  versions: string[]
   techniques?: WcagTechniques
 }
 
@@ -55,7 +57,7 @@ export function findWcagCriteria(reference: WcagReference, id: string): WcagCrit
   return reference.principles.flatMap((principle) =>
     principle.guidelines.flatMap((guideline) =>
       guideline.successcriteria
-        .filter((successCriterion) => successCriterion.num === id)
+        .filter((successCriterion) => successCriterion.num === id && successCriterion.versions.includes(WCAG_VERSION))
         .map((criterion) => ({
           standard: WCAG_STANDARD,
           id: criterion.num,
