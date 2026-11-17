@@ -24,7 +24,7 @@ export function LoginForm() {
   const passwordErrorId = useId()
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
-  const hasErrors = errors.password !== undefined
+  const hasErrors = errors.email !== undefined || errors.password !== undefined
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     const formData = new FormData(event.currentTarget)
