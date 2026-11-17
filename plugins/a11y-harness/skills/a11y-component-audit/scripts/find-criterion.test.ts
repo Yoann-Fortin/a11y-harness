@@ -3,6 +3,7 @@ import {
   type ActReference,
   findActRules,
   findRgaaCriterion,
+  findRgaaMethodologies,
   findWcagCriterion,
   type RgaaReference,
 } from './find-criterion.ts'
@@ -98,6 +99,18 @@ describe('findRgaaCriterion', () => {
     ['12.1', null],
   ])('finds %s', (id, expected) => {
     expect(findRgaaCriterion(RGAA_REFERENCE, id)).toEqual(expected)
+  })
+})
+
+describe('findRgaaMethodologies', () => {
+  it('gives the official methodology of each test of an RGAA criterion', () => {
+    const methodologies = { '11.10.1': 'First methodology', '11.10.2': 'Second methodology', '11.1.1': 'Label methodology' }
+    const criterion = { tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] } }
+
+    expect(findRgaaMethodologies(methodologies, criterion)).toEqual({
+      '11.10.1': 'First methodology',
+      '11.10.2': 'Second methodology',
+    })
   })
 })
 
