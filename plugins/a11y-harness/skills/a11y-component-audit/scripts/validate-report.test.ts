@@ -85,4 +85,10 @@ describe('validateReport', () => {
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'unrelated-evidence', evidence }])
   })
+
+  it('accepts the techniques and failures listed for the criterion as evidence', () => {
+    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: ['G131', 'F82'] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([])
+  })
 })
