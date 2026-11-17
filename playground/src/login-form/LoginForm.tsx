@@ -24,6 +24,7 @@ export function LoginForm() {
   const passwordErrorId = useId()
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
+  const hasErrors = errors.email !== undefined
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     const formData = new FormData(event.currentTarget)
@@ -35,7 +36,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <p role="status">{ERROR_SUMMARY}</p>
+      <p role="status">{hasErrors && ERROR_SUMMARY}</p>
       <label htmlFor={emailFieldId}>{EMAIL_LABEL}</label>
       <input
         id={emailFieldId}
