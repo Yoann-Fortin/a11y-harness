@@ -10,4 +10,10 @@ describe('planChecks', () => {
 
     expect(plan).toMatchObject({ filePath: COMPONENT_PATH, cwd: PROJECT_DIR })
   })
+
+  it('ignores tools other than Write and Edit', () => {
+    const plan = planChecks({ tool_name: 'Read', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR })
+
+    expect(plan).toBeNull()
+  })
 })
