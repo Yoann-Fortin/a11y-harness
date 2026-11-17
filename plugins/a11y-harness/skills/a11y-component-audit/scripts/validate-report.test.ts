@@ -30,4 +30,10 @@ describe('validateReport', () => {
   ])('checks %s', (_, finding, expected) => {
     expect(validateReport({ standard: 'wcag-2.2', findings: [finding] }, REFERENCES)).toEqual(expected)
   })
+
+  it('flags a WCAG level that differs from the official one', () => {
+    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, level: 'AA' }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'wrong-level' }])
+  })
 })
