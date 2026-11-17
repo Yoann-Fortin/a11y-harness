@@ -66,4 +66,15 @@ describe('LoginForm', () => {
       expect(passwordField()).toHaveAttribute('type', 'text')
     },
   )
+
+  it('changes the toggle icon when the password becomes visible', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const toggle = visibilityToggle()
+    const iconWhileHidden = toggle.innerHTML
+
+    await user.click(toggle)
+
+    expect(toggle.innerHTML).not.toBe(iconWhileHidden)
+  })
 })
