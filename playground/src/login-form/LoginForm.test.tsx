@@ -7,12 +7,15 @@ const EMAIL_FIELD_NAME = /adresse e-mail/i
 const PASSWORD_FIELD_LABEL = /^mot de passe/i
 const VISIBILITY_TOGGLE_NAME = /afficher le mot de passe/i
 const SUBMIT_BUTTON_NAME = /se connecter/i
+const EMAIL_REQUIRED_ERROR = /saisissez votre adresse e-mail/i
+const PASSWORD_REQUIRED_ERROR = /saisissez votre mot de passe/i
 
 type User = ReturnType<typeof userEvent.setup>
 
 const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
 const visibilityToggle = () => screen.getByRole('button', { name: VISIBILITY_TOGGLE_NAME })
+const submitButton = () => screen.getByRole('button', { name: SUBMIT_BUTTON_NAME })
 
 const exposesNewState = (toggle: HTMLElement) =>
   toggle.getAttribute('aria-pressed') === 'true' ||
@@ -39,6 +42,11 @@ const TOGGLE_ACTIVATIONS = [
 const AUTOCOMPLETE_TOKENS = [
   ['email', emailField, 'email'],
   ['password', passwordField, 'current-password'],
+] as const
+
+const REQUIRED_FIELDS = [
+  ['email', emailField, EMAIL_REQUIRED_ERROR],
+  ['password', passwordField, PASSWORD_REQUIRED_ERROR],
 ] as const
 
 describe('LoginForm', () => {
@@ -96,4 +104,16 @@ describe('LoginForm', () => {
 
     expect(screen.queryByRole('button', { name: SUBMIT_BUTTON_NAME })).toBeInTheDocument()
   })
+
+  it.each(REQUIRED_FIELDS)(
+    'describes the empty %s field error in a text linked to the field',
+    async (_, field, error) => {
+      const user = userEvent.setup()
+      render(<LoginForm />)
+
+      await user.click(submitButton())
+
+      expect(field()).toHaveAccessibleDescription(error)
+    },
+  )
 })
