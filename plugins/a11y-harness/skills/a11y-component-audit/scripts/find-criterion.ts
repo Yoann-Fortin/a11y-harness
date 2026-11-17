@@ -42,6 +42,7 @@ type RgaaCriterium = {
 }
 
 export type RgaaReference = {
+  wcag: { version: number }
   topics: { number: number; criteria: { criterium: RgaaCriterium }[] }[]
 }
 
@@ -50,7 +51,7 @@ export type RgaaCriterion = {
   id: string
   title: string
   tests: Record<string, string[]>
-  references: { wcag: string[]; techniques: string[] }
+  references: { wcag: { version: number; criteria: string[] }; techniques: string[] }
 }
 
 export function findWcagCriteria(reference: WcagReference, id: string): WcagCriterion[] {
@@ -87,8 +88,11 @@ export function findRgaaCriteria(reference: RgaaReference, id: string): RgaaCrit
             ...Object.entries(criterium.tests).map(([test, lines]) => ({ [`${id}${NUMBER_SEPARATOR}${test}`]: lines })),
           ),
           references: {
-            wcag: criterium.references.flatMap((reference) => reference.wcag ?? []),
-            techniques: criterium.references.flatMap((reference) => reference.techniques ?? []),
+            wcag: {
+              version: reference.wcag.version,
+              criteria: criterium.references.flatMap((entry) => entry.wcag ?? []),
+            },
+            techniques: criterium.references.flatMap((entry) => entry.techniques ?? []),
           },
         })),
     )
