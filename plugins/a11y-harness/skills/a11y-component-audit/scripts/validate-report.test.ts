@@ -10,7 +10,17 @@ const WCAG_REFERENCE: WcagReference = {
       guidelines: [
         {
           successcriteria: [
-            { id: 'labels-or-instructions', num: '3.3.2', handle: 'Labels or Instructions', title: WCAG_TITLE, level: 'A' },
+            {
+              id: 'labels-or-instructions',
+              num: '3.3.2',
+              handle: 'Labels or Instructions',
+              title: WCAG_TITLE,
+              level: 'A',
+              techniques: {
+                sufficient: [{ id: 'G131', technology: 'general', title: 'Providing descriptive labels' }],
+                failure: [{ id: 'F82', technology: 'failures', title: 'Failure by not including a text label' }],
+              },
+            },
           ],
         },
       ],
@@ -64,5 +74,15 @@ describe('validateReport', () => {
     const report = { standard: 'wcag-2.2', findings: [{ quote: '' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
+  })
+
+  it.each([
+    ['a technique that is not listed for the criterion', 'F68'],
+    ['a prefix of a listed technique', 'G13'],
+    ['words taken from a technique title', 'labels'],
+  ])('flags %s as unrelated evidence', (_, evidence) => {
+    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: [evidence] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'unrelated-evidence', evidence }])
   })
 })
