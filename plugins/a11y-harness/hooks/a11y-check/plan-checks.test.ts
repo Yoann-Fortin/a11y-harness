@@ -1,0 +1,13 @@
+import { describe, expect, it } from 'vitest'
+import { planChecks } from './plan-checks.ts'
+
+const PROJECT_DIR = '/project'
+const COMPONENT_PATH = '/project/src/LoginForm.tsx'
+
+describe('planChecks', () => {
+  it('plans the checks of a component written with Write', () => {
+    const plan = planChecks({ tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR })
+
+    expect(plan).toMatchObject({ filePath: COMPONENT_PATH, cwd: PROJECT_DIR })
+  })
+})
