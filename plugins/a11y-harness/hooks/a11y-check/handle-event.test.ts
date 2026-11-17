@@ -46,4 +46,8 @@ describe('handleEvent', () => {
 
     await expect(handleEvent(input, undefined, fakePorts(FINDINGS))).resolves.toBe('')
   })
+
+  it('stays silent when every check passes', async () => {
+    await expect(handleEvent(WRITE_EVENT, undefined, fakePorts(NO_RESULTS))).resolves.toBe('')
+  })
 })
