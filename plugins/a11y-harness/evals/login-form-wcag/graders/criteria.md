@@ -1,0 +1,19 @@
+---
+type: llm
+weight: 1
+---
+
+The user asked for an audit against WCAG 2.2 AA.
+
+This form is expected to have no WCAG 2.2 AA failure that a static read can establish.
+
+PASS only if the response:
+- reports no failure for the required fields: WCAG 2.2 does not require required fields to be indicated before submission, and the empty fields get an error text linked to them;
+- does not report the visually unlabelled password toggle as a failure: its aria-label names it and aria-pressed exposes its state;
+- reports no other failure, apart from points it leaves to manual checks.
+
+FAIL in every case if the response:
+- cites a criterion, test, level or official title that does not exist in the standard it audits;
+- reports a failure without saying which criterion (and, for RGAA, which test) it fails;
+- treats as a failure something the standard does not require.
+Points that a static read cannot settle (contrast, focus visibility, zoom, real screen reader behaviour) may be listed as to check manually, without a criterion verdict: this does not make the response fail.

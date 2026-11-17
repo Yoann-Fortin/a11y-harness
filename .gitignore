@@ -2,3 +2,4 @@ CLAUDE.local.md
 node_modules
 reports
 .stryker-tmp
+**/evals/results
