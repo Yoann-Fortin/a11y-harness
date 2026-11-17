@@ -14,6 +14,8 @@ const UNRELATED_EVIDENCE = 'unrelated-evidence'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 const TECHNIQUE_ID_OPENING = '"id":"'
 const TECHNIQUE_ID_CLOSING = '"'
+const NO_BREAK_SPACES = ['\u00a0', '\u202f']
+const SPACE = ' '
 
 export type Finding = {
   criterion?: string
@@ -54,6 +56,9 @@ const unrelatedEvidence = (finding: CheckedFinding, isRelated: (item: string) =>
     .filter((item) => !isRelated(item))
     .map((evidence) => ({ criterion: finding.criterion, problem: UNRELATED_EVIDENCE, evidence }))
 
+const withPlainSpaces = (text: string) =>
+  NO_BREAK_SPACES.reduce((plain, noBreakSpace) => plain.replaceAll(noBreakSpace, SPACE), text)
+
 const listsTechnique = (techniques: object, item: string) =>
   JSON.stringify(techniques).includes(`${TECHNIQUE_ID_OPENING}${item}${TECHNIQUE_ID_CLOSING}`)
 
@@ -77,7 +82,7 @@ const rgaaChecks = (finding: CheckedFinding, { rgaa }: References): Checks => {
   return [
     unknownCriterion(finding, officials),
     ...officials.flatMap((official) => [
-      mismatch(finding, official.title === finding.quote, QUOTE_MISMATCH),
+      mismatch(finding, withPlainSpaces(official.title) === withPlainSpaces(finding.quote), QUOTE_MISMATCH),
       unrelatedEvidence(
         finding,
         (item) => Object.keys(official.tests).includes(item) || official.references.techniques.includes(item),
