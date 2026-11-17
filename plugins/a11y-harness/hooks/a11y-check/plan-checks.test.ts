@@ -16,4 +16,10 @@ describe('planChecks', () => {
 
     expect(plan).toBeNull()
   })
+
+  it('plans the checks of a component changed with Edit', () => {
+    const plan = planChecks({ tool_name: 'Edit', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR })
+
+    expect(plan).toMatchObject({ filePath: COMPONENT_PATH, cwd: PROJECT_DIR })
+  })
 })
