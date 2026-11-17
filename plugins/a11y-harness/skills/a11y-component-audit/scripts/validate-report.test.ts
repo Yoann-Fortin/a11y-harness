@@ -29,9 +29,13 @@ const WCAG_REFERENCE: WcagReference = {
     },
   ],
 }
+const RGAA_REFERENCES = [{ wcag: ['3.3.2 Labels or Instructions (A)'] }, { techniques: ['H90', 'F81'] }]
 const RGAA_REFERENCE: RgaaReference = {
   topics: [
-    { number: 11, criteria: [{ criterium: { number: 10, title: RGAA_TITLE, tests: { 1: ['First test'] }, references: [] } }] },
+    {
+      number: 11,
+      criteria: [{ criterium: { number: 10, title: RGAA_TITLE, tests: { 1: ['First test'] }, references: RGAA_REFERENCES } }],
+    },
   ],
 }
 const ACT_REFERENCE: ActReference = {
@@ -122,6 +126,12 @@ describe('validateReport', () => {
 
   it('accepts the tests of the RGAA criterion as evidence', () => {
     const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['11.10.1'] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([])
+  })
+
+  it('accepts the techniques and failures referenced by the RGAA criterion as evidence', () => {
+    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['H90', 'F81'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
