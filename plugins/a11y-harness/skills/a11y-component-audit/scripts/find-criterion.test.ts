@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { findRgaaCriterion, findWcagCriterion, type RgaaReference } from './find-criterion.ts'
 
+const LABELS_TECHNIQUES = {
+  sufficient: [{ id: 'G131', technology: 'general', title: 'Providing descriptive labels' }],
+  failure: [{ id: 'F82', technology: 'failures', title: 'Failure by not including a text label' }],
+}
+
 const WCAG_REFERENCE = {
   principles: [
     {
@@ -14,6 +19,7 @@ const WCAG_REFERENCE = {
               handle: 'Labels or Instructions',
               title: 'Labels or instructions are provided when content requires user input.',
               level: 'A',
+              techniques: LABELS_TECHNIQUES,
             },
           ],
         },
@@ -52,6 +58,7 @@ describe('findWcagCriterion', () => {
         title: 'Labels or instructions are provided when content requires user input.',
         level: 'A',
         understanding: 'https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html',
+        techniques: LABELS_TECHNIQUES,
       },
     ],
     ['9.9.9', null],
