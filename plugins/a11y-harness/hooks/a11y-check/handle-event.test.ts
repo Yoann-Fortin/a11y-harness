@@ -59,4 +59,12 @@ describe('handleEvent', () => {
 
     expect(ports.plans[0]?.cwd).toBe(PACKAGE_DIR)
   })
+
+  it('checks against the standard chosen in the plugin options', async () => {
+    const ports = fakePorts(NO_RESULTS)
+
+    await handleEvent(WRITE_EVENT, 'rgaa-4.1.2', ports)
+
+    expect(ports.plans[0]?.standard).toBe('rgaa-4.1.2')
+  })
 })
