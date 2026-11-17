@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { findRgaaCriterion, findWcagCriterion } from './find-criterion.ts'
+import { findRgaaCriterion, findRgaaMethodologies, findWcagCriterion } from './find-criterion.ts'
 import { validateReport } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
 const WCAG_FILE = 'wcag-2.2.json'
 const RGAA_FILE = 'rgaa-4.1.2-criteres.json'
+const RGAA_METHODOLOGIES_FILE = 'rgaa-4.1.2-methodologies.json'
 const ACT_FILE = 'act-rules.json'
 const TEXT_ENCODING = 'utf8'
 const SUCCESS_EXIT_CODE = 0
@@ -18,7 +19,12 @@ const readReference = (file: string) => readJson(join(REFERENCE_DIR, file))
 
 const FINDERS: Record<string, (id: string) => object | null> = {
   'wcag-2.2': (id) => findWcagCriterion(readReference(WCAG_FILE), id),
-  'rgaa-4.1.2': (id) => findRgaaCriterion(readReference(RGAA_FILE), id),
+  'rgaa-4.1.2': (id) => {
+    const criterion = findRgaaCriterion(readReference(RGAA_FILE), id)
+    return criterion === null
+      ? null
+      : { ...criterion, methodologies: findRgaaMethodologies(readReference(RGAA_METHODOLOGIES_FILE), criterion) }
+  },
 }
 
 const lookUp = ([standard = '', id = '']: string[]): Outcome => {
