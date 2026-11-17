@@ -6,6 +6,7 @@ import { validateReport } from './validate-report.ts'
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
 const WCAG_FILE = 'wcag-2.2.json'
 const RGAA_FILE = 'rgaa-4.1.2-criteres.json'
+const ACT_FILE = 'act-rules.json'
 const TEXT_ENCODING = 'utf8'
 const SUCCESS_EXIT_CODE = 0
 const FAILURE_EXIT_CODE = 1
@@ -26,7 +27,7 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
 }
 
 const validate = ([reportPath = '']: string[]): Outcome => {
-  const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE) }
+  const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }
   const problems = validateReport(readJson(reportPath), references)
   return { output: problems, failed: problems.length > 0 }
 }
