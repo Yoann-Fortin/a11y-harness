@@ -113,8 +113,8 @@ export type ActReference = {
   }[]
 }
 
-export function findActRules(reference: ActReference, id: string): string[] {
-  return reference['act-rules']
+export function findActRules({ 'act-rules': rules }: ActReference, id: string): string[] {
+  return rules
     .filter((rule) => !rule.deprecated && !rule.proposed)
     .filter((rule) =>
       Object.entries(rule.frontmatter.accessibility_requirements ?? {}).some(
