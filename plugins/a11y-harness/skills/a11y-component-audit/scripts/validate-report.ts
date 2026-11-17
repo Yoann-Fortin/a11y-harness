@@ -6,7 +6,7 @@ const QUOTE_MISMATCH = 'quote-mismatch'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 
 export type Finding = {
-  criterion: string
+  criterion?: string
   level?: string
   quote: string
 }
@@ -26,7 +26,9 @@ export type Problem = {
   problem: string
 }
 
-const wcagProblems = (wcag: WcagReference) => (finding: Finding): string[] => {
+type CheckedFinding = Finding & { criterion: string }
+
+const wcagProblems = (wcag: WcagReference) => (finding: CheckedFinding): string[] => {
   const official = findWcagCriterion(wcag, finding.criterion)
   return official === null
     ? [UNKNOWN_CRITERION]
@@ -36,7 +38,7 @@ const wcagProblems = (wcag: WcagReference) => (finding: Finding): string[] => {
       ]
 }
 
-const rgaaProblems = (rgaa: RgaaReference) => (finding: Finding): string[] => {
+const rgaaProblems = (rgaa: RgaaReference) => (finding: CheckedFinding): string[] => {
   const official = findRgaaCriterion(rgaa, finding.criterion)
   if (official === null) {
     return [UNKNOWN_CRITERION]
@@ -46,7 +48,7 @@ const rgaaProblems = (rgaa: RgaaReference) => (finding: Finding): string[] => {
 
 export function validateReport(report: Report, references: References): Problem[] {
   const problemsOf = report.standard === RGAA_STANDARD ? rgaaProblems(references.rgaa) : wcagProblems(references.wcag)
-  return report.findings.flatMap((finding) =>
+  return report.findings.filter((finding): finding is CheckedFinding => finding.criterion !== undefined).flatMap((finding) =>
     problemsOf(finding).map((problem) => ({ criterion: finding.criterion, problem })),
   )
 }
