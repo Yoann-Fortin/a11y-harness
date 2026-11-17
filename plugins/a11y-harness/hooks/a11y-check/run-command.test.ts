@@ -6,6 +6,7 @@ import { runCommand } from './run-command.ts'
 const NODE = process.execPath
 const WORKING_DIR = realpathSync(tmpdir())
 const TIME_LIMIT_MS = 5000
+const SHORT_TIME_LIMIT_MS = 200
 
 describe('runCommand', () => {
   it('returns the output of a command run in the given directory', async () => {
@@ -27,6 +28,12 @@ describe('runCommand', () => {
 
   it('reports a command that cannot be found', async () => {
     const result = await runCommand('a11y-check-missing-tool', [], WORKING_DIR, TIME_LIMIT_MS)
+
+    expect(result).toEqual({ ok: false, failure: expect.any(String) })
+  })
+
+  it('stops a command that runs past the time limit', async () => {
+    const result = await runCommand(NODE, ['-e', 'setTimeout(() => {}, 10000)'], WORKING_DIR, SHORT_TIME_LIMIT_MS)
 
     expect(result).toEqual({ ok: false, failure: expect.any(String) })
   })
