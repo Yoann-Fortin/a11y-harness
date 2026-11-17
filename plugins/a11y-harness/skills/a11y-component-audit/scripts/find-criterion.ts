@@ -80,8 +80,9 @@ export function findRgaaCriteria(reference: RgaaReference, id: string): RgaaCrit
           standard: RGAA_STANDARD,
           id,
           title: criterium.title,
-          tests: Object.fromEntries(
-            Object.entries(criterium.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
+          tests: Object.assign(
+            {},
+            ...Object.entries(criterium.tests).map(([test, lines]) => ({ [`${id}${NUMBER_SEPARATOR}${test}`]: lines })),
           ),
           references: {
             wcag: criterium.references.flatMap((reference) => reference.wcag ?? []),
