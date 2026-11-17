@@ -36,4 +36,10 @@ describe('validateReport', () => {
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'wrong-level' }])
   })
+
+  it('flags a quote that differs from the official title', () => {
+    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, quote: 'Labels are required.' }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'quote-mismatch' }])
+  })
 })
