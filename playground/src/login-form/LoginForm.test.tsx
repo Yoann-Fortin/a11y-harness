@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { LoginForm } from './LoginForm'
@@ -188,5 +188,11 @@ describe('LoginForm', () => {
     await user.click(submitButton())
 
     expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+  })
+
+  it('does not reload the page on submission', () => {
+    render(<LoginForm />)
+
+    expect(fireEvent.submit(submitButton())).toBe(false)
   })
 })
