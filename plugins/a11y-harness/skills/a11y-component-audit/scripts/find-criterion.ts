@@ -1,6 +1,8 @@
 const WCAG_STANDARD = 'wcag-2.2'
 const UNDERSTANDING_URL = 'https://www.w3.org/WAI/WCAG22/Understanding/'
 const UNDERSTANDING_EXTENSION = '.html'
+const RGAA_STANDARD = 'rgaa-4.1.2'
+const NUMBER_SEPARATOR = '.'
 
 type WcagSuccessCriterion = {
   id: string
@@ -23,6 +25,23 @@ export type WcagCriterion = {
   understanding: string
 }
 
+type RgaaCriterium = {
+  number: number
+  title: string
+  tests: Record<string, string[]>
+}
+
+export type RgaaReference = {
+  topics: { number: number; criteria: { criterium: RgaaCriterium }[] }[]
+}
+
+export type RgaaCriterion = {
+  standard: string
+  id: string
+  title: string
+  tests: Record<string, string[]>
+}
+
 export function findWcagCriterion(reference: WcagReference, id: string): WcagCriterion | null {
   const criterion = reference.principles
     .flatMap((principle) => principle.guidelines)
@@ -37,5 +56,24 @@ export function findWcagCriterion(reference: WcagReference, id: string): WcagCri
         title: criterion.title,
         level: criterion.level,
         understanding: `${UNDERSTANDING_URL}${criterion.id}${UNDERSTANDING_EXTENSION}`,
+      }
+}
+
+export function findRgaaCriterion(reference: RgaaReference, id: string): RgaaCriterion | null {
+  const [topicNumber, criterionNumber] = id.split(NUMBER_SEPARATOR).map(Number)
+  const criterion = reference.topics
+    .filter((topic) => topic.number === topicNumber)
+    .flatMap((topic) => topic.criteria)
+    .map((entry) => entry.criterium)
+    .find((criterium) => criterium.number === criterionNumber)
+  return criterion === undefined
+    ? null
+    : {
+        standard: RGAA_STANDARD,
+        id,
+        title: criterion.title,
+        tests: Object.fromEntries(
+          Object.entries(criterion.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
+        ),
       }
 }
