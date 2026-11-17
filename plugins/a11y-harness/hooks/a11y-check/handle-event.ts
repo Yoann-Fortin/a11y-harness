@@ -23,7 +23,7 @@ export async function handleEvent(
   ports: HookPorts,
 ): Promise<string> {
   const event = parseEvent(rawInput)
-  if (event === null) {
+  if (event === null || typeof event.tool_input.file_path !== 'string') {
     return SILENCE
   }
   const plan = planChecks({ ...event, cwd: event.cwd })
