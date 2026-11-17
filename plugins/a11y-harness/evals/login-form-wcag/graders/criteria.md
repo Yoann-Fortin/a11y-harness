@@ -5,11 +5,12 @@ weight: 1
 
 The user asked for an audit against WCAG 2.2 AA.
 
-This form is expected to have no WCAG 2.2 AA failure that a static read can establish.
+This form is expected to fail WCAG 2.2 AA only on its error summary: it appears without moving focus, in role="status".
 
 PASS only if the response:
 - reports no failure for the required fields: WCAG 2.2 does not require required fields to be indicated before submission, and the empty fields get an error text linked to them;
 - does not report the visually unlabelled password toggle as a failure: its aria-label names it and aria-pressed exposes its state;
+- reports a failure of 4.1.3 Status Messages (AA) for the error summary: Understanding 4.1.3 documents ARIA19 for errors (situation B), with role="alert" or aria-live="assertive", and notes that an alert role is needed where no change of context takes place; role="status" is the technique for success and results;
 - reports no other failure, apart from points it leaves to manual checks.
 
 FAIL in every case if the response:
