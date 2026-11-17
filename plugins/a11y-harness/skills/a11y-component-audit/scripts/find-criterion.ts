@@ -4,12 +4,15 @@ const UNDERSTANDING_EXTENSION = '.html'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 const NUMBER_SEPARATOR = '.'
 
+export type WcagTechniques = Record<string, unknown>
+
 type WcagSuccessCriterion = {
   id: string
   num: string
   handle: string
   title: string
   level: string
+  techniques?: WcagTechniques
 }
 
 export type WcagReference = {
@@ -23,6 +26,7 @@ export type WcagCriterion = {
   title: string
   level: string
   understanding: string
+  techniques: WcagTechniques
 }
 
 type RgaaCriterium = {
@@ -56,6 +60,7 @@ export function findWcagCriterion(reference: WcagReference, id: string): WcagCri
         title: criterion.title,
         level: criterion.level,
         understanding: `${UNDERSTANDING_URL}${criterion.id}${UNDERSTANDING_EXTENSION}`,
+        techniques: criterion.techniques ?? {},
       }
 }
 
