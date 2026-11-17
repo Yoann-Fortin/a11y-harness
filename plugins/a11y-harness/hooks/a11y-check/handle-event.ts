@@ -26,7 +26,7 @@ export async function handleEvent(
   if (event === null || typeof event.tool_input.file_path !== 'string') {
     return SILENCE
   }
-  const plan = planChecks({ ...event, cwd: event.cwd })
+  const plan = planChecks({ ...event, cwd: ports.packageRootOf(event.tool_input.file_path) ?? event.cwd })
   if (plan === null) {
     return SILENCE
   }
