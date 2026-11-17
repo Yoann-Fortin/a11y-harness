@@ -11,6 +11,11 @@ export async function runCommand(
   cwd: string,
   _timeoutMs: number,
 ): Promise<CommandResult> {
-  const { stdout } = await execFileAsync(command, args, { cwd })
-  return { ok: true, stdout }
+  try {
+    const { stdout } = await execFileAsync(command, args, { cwd })
+    return { ok: true, stdout }
+  } catch (error) {
+    const { stdout } = error as { stdout: string }
+    return { ok: true, stdout }
+  }
 }
