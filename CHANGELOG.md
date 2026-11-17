@@ -15,5 +15,6 @@ All notable changes to this project are documented here. The format follows [Kee
 - `standard` plugin option: `wcag-2.2` (default) or `rgaa-4.1.2`.
 - `a11y-component-audit` skill: audits a component against WCAG 2.2 AA or RGAA 4.1.2 from the official texts it bundles (W3C WCAG 2.2 and ACT rules mapping, DINUM RGAA 4.1.2 criteria and methodology). A `lookup` command quotes a criterion, and a `validate` command rejects any report whose criterion, level, title or evidence does not match those texts. A forms checklist records rulings checked against the same sources. Evaluation cases under `evals/`.
 - `a11y-reviewer` agent: reviews several components, a folder or the changes of a branch with the audit skill, without changing any file.
+- README: installation, choice of standard, the two verdicts of the playground, architecture, evaluations, limits and roadmap.
 - WCAG-only tests for the login form (3.3.2, each field named by text shown on the page), written from the first cycle.
 - RGAA-only tests for the login form: 7.5.2 (errors announced as an alert), and 11.10 (required fields shown before submission), which the form fails on purpose. Under WCAG 2.2 the hook stays silent, under RGAA 4.1.2 it blocks and names the criterion.
