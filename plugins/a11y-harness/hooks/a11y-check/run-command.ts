@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process'
+import { type ExecFileException, execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 
 const execFileAsync = promisify(execFile)
@@ -15,7 +15,8 @@ export async function runCommand(
     const { stdout } = await execFileAsync(command, args, { cwd })
     return { ok: true, stdout }
   } catch (error) {
-    const { stdout } = error as { stdout: string }
-    return { ok: true, stdout }
+    const failure = error as ExecFileException & { stdout: string }
+    const couldNotRun = typeof failure.code === 'string'
+    return couldNotRun ? { ok: false, failure: failure.message } : { ok: true, stdout: failure.stdout }
   }
 }
