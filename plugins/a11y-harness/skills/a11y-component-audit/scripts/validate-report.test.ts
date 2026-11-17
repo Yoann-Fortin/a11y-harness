@@ -30,7 +30,9 @@ const WCAG_REFERENCE: WcagReference = {
   ],
 }
 const RGAA_REFERENCE: RgaaReference = {
-  topics: [{ number: 11, criteria: [{ criterium: { number: 10, title: RGAA_TITLE, tests: { 1: ['First test'] } } }] }],
+  topics: [
+    { number: 11, criteria: [{ criterium: { number: 10, title: RGAA_TITLE, tests: { 1: ['First test'] }, references: [] } }] },
+  ],
 }
 const ACT_REFERENCE: ActReference = {
   'act-rules': [

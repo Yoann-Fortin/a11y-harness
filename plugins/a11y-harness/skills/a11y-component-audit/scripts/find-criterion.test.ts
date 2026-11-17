@@ -34,20 +34,30 @@ const WCAG_REFERENCE = {
   ],
 }
 
+const REQUIRED_WCAG_REFERENCES = ['3.3.1 Error Identification (A)', '3.3.2 Labels or Instructions (A)']
+const REQUIRED_TECHNIQUES = ['H90', 'F81']
+
 const RGAA_REFERENCE: RgaaReference = {
   topics: [
     {
       number: 1,
       criteria: [
-        { criterium: { number: 1, title: 'Image title', tests: { 1: ['Image test'] } } },
-        { criterium: { number: 10, title: 'Other topic title', tests: { 1: ['Other topic test'] } } },
+        { criterium: { number: 1, title: 'Image title', tests: { 1: ['Image test'] }, references: [] } },
+        { criterium: { number: 10, title: 'Other topic title', tests: { 1: ['Other topic test'] }, references: [] } },
       ],
     },
     {
       number: 11,
       criteria: [
-        { criterium: { number: 1, title: 'Label title', tests: { 1: ['Label test'] } } },
-        { criterium: { number: 10, title: 'Required title', tests: { 1: ['First test'], 2: ['Second test'] } } },
+        { criterium: { number: 1, title: 'Label title', tests: { 1: ['Label test'] }, references: [] } },
+        {
+          criterium: {
+            number: 10,
+            title: 'Required title',
+            tests: { 1: ['First test'], 2: ['Second test'] },
+            references: [{ wcag: REQUIRED_WCAG_REFERENCES }, { techniques: REQUIRED_TECHNIQUES }],
+          },
+        },
       ],
     },
   ],
@@ -82,6 +92,7 @@ describe('findRgaaCriterion', () => {
         id: '11.10',
         title: 'Required title',
         tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] },
+        references: { wcag: REQUIRED_WCAG_REFERENCES, techniques: REQUIRED_TECHNIQUES },
       },
     ],
     ['12.1', null],
