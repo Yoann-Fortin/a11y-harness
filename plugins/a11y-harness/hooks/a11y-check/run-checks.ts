@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import type { CheckResults, ToolFailure } from './format-feedback.ts'
 import type { CheckPlan, Standard } from './plan-checks.ts'
 import { readBiomeReport, readVitestReport } from './read-reports.ts'
@@ -37,8 +38,13 @@ const vitestArgs = (plan: CheckPlan, reportFile: string) => [
 ]
 
 export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckResults> {
-  const lint = await tools.run(BIOME_BINARY, [...BIOME_ARGS, plan.filePath], plan.cwd, TOOL_TIME_LIMIT_MS)
-  const tests = await tools.run(VITEST_BINARY, vitestArgs(plan, tools.reportFile), plan.cwd, TOOL_TIME_LIMIT_MS)
+  const lint = await tools.run(join(plan.cwd, BIOME_BINARY), [...BIOME_ARGS, plan.filePath], plan.cwd, TOOL_TIME_LIMIT_MS)
+  const tests = await tools.run(
+    join(plan.cwd, VITEST_BINARY),
+    vitestArgs(plan, tools.reportFile),
+    plan.cwd,
+    TOOL_TIME_LIMIT_MS,
+  )
   return {
     lintErrors: lint.ok ? readBiomeReport(lint.stdout) : [],
     failingTests: tests.ok ? readVitestReport(await tools.readText(tools.reportFile)) : [],
