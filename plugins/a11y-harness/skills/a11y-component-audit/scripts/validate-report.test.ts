@@ -3,7 +3,7 @@ import type { ActReference, RgaaReference, WcagReference } from './find-criterio
 import { validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
-const RGAA_TITLE = 'Required title'
+const RGAA_TITLE = 'Required\u202ftitle\u00a0?'
 const NAME_TITLE = 'Name, role and value can be programmatically determined.'
 const WCAG_REFERENCE: WcagReference = {
   principles: [
@@ -135,6 +135,12 @@ describe('validateReport', () => {
 
   it('accepts the tests of the RGAA criterion as evidence', () => {
     const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['11.10.1'] }] }
+
+    expect(validateReport(report, REFERENCES)).toEqual([])
+  })
+
+  it('accepts an RGAA quote typed with plain spaces where the official title has no-break spaces', () => {
+    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, quote: 'Required title ?' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
