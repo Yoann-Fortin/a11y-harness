@@ -27,6 +27,7 @@ export function LoginForm() {
   const hasErrors = errors.email !== undefined || errors.password !== undefined
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault()
     const formData = new FormData(event.currentTarget)
     setErrors({
       email: formData.get(EMAIL_FIELD_NAME) ? undefined : EMAIL_REQUIRED_ERROR,
