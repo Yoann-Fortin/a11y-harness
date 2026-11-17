@@ -50,6 +50,12 @@ describe('skill scripts, on the official reference files', () => {
     expect(await run('validate', report)).toEqual([])
   })
 
+  it('accepts a report given inline', async () => {
+    const report = JSON.stringify({ standard: 'wcag-2.2', findings: [{ criterion: '3.3.2', level: 'A', quote: LABELS_TITLE }] })
+
+    expect(await run('validate', report)).toEqual([])
+  })
+
   it('rejects a report that misstates a criterion', async () => {
     const report = await writeReport({ criterion: '3.3.2', level: 'AA', quote: LABELS_TITLE })
 
