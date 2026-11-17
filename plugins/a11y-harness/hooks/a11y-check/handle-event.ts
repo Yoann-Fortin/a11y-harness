@@ -19,14 +19,14 @@ const parseEvent = (rawInput: string): ToolEvent | null => {
 
 export async function handleEvent(
   rawInput: string,
-  _requestedStandard: string | undefined,
+  requestedStandard: string | undefined,
   ports: HookPorts,
 ): Promise<string> {
   const event = parseEvent(rawInput)
   if (event === null || typeof event.tool_input.file_path !== 'string') {
     return SILENCE
   }
-  const plan = planChecks({ ...event, cwd: ports.packageRootOf(event.tool_input.file_path) ?? event.cwd })
+  const plan = planChecks({ ...event, cwd: ports.packageRootOf(event.tool_input.file_path) ?? event.cwd }, requestedStandard)
   if (plan === null) {
     return SILENCE
   }
