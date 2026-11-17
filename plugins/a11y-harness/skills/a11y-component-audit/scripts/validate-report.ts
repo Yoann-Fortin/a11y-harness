@@ -41,49 +41,55 @@ export type Problem = {
 
 type CheckedFinding = Finding & { criterion: string }
 
-type Issue = Omit<Problem, 'criterion'>
+type Checks = Problem[][]
 
-const issues = (...problems: string[]): Issue[] => problems.map((problem) => ({ problem }))
+const unknownCriterion = (finding: CheckedFinding, officials: object[]): Problem[] =>
+  officials.length === 0 ? [{ criterion: finding.criterion, problem: UNKNOWN_CRITERION }] : []
 
-const unrelatedEvidence = (evidence: string[], isRelated: (item: string) => boolean): Issue[] =>
-  evidence.filter((item) => !isRelated(item)).map((item) => ({ problem: UNRELATED_EVIDENCE, evidence: item }))
+const mismatch = (finding: CheckedFinding, isExact: boolean, problem: string): Problem[] =>
+  isExact ? [] : [{ criterion: finding.criterion, problem }]
 
-const listsTechnique = (techniques: object) => {
-  const serialized = JSON.stringify(techniques)
-  return (item: string) => serialized.includes(`${TECHNIQUE_ID_OPENING}${item}${TECHNIQUE_ID_CLOSING}`)
-}
+const unrelatedEvidence = (finding: CheckedFinding, isRelated: (item: string) => boolean): Problem[] =>
+  (finding.evidence ?? [])
+    .filter((item) => !isRelated(item))
+    .map((evidence) => ({ criterion: finding.criterion, problem: UNRELATED_EVIDENCE, evidence }))
 
-const wcagProblems = (wcag: WcagReference, act: ActReference) => (finding: CheckedFinding): Issue[] => {
-  const [official = null] = findWcagCriteria(wcag, finding.criterion)
-  return official === null
-    ? issues(UNKNOWN_CRITERION)
-    : [
-        ...issues(...(official.level === finding.level ? [] : [WRONG_LEVEL])),
-        ...issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH])),
-        ...unrelatedEvidence(finding.evidence ?? [], (item) => {
-          const isTechnique = listsTechnique(official.techniques)
-          return isTechnique(item) || findActRules(act, official.id).includes(item)
-        }),
-      ]
-}
+const listsTechnique = (techniques: object, item: string) =>
+  JSON.stringify(techniques).includes(`${TECHNIQUE_ID_OPENING}${item}${TECHNIQUE_ID_CLOSING}`)
 
-const rgaaProblems = (rgaa: RgaaReference) => (finding: CheckedFinding): Issue[] => {
-  const [official = null] = findRgaaCriteria(rgaa, finding.criterion)
-  if (official === null) {
-    return issues(UNKNOWN_CRITERION)
-  }
+const wcagChecks = (finding: CheckedFinding, { wcag, act }: References): Checks => {
+  const officials = findWcagCriteria(wcag, finding.criterion)
   return [
-    ...issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH])),
-    ...unrelatedEvidence(
-      finding.evidence ?? [],
-      (item) => Object.keys(official.tests).includes(item) || official.references.techniques.includes(item),
-    ),
+    unknownCriterion(finding, officials),
+    ...officials.flatMap((official) => [
+      mismatch(finding, official.level === finding.level, WRONG_LEVEL),
+      mismatch(finding, official.title === finding.quote, QUOTE_MISMATCH),
+      unrelatedEvidence(
+        finding,
+        (item) => listsTechnique(official.techniques, item) || findActRules(act, official.id).includes(item),
+      ),
+    ]),
+  ]
+}
+
+const rgaaChecks = (finding: CheckedFinding, { rgaa }: References): Checks => {
+  const officials = findRgaaCriteria(rgaa, finding.criterion)
+  return [
+    unknownCriterion(finding, officials),
+    ...officials.flatMap((official) => [
+      mismatch(finding, official.title === finding.quote, QUOTE_MISMATCH),
+      unrelatedEvidence(
+        finding,
+        (item) => Object.keys(official.tests).includes(item) || official.references.techniques.includes(item),
+      ),
+    ]),
   ]
 }
 
 export function validateReport(report: Report, references: References): Problem[] {
-  const problemsOf = report.standard === RGAA_STANDARD ? rgaaProblems(references.rgaa) : wcagProblems(references.wcag, references.act)
+  const checksOf = report.standard === RGAA_STANDARD ? rgaaChecks : wcagChecks
   return report.findings
     .filter((finding): finding is CheckedFinding => finding.criterion !== undefined)
-    .flatMap((finding) => problemsOf(finding).map((issue) => ({ criterion: finding.criterion, ...issue })))
+    .flatMap((finding) => checksOf(finding, references))
+    .flat()
 }
