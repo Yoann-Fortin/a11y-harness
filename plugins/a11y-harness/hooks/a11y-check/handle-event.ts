@@ -31,5 +31,5 @@ export async function handleEvent(
     return SILENCE
   }
   const feedback = formatFeedback(await ports.check(plan))
-  return JSON.stringify({ decision: BLOCK_DECISION, reason: feedback })
+  return feedback === null ? SILENCE : JSON.stringify({ decision: BLOCK_DECISION, reason: feedback })
 }
