@@ -13,3 +13,9 @@ These files are copied unmodified from their official sources. They let the skil
 - Référentiel général d'amélioration de l'accessibilité (RGAA) 4.1.2, Direction interministérielle du numérique (DINUM): https://accessibilite.numerique.gouv.fr/
 - Machine-readable file: https://github.com/DISIC/accessibilite.numerique.gouv.fr/blob/main/RGAA/criteres.json, downloaded on 2026-11-17
 - Published under the Licence Ouverte 2.0 (Etalab): https://www.etalab.gouv.fr/licence-ouverte-open-licence/
+
+## act-rules.json
+
+- WCAG Conformance Test Rules (ACT Rules), W3C Web Accessibility Initiative: https://www.w3.org/WAI/standards-guidelines/act/rules/
+- Machine-readable file: https://github.com/w3c/wcag-act-rules/blob/main/_data/wcag-act-rules/wcag-mapping.json, downloaded on 2026-11-17
+- Copyright © World Wide Web Consortium. Distributed unmodified under the W3C Document License: https://www.w3.org/copyright/document-license/
