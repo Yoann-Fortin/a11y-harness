@@ -5,16 +5,18 @@ Accessibility plugin for Claude Code, for React: a hook that feeds lint and axe 
 ## Layout
 
 - `.claude-plugin/marketplace.json`: the marketplace, in the same format as the `claude-code-plugins` repository.
-- `plugins/a11y-harness/`: the installable plugin (manifest, hooks, skills, agents). No React or Vite dependency here.
+- `plugins/a11y-harness/`: the installable plugin (manifest, hooks, skills, agents). Its code only imports Node built-in modules, so users install nothing. Tests sit next to the code as `*.test.ts`.
+- Root `package.json`: a pnpm workspace that holds the development tools of the plugin (Vitest, Stryker, Biome, TypeScript) and includes `playground/`.
 - `playground/`: Vite, React and Vitest sandbox. One folder per sample component, with its test next to it. Faulty versions of the sample components are not versioned: they come from Claude running without the harness, at evaluation time.
 - `.claude/rules/`: rules scoped to part of the repository, loaded only when a matching file is read or edited.
 
 ## Commands
 
-- `pnpm --dir playground test`: Vitest tests
-- `pnpm --dir playground lint`: Biome
-- `pnpm --dir playground build`: type check and build
-- `pnpm --dir playground test:mutation`: Stryker, the build fails below a 100% mutation score
+Run `pnpm install` once at the root.
+
+- `pnpm test`, `pnpm test:mutation`, `pnpm lint`, `pnpm typecheck`: plugin tests, Stryker, Biome and TypeScript at the root
+- `pnpm --dir playground test`, `pnpm --dir playground test:mutation`, `pnpm --dir playground build`: the same checks for the sandbox
+- Stryker fails below a 100% mutation score in both places
 - `claude plugin validate .`: marketplace and plugin manifests
 
 ## Before each commit

@@ -1,0 +1,19 @@
+{
+  "name": "a11y-harness",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:mutation": "stryker run",
+    "lint": "biome lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/vitest-runner": "^10.1.1",
+    "@types/node": "^24.19.2",
+    "typescript": "~7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
