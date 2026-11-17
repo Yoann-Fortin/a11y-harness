@@ -39,7 +39,7 @@ const fakeTools = (outputs: Record<string, CommandResult>, vitestReport: string)
     calls,
     run: async (command: string, args: string[], cwd: string) => {
       calls.push({ command, args, cwd })
-      return outputs[command]
+      return outputs[command] ?? CANNOT_RUN
     },
     readText: async () => vitestReport,
     reportFile: REPORT_FILE,
