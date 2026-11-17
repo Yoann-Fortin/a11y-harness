@@ -2,6 +2,9 @@ import { extname } from 'node:path'
 
 const WATCHED_TOOLS = ['Write', 'Edit']
 const COMPONENT_EXTENSIONS = ['.tsx', '.jsx']
+const WCAG_STANDARD = 'wcag-2.2'
+
+export type Standard = typeof WCAG_STANDARD
 
 export type ToolEvent = {
   tool_name: string
@@ -12,10 +15,11 @@ export type ToolEvent = {
 export type CheckPlan = {
   filePath: string
   cwd: string
+  standard: Standard
 }
 
 export function planChecks(event: ToolEvent): CheckPlan | null {
   const filePath = event.tool_input.file_path
   const isWatched = WATCHED_TOOLS.includes(event.tool_name) && COMPONENT_EXTENSIONS.includes(extname(filePath))
-  return isWatched ? { filePath, cwd: event.cwd } : null
+  return isWatched ? { filePath, cwd: event.cwd, standard: WCAG_STANDARD } : null
 }
