@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import type { RgaaReference, WcagReference } from './find-criterion.ts'
+import type { ActReference, RgaaReference, WcagReference } from './find-criterion.ts'
 import { validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
 const RGAA_TITLE = 'Required title'
+const NAME_TITLE = 'Name, role and value can be programmatically determined.'
 const WCAG_REFERENCE: WcagReference = {
   principles: [
     {
@@ -21,6 +22,7 @@ const WCAG_REFERENCE: WcagReference = {
                 failure: [{ id: 'F82', technology: 'failures', title: 'Failure by not including a text label' }],
               },
             },
+            { id: 'name-role-value', num: '4.1.2', handle: 'Name, Role, Value', title: NAME_TITLE, level: 'A' },
           ],
         },
       ],
@@ -30,7 +32,16 @@ const WCAG_REFERENCE: WcagReference = {
 const RGAA_REFERENCE: RgaaReference = {
   topics: [{ number: 11, criteria: [{ criterium: { number: 10, title: RGAA_TITLE, tests: { 1: ['First test'] } } }] }],
 }
-const REFERENCES = { wcag: WCAG_REFERENCE, rgaa: RGAA_REFERENCE }
+const ACT_REFERENCE: ActReference = {
+  'act-rules': [
+    {
+      deprecated: false,
+      proposed: false,
+      frontmatter: { id: 'e086e5', accessibility_requirements: { 'wcag20:4.1.2': { forConformance: true } } },
+    },
+  ],
+}
+const REFERENCES = { wcag: WCAG_REFERENCE, rgaa: RGAA_REFERENCE, act: ACT_REFERENCE }
 const WCAG_FINDING = { criterion: '3.3.2', level: 'A', quote: WCAG_TITLE }
 const RGAA_FINDING = { criterion: '11.10', quote: RGAA_TITLE }
 
@@ -90,5 +101,11 @@ describe('validateReport', () => {
     const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: ['G131', 'F82'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
+  })
+
+  it('accepts an approved ACT rule written for the criterion as evidence', () => {
+    const finding = { criterion: '4.1.2', level: 'A', quote: NAME_TITLE, evidence: ['e086e5'] }
+
+    expect(validateReport({ standard: 'wcag-2.2', findings: [finding] }, REFERENCES)).toEqual([])
   })
 })
