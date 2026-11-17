@@ -5,10 +5,12 @@ import type { CheckPlan } from './plan-checks.ts'
 
 const SESSION_DIR = '/repo'
 const NO_RESULTS: CheckResults = { lintErrors: [], failingTests: [], toolFailures: [] }
+const COMPONENT_PATH = '/repo/playground/src/Form.tsx'
 const FINDINGS: CheckResults = {
   ...NO_RESULTS,
   failingTests: [{ name: 'Form names the field', message: 'Unable to find the label' }],
 }
+const WRITE_EVENT = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: SESSION_DIR })
 
 const fakePorts = (results: CheckResults, packageRoot: string | null = null) => {
   const plans: CheckPlan[] = []
@@ -31,5 +33,11 @@ describe('handleEvent', () => {
     ],
   ])('stays silent on %s', async (_, input) => {
     await expect(handleEvent(input, undefined, fakePorts(FINDINGS))).resolves.toBe('')
+  })
+
+  it('asks Claude to fix a component with findings', async () => {
+    const output = await handleEvent(WRITE_EVENT, undefined, fakePorts(FINDINGS))
+
+    expect(JSON.parse(output)).toEqual({ decision: 'block', reason: JSON.stringify(FINDINGS) })
   })
 })
