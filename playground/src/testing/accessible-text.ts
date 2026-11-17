@@ -1,5 +1,6 @@
 const ID_SEPARATOR = ' '
 const LABELLED_BY = 'aria-labelledby'
+const DESCRIBED_BY = 'aria-describedby'
 
 const referencedElements = (field: HTMLElement, attribute: string) =>
   (field.getAttribute(attribute) ?? '')
@@ -15,3 +16,5 @@ const labelsOf = (field: HTMLElement) => (field instanceof HTMLInputElement ? Ar
 
 export const namingText = (field: HTMLElement) =>
   textOf([...labelsOf(field), ...referencedElements(field, LABELLED_BY)])
+
+export const describingText = (field: HTMLElement) => textOf(referencedElements(field, DESCRIBED_BY))
