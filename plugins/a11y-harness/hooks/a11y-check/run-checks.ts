@@ -1,5 +1,5 @@
 import type { CheckResults, ToolFailure } from './format-feedback.ts'
-import type { CheckPlan } from './plan-checks.ts'
+import type { CheckPlan, Standard } from './plan-checks.ts'
 import { readBiomeReport, readVitestReport } from './read-reports.ts'
 import type { CommandResult } from './run-command.ts'
 
@@ -8,7 +8,10 @@ const BIOME_TOOL = 'biome'
 const BIOME_ARGS = ['lint', '--reporter=json']
 const VITEST_BINARY = 'node_modules/.bin/vitest'
 const VITEST_TOOL = 'vitest'
-const RGAA_ONLY_TESTS = '**/*.rgaa.test.tsx'
+const EXCLUDED_TESTS: Record<Standard, string> = {
+  'wcag-2.2': '**/*.rgaa.test.tsx',
+  'rgaa-4.1.2': '**/*.wcag.test.tsx',
+}
 const TOOL_TIME_LIMIT_MS = 60_000
 
 export type RunCommand = (command: string, args: string[], cwd: string, timeoutMs: number) => Promise<CommandResult>
@@ -30,7 +33,7 @@ const vitestArgs = (plan: CheckPlan, reportFile: string) => [
   `--outputFile=${reportFile}`,
   '--passWithNoTests',
   '--exclude',
-  RGAA_ONLY_TESTS,
+  EXCLUDED_TESTS[plan.standard],
 ]
 
 export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckResults> {
