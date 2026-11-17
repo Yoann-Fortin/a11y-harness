@@ -13,20 +13,38 @@ const LABELS_TECHNIQUES = {
   failure: [{ id: 'F82', technology: 'failures', title: 'Failure by not including a text label' }],
 }
 
+const ALL_VERSIONS = ['2.0', '2.1', '2.2']
+
 const WCAG_REFERENCE = {
   principles: [
     {
       guidelines: [
         {
           successcriteria: [
-            { id: 'non-text-content', num: '1.1.1', handle: 'Non-text Content', title: 'Non-text title', level: 'A' },
+            {
+              id: 'non-text-content',
+              num: '1.1.1',
+              handle: 'Non-text Content',
+              title: 'Non-text title',
+              level: 'A',
+              versions: ALL_VERSIONS,
+            },
             {
               id: 'labels-or-instructions',
               num: '3.3.2',
               handle: 'Labels or Instructions',
               title: 'Labels or instructions are provided when content requires user input.',
               level: 'A',
+              versions: ALL_VERSIONS,
               techniques: LABELS_TECHNIQUES,
+            },
+            {
+              id: 'parsing',
+              num: '4.1.1',
+              handle: 'Parsing (Obsolete and removed)',
+              title: 'This criterion no longer has utility and is removed.',
+              level: '',
+              versions: ['2.0', '2.1'],
             },
           ],
         },
@@ -81,6 +99,7 @@ describe('findWcagCriteria', () => {
       ],
     ],
     ['9.9.9', []],
+    ['4.1.1', []],
   ])('lists the criteria numbered %s', (id, expected) => {
     expect(findWcagCriteria(WCAG_REFERENCE, id)).toEqual(expected)
   })
