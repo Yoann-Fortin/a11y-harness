@@ -1,8 +1,8 @@
 import {
   type ActReference,
   findActRules,
-  findRgaaCriterion,
-  findWcagCriterion,
+  findRgaaCriteria,
+  findWcagCriteria,
   type RgaaReference,
   type WcagReference,
 } from './find-criterion.ts'
@@ -54,7 +54,7 @@ const listsTechnique = (techniques: object) => {
 }
 
 const wcagProblems = (wcag: WcagReference, act: ActReference) => (finding: CheckedFinding): Issue[] => {
-  const official = findWcagCriterion(wcag, finding.criterion)
+  const [official = null] = findWcagCriteria(wcag, finding.criterion)
   return official === null
     ? issues(UNKNOWN_CRITERION)
     : [
@@ -68,7 +68,7 @@ const wcagProblems = (wcag: WcagReference, act: ActReference) => (finding: Check
 }
 
 const rgaaProblems = (rgaa: RgaaReference) => (finding: CheckedFinding): Issue[] => {
-  const official = findRgaaCriterion(rgaa, finding.criterion)
+  const [official = null] = findRgaaCriteria(rgaa, finding.criterion)
   if (official === null) {
     return issues(UNKNOWN_CRITERION)
   }

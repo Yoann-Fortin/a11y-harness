@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { findRgaaCriterion, findRgaaMethodologies, findWcagCriterion } from './find-criterion.ts'
+import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
 import { validateReport } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
@@ -17,18 +17,17 @@ type Outcome = { output: unknown; failed: boolean }
 const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
 const readReference = (file: string) => readJson(join(REFERENCE_DIR, file))
 
-const FINDERS: Record<string, (id: string) => object | null> = {
-  'wcag-2.2': (id) => findWcagCriterion(readReference(WCAG_FILE), id),
-  'rgaa-4.1.2': (id) => {
-    const criterion = findRgaaCriterion(readReference(RGAA_FILE), id)
-    return criterion === null
-      ? null
-      : { ...criterion, methodologies: findRgaaMethodologies(readReference(RGAA_METHODOLOGIES_FILE), criterion) }
-  },
+const FINDERS: Record<string, (id: string) => object[]> = {
+  'wcag-2.2': (id) => findWcagCriteria(readReference(WCAG_FILE), id),
+  'rgaa-4.1.2': (id) =>
+    findRgaaCriteria(readReference(RGAA_FILE), id).map((criterion) => ({
+      ...criterion,
+      methodologies: findRgaaMethodologies(readReference(RGAA_METHODOLOGIES_FILE), criterion),
+    })),
 }
 
 const lookUp = ([standard = '', id = '']: string[]): Outcome => {
-  const criterion = FINDERS[standard]?.(id) ?? null
+  const [criterion = null] = FINDERS[standard]?.(id) ?? []
   return { output: criterion, failed: criterion === null }
 }
 

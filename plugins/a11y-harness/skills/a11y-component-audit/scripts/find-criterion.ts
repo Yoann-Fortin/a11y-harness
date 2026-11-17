@@ -51,45 +51,44 @@ export type RgaaCriterion = {
   references: { wcag: string[]; techniques: string[] }
 }
 
-export function findWcagCriterion(reference: WcagReference, id: string): WcagCriterion | null {
-  const criterion = reference.principles
-    .flatMap((principle) => principle.guidelines)
-    .flatMap((guideline) => guideline.successcriteria)
-    .find((successCriterion) => successCriterion.num === id)
-  return criterion === undefined
-    ? null
-    : {
-        standard: WCAG_STANDARD,
-        id: criterion.num,
-        handle: criterion.handle,
-        title: criterion.title,
-        level: criterion.level,
-        understanding: `${UNDERSTANDING_URL}${criterion.id}${UNDERSTANDING_EXTENSION}`,
-        techniques: criterion.techniques ?? {},
-      }
+export function findWcagCriteria(reference: WcagReference, id: string): WcagCriterion[] {
+  return reference.principles.flatMap((principle) =>
+    principle.guidelines.flatMap((guideline) =>
+      guideline.successcriteria
+        .filter((successCriterion) => successCriterion.num === id)
+        .map((criterion) => ({
+          standard: WCAG_STANDARD,
+          id: criterion.num,
+          handle: criterion.handle,
+          title: criterion.title,
+          level: criterion.level,
+          understanding: `${UNDERSTANDING_URL}${criterion.id}${UNDERSTANDING_EXTENSION}`,
+          techniques: criterion.techniques ?? {},
+        })),
+    ),
+  )
 }
 
-export function findRgaaCriterion(reference: RgaaReference, id: string): RgaaCriterion | null {
+export function findRgaaCriteria(reference: RgaaReference, id: string): RgaaCriterion[] {
   const [topicNumber, criterionNumber] = id.split(NUMBER_SEPARATOR).map(Number)
-  const criterion = reference.topics
+  return reference.topics
     .filter((topic) => topic.number === topicNumber)
-    .flatMap((topic) => topic.criteria)
-    .map((entry) => entry.criterium)
-    .find((criterium) => criterium.number === criterionNumber)
-  return criterion === undefined
-    ? null
-    : {
-        standard: RGAA_STANDARD,
-        id,
-        title: criterion.title,
-        tests: Object.fromEntries(
-          Object.entries(criterion.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
-        ),
-        references: {
-          wcag: criterion.references.flatMap((reference) => reference.wcag ?? []),
-          techniques: criterion.references.flatMap((reference) => reference.techniques ?? []),
-        },
-      }
+    .flatMap((topic) =>
+      topic.criteria
+        .filter(({ criterium }) => criterium.number === criterionNumber)
+        .map(({ criterium }) => ({
+          standard: RGAA_STANDARD,
+          id,
+          title: criterium.title,
+          tests: Object.fromEntries(
+            Object.entries(criterium.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
+          ),
+          references: {
+            wcag: criterium.references.flatMap((reference) => reference.wcag ?? []),
+            techniques: criterium.references.flatMap((reference) => reference.techniques ?? []),
+          },
+        })),
+    )
 }
 
 export type RgaaMethodologies = Record<string, string>
