@@ -30,10 +30,13 @@ export type WcagCriterion = {
   techniques: WcagTechniques
 }
 
+type RgaaCriteriumReferences = { wcag?: string[]; techniques?: string[] }[]
+
 type RgaaCriterium = {
   number: number
   title: string
   tests: Record<string, string[]>
+  references: RgaaCriteriumReferences
 }
 
 export type RgaaReference = {
@@ -45,6 +48,7 @@ export type RgaaCriterion = {
   id: string
   title: string
   tests: Record<string, string[]>
+  references: { wcag: string[]; techniques: string[] }
 }
 
 export function findWcagCriterion(reference: WcagReference, id: string): WcagCriterion | null {
@@ -81,6 +85,10 @@ export function findRgaaCriterion(reference: RgaaReference, id: string): RgaaCri
         tests: Object.fromEntries(
           Object.entries(criterion.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
         ),
+        references: {
+          wcag: criterion.references.flatMap((reference) => reference.wcag ?? []),
+          techniques: criterion.references.flatMap((reference) => reference.techniques ?? []),
+        },
       }
 }
 
