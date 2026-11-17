@@ -167,4 +167,15 @@ describe('LoginForm', () => {
 
     expect(announcesErrors(regionsBeforeSubmission)).toBe(false)
   })
+
+  it('still announces the errors when only the email field is filled', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const regionsBeforeSubmission = liveRegions()
+
+    await user.type(emailField(), FILLED_EMAIL)
+    await user.click(submitButton())
+
+    expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+  })
 })
