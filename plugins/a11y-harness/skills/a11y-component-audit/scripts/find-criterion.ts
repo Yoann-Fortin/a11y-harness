@@ -3,6 +3,7 @@ const UNDERSTANDING_URL = 'https://www.w3.org/WAI/WCAG22/Understanding/'
 const UNDERSTANDING_EXTENSION = '.html'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 const NUMBER_SEPARATOR = '.'
+const REQUIREMENT_SEPARATOR = ':'
 
 export type WcagTechniques = Record<string, unknown>
 
@@ -81,4 +82,26 @@ export function findRgaaCriterion(reference: RgaaReference, id: string): RgaaCri
           Object.entries(criterion.tests).map(([test, lines]) => [`${id}${NUMBER_SEPARATOR}${test}`, lines]),
         ),
       }
+}
+
+type ActRequirement = { forConformance?: boolean; secondary?: string }
+
+export type ActReference = {
+  'act-rules': {
+    deprecated: boolean
+    proposed: boolean
+    frontmatter: { id: string; accessibility_requirements: Record<string, ActRequirement> | null }
+  }[]
+}
+
+export function findActRules(reference: ActReference, id: string): string[] {
+  return reference['act-rules']
+    .filter((rule) => !rule.deprecated && !rule.proposed)
+    .filter((rule) =>
+      Object.entries(rule.frontmatter.accessibility_requirements ?? {}).some(
+        ([requirement, mapping]) =>
+          requirement.split(REQUIREMENT_SEPARATOR)[1] === id && mapping.forConformance === true,
+      ),
+    )
+    .map((rule) => rule.frontmatter.id)
 }
