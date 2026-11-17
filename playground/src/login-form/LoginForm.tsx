@@ -5,6 +5,7 @@ const EMAIL_LABEL = 'Adresse e-mail'
 const EMAIL_AUTOCOMPLETE = 'email'
 const PASSWORD_LABEL = 'Mot de passe'
 const PASSWORD_AUTOCOMPLETE = 'current-password'
+const SUBMIT_LABEL = 'Se connecter'
 
 export function LoginForm() {
   const emailFieldId = useId()
@@ -29,6 +30,7 @@ export function LoginForm() {
         isPasswordVisible={isPasswordVisible}
         onToggle={() => setIsPasswordVisible(!isPasswordVisible)}
       />
+      <button type="submit">{SUBMIT_LABEL}</button>
     </form>
   )
 }
