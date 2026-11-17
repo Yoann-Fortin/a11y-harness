@@ -32,6 +32,14 @@ describe('skill scripts, on the official reference files', () => {
     expect(criterion.tests['11.10.1'][0]).toMatch(/^Les \[indications du caractère obligatoire\]/)
   })
 
+  it('gives the official methodology of each test of an RGAA 4.1.2 criterion', async () => {
+    const criterion = await run('lookup', 'rgaa-4.1.2', '11.1')
+
+    expect(criterion.methodologies).toMatchObject({
+      '11.1.3': expect.stringMatching(/^1\. Retrouver dans le document les champs de formulaire dont l’étiquette n’est pas visible/),
+    })
+  })
+
   it('fails on a criterion that does not exist', async () => {
     await expect(run('lookup', 'rgaa-4.1.2', '99.1')).rejects.toMatchObject({ code: FAILURE_EXIT_CODE, stdout: 'null' })
   })
