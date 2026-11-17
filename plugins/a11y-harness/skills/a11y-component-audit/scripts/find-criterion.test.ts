@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { findRgaaCriterion, findWcagCriterion, type RgaaReference } from './find-criterion.ts'
+import {
+  type ActReference,
+  findActRules,
+  findRgaaCriterion,
+  findWcagCriterion,
+  type RgaaReference,
+} from './find-criterion.ts'
 
 const LABELS_TECHNIQUES = {
   sufficient: [{ id: 'G131', technology: 'general', title: 'Providing descriptive labels' }],
@@ -81,5 +87,41 @@ describe('findRgaaCriterion', () => {
     ['12.1', null],
   ])('finds %s', (id, expected) => {
     expect(findRgaaCriterion(RGAA_REFERENCE, id)).toEqual(expected)
+  })
+})
+
+const ACT_REFERENCE: ActReference = {
+  'act-rules': [
+    {
+      deprecated: false,
+      proposed: false,
+      frontmatter: {
+        id: 'e086e5',
+        accessibility_requirements: {
+          'wcag20:4.1.2': { forConformance: true },
+          'wcag20:1.3.1': { secondary: 'This success criterion is more strict than this rule.' },
+        },
+      },
+    },
+    {
+      deprecated: true,
+      proposed: false,
+      frontmatter: { id: 'old001', accessibility_requirements: { 'wcag20:4.1.2': { forConformance: true } } },
+    },
+    {
+      deprecated: false,
+      proposed: true,
+      frontmatter: { id: 'new001', accessibility_requirements: { 'wcag20:4.1.2': { forConformance: true } } },
+    },
+    { deprecated: false, proposed: false, frontmatter: { id: 'none01', accessibility_requirements: null } },
+  ],
+}
+
+describe('findActRules', () => {
+  it.each([
+    ['4.1.2', ['e086e5']],
+    ['1.3.1', []],
+  ])('lists the approved ACT rules written for %s', (id, expected) => {
+    expect(findActRules(ACT_REFERENCE, id)).toEqual(expected)
   })
 })
