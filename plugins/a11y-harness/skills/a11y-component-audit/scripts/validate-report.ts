@@ -5,6 +5,8 @@ const WRONG_LEVEL = 'wrong-level'
 const QUOTE_MISMATCH = 'quote-mismatch'
 const UNRELATED_EVIDENCE = 'unrelated-evidence'
 const RGAA_STANDARD = 'rgaa-4.1.2'
+const TECHNIQUE_ID_OPENING = '"id":"'
+const TECHNIQUE_ID_CLOSING = '"'
 
 export type Finding = {
   criterion?: string
@@ -35,8 +37,13 @@ type Issue = Omit<Problem, 'criterion'>
 
 const issues = (...problems: string[]): Issue[] => problems.map((problem) => ({ problem }))
 
-const unrelatedEvidence = (evidence: string[]): Issue[] =>
-  evidence.map((item) => ({ problem: UNRELATED_EVIDENCE, evidence: item }))
+const unrelatedEvidence = (evidence: string[], isRelated: (item: string) => boolean): Issue[] =>
+  evidence.filter((item) => !isRelated(item)).map((item) => ({ problem: UNRELATED_EVIDENCE, evidence: item }))
+
+const listsTechnique = (techniques: object) => {
+  const serialized = JSON.stringify(techniques)
+  return (item: string) => serialized.includes(`${TECHNIQUE_ID_OPENING}${item}${TECHNIQUE_ID_CLOSING}`)
+}
 
 const wcagProblems = (wcag: WcagReference) => (finding: CheckedFinding): Issue[] => {
   const official = findWcagCriterion(wcag, finding.criterion)
@@ -45,7 +52,7 @@ const wcagProblems = (wcag: WcagReference) => (finding: CheckedFinding): Issue[]
     : [
         ...issues(...(official.level === finding.level ? [] : [WRONG_LEVEL])),
         ...issues(...(official.title === finding.quote ? [] : [QUOTE_MISMATCH])),
-        ...unrelatedEvidence(finding.evidence ?? []),
+        ...unrelatedEvidence(finding.evidence ?? [], listsTechnique(official.techniques)),
       ]
 }
 
