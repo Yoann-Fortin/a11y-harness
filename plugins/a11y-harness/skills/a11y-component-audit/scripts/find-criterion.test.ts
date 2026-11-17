@@ -57,6 +57,7 @@ const REQUIRED_WCAG_REFERENCES = ['3.3.1 Error Identification (A)', '3.3.2 Label
 const REQUIRED_TECHNIQUES = ['H90', 'F81']
 
 const RGAA_REFERENCE: RgaaReference = {
+  wcag: { version: 2.1 },
   topics: [
     {
       number: 1,
@@ -115,7 +116,7 @@ describe('findRgaaCriteria', () => {
           id: '11.10',
           title: 'Required title',
           tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] },
-          references: { wcag: REQUIRED_WCAG_REFERENCES, techniques: REQUIRED_TECHNIQUES },
+          references: { wcag: { version: 2.1, criteria: REQUIRED_WCAG_REFERENCES }, techniques: REQUIRED_TECHNIQUES },
         },
       ],
     ],

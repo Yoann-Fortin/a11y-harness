@@ -39,6 +39,7 @@ const WCAG_REFERENCE: WcagReference = {
 }
 const RGAA_REFERENCES = [{ wcag: ['3.3.2 Labels or Instructions (A)'] }, { techniques: ['H90', 'F81'] }]
 const RGAA_REFERENCE: RgaaReference = {
+  wcag: { version: 2.1 },
   topics: [
     {
       number: 11,
