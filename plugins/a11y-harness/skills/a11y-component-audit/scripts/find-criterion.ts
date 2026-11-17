@@ -92,6 +92,17 @@ export function findRgaaCriterion(reference: RgaaReference, id: string): RgaaCri
       }
 }
 
+export type RgaaMethodologies = Record<string, string>
+
+export function findRgaaMethodologies(
+  methodologies: RgaaMethodologies,
+  criterion: Pick<RgaaCriterion, 'tests'>,
+): RgaaMethodologies {
+  return Object.fromEntries(
+    Object.entries(methodologies).filter(([test]) => Object.keys(criterion.tests).includes(test)),
+  )
+}
+
 type ActRequirement = { forConformance?: boolean; secondary?: string }
 
 export type ActReference = {
