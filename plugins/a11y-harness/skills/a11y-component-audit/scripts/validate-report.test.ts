@@ -22,6 +22,7 @@ const RGAA_REFERENCE: RgaaReference = {
 }
 const REFERENCES = { wcag: WCAG_REFERENCE, rgaa: RGAA_REFERENCE }
 const WCAG_FINDING = { criterion: '3.3.2', level: 'A', quote: WCAG_TITLE }
+const RGAA_FINDING = { criterion: '11.10', quote: RGAA_TITLE }
 
 describe('validateReport', () => {
   it.each([
@@ -41,5 +42,21 @@ describe('validateReport', () => {
     const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, quote: 'Labels are required.' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'quote-mismatch' }])
+  })
+
+  it.each([
+    ['an exact RGAA finding', RGAA_FINDING, []],
+    [
+      'an RGAA quote that differs from the official title',
+      { ...RGAA_FINDING, quote: 'Required fields are marked.' },
+      [{ criterion: '11.10', problem: 'quote-mismatch' }],
+    ],
+    [
+      'a criterion that exists in WCAG but not in RGAA',
+      { ...RGAA_FINDING, criterion: '3.3.2' },
+      [{ criterion: '3.3.2', problem: 'unknown-criterion' }],
+    ],
+  ])('checks %s against RGAA 4.1.2', (_, finding, expected) => {
+    expect(validateReport({ standard: 'rgaa-4.1.2', findings: [finding] }, REFERENCES)).toEqual(expected)
   })
 })
