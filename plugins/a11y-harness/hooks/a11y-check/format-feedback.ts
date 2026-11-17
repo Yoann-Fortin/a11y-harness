@@ -24,6 +24,7 @@ export type CheckResults = {
 export function formatFeedback(results: CheckResults): string | null {
   const hasFindings =
     results.lintErrors.length > 0 ||
-    results.failingTests.length > 0
+    results.failingTests.length > 0 ||
+    results.toolFailures.length > 0
   return hasFindings ? JSON.stringify(results) : null
 }
