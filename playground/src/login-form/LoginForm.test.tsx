@@ -6,6 +6,7 @@ import { LoginForm } from './LoginForm'
 const EMAIL_FIELD_NAME = /adresse e-mail/i
 const PASSWORD_FIELD_LABEL = /^mot de passe/i
 const VISIBILITY_TOGGLE_NAME = /afficher le mot de passe/i
+const SUBMIT_BUTTON_NAME = /se connecter/i
 
 type User = ReturnType<typeof userEvent.setup>
 
@@ -88,5 +89,11 @@ describe('LoginForm', () => {
     render(<LoginForm />)
 
     expect(field()).toHaveAttribute('autocomplete', token)
+  })
+
+  it('gives the submit button an accessible name', () => {
+    render(<LoginForm />)
+
+    expect(screen.queryByRole('button', { name: SUBMIT_BUTTON_NAME })).toBeInTheDocument()
   })
 })
