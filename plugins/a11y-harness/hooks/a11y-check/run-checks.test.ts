@@ -104,4 +104,12 @@ describe('runChecks', () => {
     expect(results.failingTests).toEqual([])
     expect(results.toolFailures).toEqual([{ tool: 'vitest', message: 'command not found' }])
   })
+
+  it('leaves the WCAG-only tests out under RGAA', async () => {
+    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: OUTPUT('') }, NO_FAILURES)
+
+    await runChecks({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, tools)
+
+    expect(tools.calls.find((call) => call.command === VITEST)?.args.at(-1)).toBe('**/*.wcag.test.tsx')
+  })
 })
