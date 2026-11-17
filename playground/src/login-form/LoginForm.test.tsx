@@ -7,6 +7,8 @@ const EMAIL_FIELD_NAME = /adresse e-mail/i
 const PASSWORD_FIELD_LABEL = /^mot de passe/i
 const VISIBILITY_TOGGLE_NAME = /afficher le mot de passe/i
 const SUBMIT_BUTTON_NAME = /se connecter/i
+const FILLED_EMAIL = 'nom@exemple.fr'
+const FILLED_PASSWORD = 'motdepasse'
 const EMAIL_REQUIRED_ERROR = /saisissez votre adresse e-mail/i
 const PASSWORD_REQUIRED_ERROR = /saisissez votre mot de passe/i
 const ERROR_SUMMARY = /le formulaire contient des erreurs/i
@@ -55,6 +57,11 @@ const AUTOCOMPLETE_TOKENS = [
 const REQUIRED_FIELDS = [
   ['email', emailField, EMAIL_REQUIRED_ERROR],
   ['password', passwordField, PASSWORD_REQUIRED_ERROR],
+] as const
+
+const FILLED_FIELD_CASES = [
+  ['email', emailField, FILLED_EMAIL, EMAIL_REQUIRED_ERROR, passwordField, PASSWORD_REQUIRED_ERROR],
+  ['password', passwordField, FILLED_PASSWORD, PASSWORD_REQUIRED_ERROR, emailField, EMAIL_REQUIRED_ERROR],
 ] as const
 
 describe('LoginForm', () => {
@@ -134,4 +141,18 @@ describe('LoginForm', () => {
 
     expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
   })
+
+  it.each(FILLED_FIELD_CASES)(
+    'flags only the other field when the %s field is filled',
+    async (_, filledField, value, filledFieldError, emptyField, emptyFieldError) => {
+      const user = userEvent.setup()
+      render(<LoginForm />)
+
+      await user.type(filledField(), value)
+      await user.click(submitButton())
+
+      expect(filledField()).not.toHaveAccessibleDescription(filledFieldError)
+      expect(emptyField()).toHaveAccessibleDescription(emptyFieldError)
+    },
+  )
 })
