@@ -18,5 +18,8 @@
   "tsconfigFile": "tsconfig.stryker-none.json",
   "plugins": [
     "@stryker-mutator/vitest-runner"
-  ]
+  ],
+  "vitest": {
+    "configFile": "vitest.mutation.config.ts"
+  }
 }

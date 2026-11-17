@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "biome lint",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --exclude '**/*.rgaa.test.tsx'",
     "test:watch": "vitest",
-    "test:mutation": "stryker run"
+    "test:mutation": "stryker run",
+    "test:rgaa": "vitest run --exclude '**/*.wcag.test.tsx'"
   },
   "dependencies": {
     "react": "^19.3.1",
