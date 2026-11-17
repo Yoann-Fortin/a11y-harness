@@ -11,7 +11,7 @@
     {
       "name": "a11y-harness",
       "source": "./plugins/a11y-harness",
-      "description": "Accessibility harness for React: a lint and axe feedback hook, a component audit skill and a read-only reviewer agent, mapped to WCAG 2.2 and RGAA 4.1.2",
+      "description": "Accessibility harness for React: a hook that feeds lint and accessibility test failures back to Claude, a component audit skill and a read-only reviewer agent, for WCAG 2.2 or RGAA 4.1.2",
       "author": {
         "name": "Yoann Fortin"
       },
@@ -21,8 +21,9 @@
         "wcag",
         "rgaa",
         "react",
-        "axe",
-        "hooks"
+        "hooks",
+        "biome",
+        "vitest"
       ],
       "category": "quality",
       "license": "MIT"

@@ -1,0 +1,17 @@
+{
+  "description": "Checks the accessibility of a React component after Claude writes or edits it",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/a11y-check/main.ts\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
