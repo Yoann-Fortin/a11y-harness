@@ -13,3 +13,5 @@ All notable changes to this project are documented here. The format follows [Kee
 - Root pnpm workspace with the plugin's development tools (Vitest, Stryker, Biome, TypeScript), a single lockfile and a single Biome configuration.
 - `a11y-check` hook (PostToolUse on Write and Edit of `.tsx` and `.jsx` files): runs Biome and the related Vitest tests from the component's package, leaves out the tests of the other standard, and asks Claude to fix the findings through `decision: "block"` with a JSON report, free of colour codes. Runs on Node 22.18 or later, without a build step.
 - `standard` plugin option: `wcag-2.2` (default) or `rgaa-4.1.2`.
+- WCAG-only tests for the login form (3.3.2, each field named by text shown on the page), written from the first cycle.
+- RGAA-only tests for the login form (11.10, required fields shown before submission), which it fails on purpose: under WCAG 2.2 the hook stays silent, under RGAA 4.1.2 it blocks and names the criterion.
