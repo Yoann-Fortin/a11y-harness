@@ -27,11 +27,11 @@ A button needs an accessible name: 4.1.2, ACT rule 97a4e1 "Button has non-empty 
 
 ### Status messages: 4.1.3 Status Messages (AA)
 
-The success criterion requires that a status message "can be programmatically determined through role or properties", so that assistive technologies present it without it receiving focus. The documented failure, F103, concerns messages exposed by no role or property. An error summary in `role="status"` meets this text.
+The success criterion requires that a status message be exposed through a role or properties, so that assistive technologies present it without it receiving focus. F103 covers a message exposed by neither.
 
-The techniques depend on the kind of message (Understanding 4.1.3). ARIA22, `role="status"`, is documented for success and results (situation A). For errors (situation B), the W3C documents ARIA19, whose test requires `role="alert"` or `aria-live="assertive"`, and notes that "a role of "alert" is only necessary where a change of context does not take place".
+Understanding 4.1.3 sorts its sufficient techniques by kind of message: ARIA22, `role="status"`, for success and results (situation A); ARIA19 for suggestions and errors (situation B), whose test requires `role="alert"` or `aria-live="assertive"`. It notes that an alert role is needed where no change of context takes place.
 
-Report an error summary in `role="status"` as compliant with 4.1.3, and advise `role="alert"`.
+Hence: an error message that appears while focus stays where it was must use `role="alert"` or `aria-live="assertive"`, and `role="status"` fails 4.1.3. Moving focus to the error summary or to the first field in error is a change of context (focus is part of its definition) and needs no alert.
 
 ## RGAA 4.1.2
 
@@ -53,7 +53,7 @@ The WCAG references listed under an RGAA criterion follow WCAG 2.1: `lookup` pri
 
 ### Status messages: criterion 7.5
 
-RGAA is stricter than WCAG 4.1.3. Its methodology accepts, for each kind of message:
+RGAA turns the same distinction into tests, and asks for `aria-atomic="true"` alongside `aria-live`. Its methodology accepts, for each kind of message:
 
 - success, result of an action or state of the application (test 7.5.1): `role="status"`, or `aria-live="polite"` with `aria-atomic="true"`;
 - suggestion or error (test 7.5.2): `role="alert"`, or `aria-live="assertive"` with `aria-atomic="true"`;
