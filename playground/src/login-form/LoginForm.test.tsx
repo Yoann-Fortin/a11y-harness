@@ -12,7 +12,7 @@ const FILLED_PASSWORD = 'motdepasse'
 const EMAIL_REQUIRED_ERROR = /saisissez votre adresse e-mail/i
 const PASSWORD_REQUIRED_ERROR = /saisissez votre mot de passe/i
 const ERROR_SUMMARY = /le formulaire contient des erreurs/i
-const LIVE_REGION_SELECTOR = '[role="status"], [role="alert"], [aria-live]'
+const ALERT_REGION_SELECTOR = '[role="alert"], [aria-live="assertive"]'
 
 type User = ReturnType<typeof userEvent.setup>
 
@@ -20,7 +20,7 @@ const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
 const visibilityToggle = () => screen.getByRole('button', { name: VISIBILITY_TOGGLE_NAME })
 const submitButton = () => screen.getByRole('button', { name: SUBMIT_BUTTON_NAME })
-const liveRegions = () => Array.from(document.querySelectorAll(LIVE_REGION_SELECTOR))
+const alertRegions = () => Array.from(document.querySelectorAll(ALERT_REGION_SELECTOR))
 
 const exposesNewState = (toggle: HTMLElement) =>
   toggle.getAttribute('aria-pressed') === 'true' ||
@@ -132,10 +132,10 @@ describe('LoginForm', () => {
     },
   )
 
-  it('announces the errors through a live region present before submission, or moves focus to them', async () => {
+  it('announces the errors through an alert region present before submission, or moves focus to them', async () => {
     const user = userEvent.setup()
     render(<LoginForm />)
-    const regionsBeforeSubmission = liveRegions()
+    const regionsBeforeSubmission = alertRegions()
 
     await user.click(submitButton())
 
@@ -159,7 +159,7 @@ describe('LoginForm', () => {
   it('announces nothing once every field is filled', async () => {
     const user = userEvent.setup()
     render(<LoginForm />)
-    const regionsBeforeSubmission = liveRegions()
+    const regionsBeforeSubmission = alertRegions()
 
     await user.type(emailField(), FILLED_EMAIL)
     await user.type(passwordField(), FILLED_PASSWORD)
@@ -171,7 +171,7 @@ describe('LoginForm', () => {
   it('still announces the errors when only the email field is filled', async () => {
     const user = userEvent.setup()
     render(<LoginForm />)
-    const regionsBeforeSubmission = liveRegions()
+    const regionsBeforeSubmission = alertRegions()
 
     await user.type(emailField(), FILLED_EMAIL)
     await user.click(submitButton())
@@ -182,7 +182,7 @@ describe('LoginForm', () => {
   it('still announces the errors when only the password field is filled', async () => {
     const user = userEvent.setup()
     render(<LoginForm />)
-    const regionsBeforeSubmission = liveRegions()
+    const regionsBeforeSubmission = alertRegions()
 
     await user.type(passwordField(), FILLED_PASSWORD)
     await user.click(submitButton())
