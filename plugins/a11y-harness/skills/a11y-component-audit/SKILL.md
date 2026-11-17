@@ -9,7 +9,7 @@ allowed-tools: Read, Glob, Grep, Bash(node:*)
 Every criterion, test, level and technique you cite comes from the official reference files bundled with this skill, never from memory. Two commands give access to them:
 
 - **Look up a criterion**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" lookup <standard> <number>`, where `<standard>` is `wcag-2.2` or `rgaa-4.1.2` and `<number>` a criterion such as `3.3.2` or `11.1`. It prints the official title, the level and the techniques and failures of a WCAG success criterion, or the tests, their official methodology and the references of an RGAA criterion. It prints `null` for a criterion that does not exist.
-- **Check a report**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" validate /dev/stdin`, with the report in a heredoc. It prints `[]` when every citation matches the official texts, or the list of problems.
+- **Check a report**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" validate '<report>'`, with the report as JSON on one line between single quotes, where an apostrophe `'` is written `'\''`. It prints `[]` when every citation matches the official texts, or the list of problems.
 
 Run each command on its own, starting with `node` and written as above: no shell variable, loop or pipe, which the permission rules would refuse.
 
