@@ -1,8 +1,9 @@
-import { findWcagCriterion, type WcagReference } from './find-criterion.ts'
+import { findRgaaCriterion, findWcagCriterion, type RgaaReference, type WcagReference } from './find-criterion.ts'
 
 const UNKNOWN_CRITERION = 'unknown-criterion'
 const WRONG_LEVEL = 'wrong-level'
 const QUOTE_MISMATCH = 'quote-mismatch'
+const RGAA_STANDARD = 'rgaa-4.1.2'
 
 export type Finding = {
   criterion: string
@@ -17,6 +18,7 @@ export type Report = {
 
 export type References = {
   wcag: WcagReference
+  rgaa: RgaaReference
 }
 
 export type Problem = {
@@ -34,8 +36,16 @@ const wcagProblems = (wcag: WcagReference) => (finding: Finding): string[] => {
       ]
 }
 
+const rgaaProblems = (rgaa: RgaaReference) => (finding: Finding): string[] => {
+  const official = findRgaaCriterion(rgaa, finding.criterion)
+  if (official === null) {
+    return [UNKNOWN_CRITERION]
+  }
+  return official.title === finding.quote ? [] : [QUOTE_MISMATCH]
+}
+
 export function validateReport(report: Report, references: References): Problem[] {
-  const problemsOf = wcagProblems(references.wcag)
+  const problemsOf = report.standard === RGAA_STANDARD ? rgaaProblems(references.rgaa) : wcagProblems(references.wcag)
   return report.findings.flatMap((finding) =>
     problemsOf(finding).map((problem) => ({ criterion: finding.criterion, problem })),
   )
