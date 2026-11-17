@@ -1,0 +1,18 @@
+{
+  "name": "a11y-harness",
+  "owner": { "name": "Yoann Fortin" },
+  "metadata": {
+    "description": "Accessibility harness for Claude Code: WCAG 2.2 checks with RGAA 4.1.2 mapping for React components",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "a11y-harness",
+      "source": "./plugins/a11y-harness",
+      "description": "Accessibility harness for React: a lint and axe feedback hook, a component audit skill and a read-only reviewer agent, mapped to WCAG 2.2 and RGAA 4.1.2",
+      "author": { "name": "Yoann Fortin" },
+      "keywords": ["accessibility", "a11y", "wcag", "rgaa", "react", "axe", "hooks"],
+      "category": "quality"
+    }
+  ]
+}

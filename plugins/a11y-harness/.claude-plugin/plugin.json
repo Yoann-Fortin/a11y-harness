@@ -1,0 +1,6 @@
+{
+  "name": "a11y-harness",
+  "description": "Accessibility harness for React: a lint and axe feedback hook, a component audit skill and a read-only reviewer agent, mapped to WCAG 2.2 and RGAA 4.1.2",
+  "version": "0.1.0",
+  "author": { "name": "Yoann Fortin" }
+}
