@@ -9,6 +9,8 @@ const VISIBILITY_TOGGLE_NAME = /afficher le mot de passe/i
 const SUBMIT_BUTTON_NAME = /se connecter/i
 const EMAIL_REQUIRED_ERROR = /saisissez votre adresse e-mail/i
 const PASSWORD_REQUIRED_ERROR = /saisissez votre mot de passe/i
+const ERROR_SUMMARY = /le formulaire contient des erreurs/i
+const LIVE_REGION_SELECTOR = '[role="status"], [role="alert"], [aria-live]'
 
 type User = ReturnType<typeof userEvent.setup>
 
@@ -16,10 +18,16 @@ const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
 const visibilityToggle = () => screen.getByRole('button', { name: VISIBILITY_TOGGLE_NAME })
 const submitButton = () => screen.getByRole('button', { name: SUBMIT_BUTTON_NAME })
+const liveRegions = () => Array.from(document.querySelectorAll(LIVE_REGION_SELECTOR))
 
 const exposesNewState = (toggle: HTMLElement) =>
   toggle.getAttribute('aria-pressed') === 'true' ||
   screen.queryByRole('button', { name: VISIBILITY_TOGGLE_NAME }) === null
+
+const announcesErrors = (regionsBeforeSubmission: Element[]) =>
+  regionsBeforeSubmission.some(
+    (region) => region.isConnected && ERROR_SUMMARY.test(region.textContent ?? ''),
+  ) || [emailField(), passwordField()].some((field) => field === document.activeElement)
 
 const TOGGLE_ACTIVATIONS = [
   ['a click', (user: User, toggle: HTMLElement) => user.click(toggle)],
@@ -116,4 +124,14 @@ describe('LoginForm', () => {
       expect(field()).toHaveAccessibleDescription(error)
     },
   )
+
+  it('announces the errors through a live region present before submission, or moves focus to them', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const regionsBeforeSubmission = liveRegions()
+
+    await user.click(submitButton())
+
+    expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+  })
 })
