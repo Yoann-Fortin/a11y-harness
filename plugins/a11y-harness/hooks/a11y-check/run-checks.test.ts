@@ -5,8 +5,8 @@ import type { CommandResult } from './run-command.ts'
 const FILE = '/project/src/Form.tsx'
 const PROJECT_DIR = '/project'
 const WCAG_PLAN = { filePath: FILE, cwd: PROJECT_DIR, standard: 'wcag-2.2' as const }
-const BIOME = 'node_modules/.bin/biome'
-const VITEST = 'node_modules/.bin/vitest'
+const BIOME = '/project/node_modules/.bin/biome'
+const VITEST = '/project/node_modules/.bin/vitest'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
 const BIOME_REPORT = JSON.stringify({
   diagnostics: [
