@@ -11,6 +11,7 @@ const FINDINGS: CheckResults = {
   failingTests: [{ name: 'Form names the field', message: 'Unable to find the label' }],
 }
 const WRITE_EVENT = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: SESSION_DIR })
+const PACKAGE_DIR = '/repo/playground'
 
 const fakePorts = (results: CheckResults, packageRoot: string | null = null) => {
   const plans: CheckPlan[] = []
@@ -49,5 +50,13 @@ describe('handleEvent', () => {
 
   it('stays silent when every check passes', async () => {
     await expect(handleEvent(WRITE_EVENT, undefined, fakePorts(NO_RESULTS))).resolves.toBe('')
+  })
+
+  it('runs the checks from the package folder of the component', async () => {
+    const ports = fakePorts(NO_RESULTS, PACKAGE_DIR)
+
+    await handleEvent(WRITE_EVENT, undefined, ports)
+
+    expect(ports.plans[0]?.cwd).toBe(PACKAGE_DIR)
   })
 })
