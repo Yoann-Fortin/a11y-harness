@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { LoginForm } from './login-form/LoginForm'
 
 const ROOT_ELEMENT_ID = 'root'
 const MISSING_ROOT_MESSAGE = `Missing #${ROOT_ELEMENT_ID} element`
@@ -15,6 +16,7 @@ createRoot(rootElement).render(
   <StrictMode>
     <main>
       <h1>{PAGE_TITLE}</h1>
+      <LoginForm />
     </main>
   </StrictMode>,
 )
