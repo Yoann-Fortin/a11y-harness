@@ -24,4 +24,10 @@ describe('runCommand', () => {
 
     expect(result).toEqual({ ok: true, stdout: 'report' })
   })
+
+  it('reports a command that cannot be found', async () => {
+    const result = await runCommand('a11y-check-missing-tool', [], WORKING_DIR, TIME_LIMIT_MS)
+
+    expect(result).toEqual({ ok: false, failure: expect.any(String) })
+  })
 })
