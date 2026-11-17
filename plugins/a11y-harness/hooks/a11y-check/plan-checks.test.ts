@@ -3,6 +3,7 @@ import { planChecks } from './plan-checks.ts'
 
 const PROJECT_DIR = '/project'
 const COMPONENT_PATH = '/project/src/LoginForm.tsx'
+const MODULE_PATH = '/project/src/format-date.ts'
 
 describe('planChecks', () => {
   it('plans the checks of a component written with Write', () => {
@@ -21,5 +22,11 @@ describe('planChecks', () => {
     const plan = planChecks({ tool_name: 'Edit', tool_input: { file_path: COMPONENT_PATH }, cwd: PROJECT_DIR })
 
     expect(plan).toMatchObject({ filePath: COMPONENT_PATH, cwd: PROJECT_DIR })
+  })
+
+  it('ignores files that are not React components', () => {
+    const plan = planChecks({ tool_name: 'Write', tool_input: { file_path: MODULE_PATH }, cwd: PROJECT_DIR })
+
+    expect(plan).toBeNull()
   })
 })
