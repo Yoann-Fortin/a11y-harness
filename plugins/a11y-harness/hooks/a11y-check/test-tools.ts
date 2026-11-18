@@ -51,7 +51,7 @@ export const VITEST: FileTestTool = {
   countTests: countJestFormatTests,
 }
 
-export const JEST: TestTool = {
+export const JEST: FileTestTool = {
   name: JEST_NAME,
   package: JEST_PACKAGE,
   binary: JEST_BINARY,
@@ -65,6 +65,7 @@ export const JEST: TestTool = {
     JEST_DEFAULT_IGNORED_PATHS,
     JEST_EXCLUDED_TESTS[plan.standard],
   ],
+  fileArgs: (testFile, reportFile) => [testFile, '--json', `--outputFile=${reportFile}`],
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
