@@ -18,7 +18,7 @@ const wcag = readJson(join(STANDARDS_DIR, WCAG_FILE))
 const rgaa = readJson(join(STANDARDS_DIR, RGAA_FILE))
 const criteriaOf = (standard: string): string[] =>
   table.elements.flatMap(({ criteria }: { criteria: Record<string, string[]> }) => criteria[standard])
-const elementsIn = (source: string) => inventoryOf(table, source, WCAG).map(({ element }) => element)
+const elementsIn = (source: string) => inventoryOf(table, `<form>${source}</form>`, WCAG).map(({ element }) => element)
 
 const FORMS = ['<form onSubmit={handleSubmit}>', '<form noValidate onSubmit={handleSubmit}>', '<section role="form" aria-label="Contact">', "<div role='form'>"]
 
