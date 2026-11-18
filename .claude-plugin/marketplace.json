@@ -23,7 +23,9 @@
         "react",
         "hooks",
         "biome",
-        "vitest"
+        "eslint",
+        "vitest",
+        "jest"
       ],
       "category": "quality",
       "license": "MIT"
