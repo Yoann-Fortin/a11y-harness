@@ -22,4 +22,11 @@ describe('guardCommand', () => {
       expect(guardCommand(bashCall(command, REVIEWER))).toBeNull()
     },
   )
+
+  it.each([`rm -rf src; ${SCRIPTS} lookup rgaa-4.1.2 11.1`, `${SCRIPTS} lookup rgaa-4.1.2 11.1 && rm -rf src`])(
+    'denies the reviewer an audit command chained with another one: %s',
+    (command) => {
+      expect(guardCommand(bashCall(command, REVIEWER))).not.toBeNull()
+    },
+  )
 })
