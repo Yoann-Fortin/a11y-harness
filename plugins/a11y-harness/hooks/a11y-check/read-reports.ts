@@ -9,6 +9,11 @@ type BiomeDiagnostic = {
   location: { path: string; start: { line: number } }
 }
 
+type EslintFileReport = {
+  filePath: string
+  messages: { ruleId: string; message: string; line: number }[]
+}
+
 type VitestAssertion = {
   fullName: string
   status: string
@@ -27,6 +32,18 @@ export function readBiomeReport(report: string): LintError[] {
     rule: diagnostic.category,
     message: diagnostic.message,
   }))
+}
+
+export function readEslintReport(report: string): LintError[] {
+  const files: EslintFileReport[] = JSON.parse(report)
+  return files.flatMap((file) =>
+    file.messages.map((message) => ({
+      file: file.filePath,
+      line: message.line,
+      rule: message.ruleId,
+      message: message.message,
+    })),
+  )
 }
 
 export function readVitestReport(report: string): FailingTest[] {
