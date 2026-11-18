@@ -1,4 +1,6 @@
 const REVIEWER_SUFFIX = 'a11y-reviewer'
+const READ_ONLY_REASON =
+  'The a11y-reviewer agent is read-only: it may only run the node commands of the a11y-component-audit skill, and git diff, git log or git show without --output, each on its own.'
 const SINGLE_QUOTED = /'[^']*'/g
 const SHELL_OPERATOR = /[;&|<>`$()]/
 const OUTPUT_OPTION = /--output/
@@ -16,5 +18,11 @@ export type BashCall = {
 
 export const guardCommand = (call: BashCall) =>
   String(call.agent_type).endsWith(REVIEWER_SUFFIX) && !isReadOnlyCommand(call.tool_input.command)
-    ? { hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny' } }
+    ? {
+        hookSpecificOutput: {
+          hookEventName: 'PreToolUse',
+          permissionDecision: 'deny',
+          permissionDecisionReason: READ_ONLY_REASON,
+        },
+      }
     : null
