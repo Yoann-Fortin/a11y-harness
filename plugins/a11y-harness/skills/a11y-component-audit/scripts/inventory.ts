@@ -5,8 +5,11 @@ export type FormElement = {
 }
 
 export type CriteriaTable = {
+  form: { signals: string[] }
   elements: FormElement[]
 }
+
+export const holdsForm = (_table: CriteriaTable, _source: string) => true
 
 export const inventoryOf = (table: CriteriaTable, source: string, standard: string) =>
   table.elements

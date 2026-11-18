@@ -24,7 +24,7 @@ describe('inventoryOf', () => {
   it('reads each signal as a regular expression', () => {
     const source = '<input name="secret" type="password" />'
 
-    expect(inventoryOf({ elements: [PASSWORD_FIELD] }, source, WCAG)).toEqual([{ element: 'password-field', criteria: ['3.3.8'] }])
+    expect(inventoryOf({ form: FORM, elements: [PASSWORD_FIELD] }, source, WCAG)).toEqual([{ element: 'password-field', criteria: ['3.3.8'] }])
   })
 })
 
