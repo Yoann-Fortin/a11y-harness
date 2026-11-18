@@ -34,4 +34,8 @@ describe('passesTestFile', () => {
   it('passes a test file whose tests all pass with the test runner of the package', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(PASSING_REPORT))).toBe(true)
   })
+
+  it('fails a test file with a failing test', async () => {
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(FAILING_REPORT))).toBe(false)
+  })
 })
