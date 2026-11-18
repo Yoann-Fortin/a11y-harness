@@ -1,4 +1,4 @@
-import type { VariantRun } from './judge-variants.ts'
+import { problemsOf, type VariantRun } from './judge-variants.ts'
 
 export type VariantPlan = {
   component: string
@@ -13,8 +13,10 @@ export type ProjectPorts = {
 
 export async function verifyVariants(plan: VariantPlan, project: ProjectPorts) {
   const contents = await Promise.all(plan.variants.map(({ file }) => project.readText(file)))
-  for (const content of contents) {
-    await project.writeText(plan.component, content)
-    await project.runTests()
+  const runs: VariantRun[] = []
+  for (const [index, variant] of plan.variants.entries()) {
+    await project.writeText(plan.component, contents[index])
+    runs.push({ ...variant, variant: variant.file, passed: await project.runTests() })
   }
+  return problemsOf(runs)
 }
