@@ -1,39 +1,40 @@
 import { describe, expect, it } from 'vitest'
+import type { LintTool } from './lint-tools.ts'
 import { runChecks } from './run-checks.ts'
 import type { CommandResult } from './run-command.ts'
+import type { TestTool } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const PROJECT_DIR = '/project'
-const WCAG_PLAN = { filePath: FILE, cwd: PROJECT_DIR, standard: 'wcag-2.2' as const }
-const BIOME = '/project/node_modules/.bin/biome'
-const VITEST = '/project/node_modules/.bin/vitest'
-const REPORT_FILE = '/tmp/a11y-check/vitest.json'
-const BIOME_REPORT = JSON.stringify({
-  diagnostics: [
-    {
-      message: 'Provide a text alternative.',
-      category: 'lint/a11y/useAltText',
-      location: { path: 'src/Form.tsx', start: { line: 3 } },
-    },
-  ],
-})
-const NO_DIAGNOSTICS = JSON.stringify({ diagnostics: [] })
-const VITEST_REPORT = JSON.stringify({
-  testResults: [
-    {
-      assertionResults: [
-        { fullName: 'Form names the field', status: 'failed', failureMessages: ['Unable to find the label'] },
-      ],
-    },
-  ],
-})
-const NO_FAILURES = JSON.stringify({ testResults: [] })
-const OUTPUT = (stdout: string): CommandResult => ({ ok: true, stdout })
+const PLAN = { filePath: FILE, cwd: PROJECT_DIR, standard: 'wcag-2.2' as const }
+const REPORT_FILE = '/tmp/a11y-check/report.json'
+const LINT_OUTPUT = 'lint output'
+const TEST_REPORT = 'test report'
+const LINT_ERROR = { file: 'src/Form.tsx', line: 3, rule: 'a11y/alt-text', message: 'Provide a text alternative.' }
+const FAILING_TEST = { name: 'Form names the field', message: 'Unable to find the label' }
+const LINTER_PATH = '/project/node_modules/.bin/linter'
+const RUNNER_PATH = '/project/node_modules/.bin/runner'
 const CANNOT_RUN: CommandResult = { ok: false, failure: 'command not found' }
+
+const LINTER: LintTool = {
+  name: 'linter',
+  binary: 'node_modules/.bin/linter',
+  args: (plan) => ['check', plan.filePath],
+  readReport: (output) => (output === LINT_OUTPUT ? [LINT_ERROR] : []),
+}
+
+const TEST_RUNNER: TestTool = {
+  name: 'runner',
+  binary: 'node_modules/.bin/runner',
+  args: (plan, reportFile) => ['related', plan.filePath, reportFile],
+  readReport: (report) => (report === TEST_REPORT ? [FAILING_TEST] : []),
+}
+
+const OUTPUT = (stdout: string): CommandResult => ({ ok: true, stdout })
 
 type Call = { command: string; args: string[]; cwd: string }
 
-const fakeTools = (outputs: Record<string, CommandResult>, vitestReport: string) => {
+const fakeTools = (outputs: Record<string, CommandResult>) => {
   const calls: Call[] = []
   return {
     calls,
@@ -41,75 +42,54 @@ const fakeTools = (outputs: Record<string, CommandResult>, vitestReport: string)
       calls.push({ command, args, cwd })
       return outputs[command] ?? CANNOT_RUN
     },
-    readText: async () => vitestReport,
+    readText: async (path: string) => (path === REPORT_FILE ? TEST_REPORT : ''),
     reportFile: REPORT_FILE,
+    linters: [LINTER],
+    testRunners: [TEST_RUNNER],
   }
 }
 
 describe('runChecks', () => {
-  it('lints the planned file with Biome and reports its errors', async () => {
-    const tools = fakeTools({ [BIOME]: OUTPUT(BIOME_REPORT), [VITEST]: OUTPUT('') }, NO_FAILURES)
+  it('runs each linter on the planned file from the package folder and reports its errors', async () => {
+    const tools = fakeTools({ [LINTER_PATH]: OUTPUT(LINT_OUTPUT), [RUNNER_PATH]: OUTPUT('') })
 
-    const results = await runChecks(WCAG_PLAN, tools)
+    const results = await runChecks(PLAN, tools)
 
-    expect(tools.calls).toContainEqual({ command: BIOME, args: ['lint', '--reporter=json', FILE], cwd: PROJECT_DIR })
-    expect(results).toEqual({
-      lintErrors: [
-        { file: 'src/Form.tsx', line: 3, rule: 'lint/a11y/useAltText', message: 'Provide a text alternative.' },
-      ],
-      failingTests: [],
-      toolFailures: [],
-    })
+    expect(tools.calls).toContainEqual({ command: LINTER_PATH, args: ['check', FILE], cwd: PROJECT_DIR })
+    expect(results.lintErrors).toEqual([LINT_ERROR])
+    expect(results.toolFailures).toEqual([])
   })
 
-  it('reports Biome as a tool failure when it cannot run', async () => {
-    const tools = fakeTools({ [BIOME]: CANNOT_RUN, [VITEST]: OUTPUT('') }, NO_FAILURES)
+  it('reports a linter that cannot run as a tool failure', async () => {
+    const tools = fakeTools({ [RUNNER_PATH]: OUTPUT('') })
 
-    const results = await runChecks(WCAG_PLAN, tools)
+    const results = await runChecks(PLAN, tools)
 
     expect(results).toEqual({
       lintErrors: [],
+      failingTests: [FAILING_TEST],
+      toolFailures: [{ tool: 'linter', message: 'command not found' }],
+    })
+  })
+
+  it('runs each test runner on the planned file and reads the failing tests from its report', async () => {
+    const tools = fakeTools({ [LINTER_PATH]: OUTPUT(''), [RUNNER_PATH]: OUTPUT('') })
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(tools.calls).toContainEqual({ command: RUNNER_PATH, args: ['related', FILE, REPORT_FILE], cwd: PROJECT_DIR })
+    expect(results.failingTests).toEqual([FAILING_TEST])
+  })
+
+  it('reports a test runner that cannot run as a tool failure', async () => {
+    const tools = fakeTools({ [LINTER_PATH]: OUTPUT(LINT_OUTPUT) })
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(results).toEqual({
+      lintErrors: [LINT_ERROR],
       failingTests: [],
-      toolFailures: [{ tool: 'biome', message: 'command not found' }],
+      toolFailures: [{ tool: 'runner', message: 'command not found' }],
     })
-  })
-
-  it('runs the tests related to the planned file, leaving the RGAA-only tests out under WCAG', async () => {
-    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: OUTPUT('') }, VITEST_REPORT)
-
-    const results = await runChecks(WCAG_PLAN, tools)
-
-    expect(tools.calls).toContainEqual({
-      command: VITEST,
-      args: [
-        'related',
-        FILE,
-        '--run',
-        '--reporter=json',
-        `--outputFile=${REPORT_FILE}`,
-        '--passWithNoTests',
-        '--exclude',
-        '**/*.rgaa.test.tsx',
-      ],
-      cwd: PROJECT_DIR,
-    })
-    expect(results.failingTests).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
-  })
-
-  it('reports Vitest as a tool failure when it cannot run', async () => {
-    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: CANNOT_RUN }, VITEST_REPORT)
-
-    const results = await runChecks(WCAG_PLAN, tools)
-
-    expect(results.failingTests).toEqual([])
-    expect(results.toolFailures).toEqual([{ tool: 'vitest', message: 'command not found' }])
-  })
-
-  it('leaves the WCAG-only tests out under RGAA', async () => {
-    const tools = fakeTools({ [BIOME]: OUTPUT(NO_DIAGNOSTICS), [VITEST]: OUTPUT('') }, NO_FAILURES)
-
-    await runChecks({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, tools)
-
-    expect(tools.calls.find((call) => call.command === VITEST)?.args.at(-1)).toBe('**/*.wcag.test.tsx')
   })
 })
