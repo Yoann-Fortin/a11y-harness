@@ -26,6 +26,10 @@ describe('inventoryOf', () => {
 
     expect(inventoryOf({ form: FORM, elements: [PASSWORD_FIELD] }, source, WCAG)).toEqual([{ element: 'password-field', criteria: ['3.3.8'] }])
   })
+
+  it('lists nothing in a source that holds no form', () => {
+    expect(inventoryOf(TABLE, '<input type="email" />', WCAG)).toEqual([])
+  })
 })
 
 describe('holdsForm', () => {
