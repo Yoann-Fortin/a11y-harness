@@ -121,6 +121,22 @@
           "11.10"
         ]
       }
+    },
+    {
+      "id": "status-message",
+      "description": "Message shown after an action without moving focus",
+      "signals": [
+        "role=[\"'](?:alert|status|log|progressbar)[\"']",
+        "aria-live"
+      ],
+      "criteria": {
+        "wcag-2.2": [
+          "4.1.3"
+        ],
+        "rgaa-4.1.2": [
+          "7.5"
+        ]
+      }
     }
   ]
 }
