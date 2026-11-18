@@ -7,4 +7,4 @@ export type VariantRun = {
 }
 
 export const problemsOf = (runs: VariantRun[]) =>
-  runs.map(({ variant }) => ({ variant, problem: CONFORMING_VARIANT_REJECTED }))
+  runs.filter(({ passed }) => !passed).map(({ variant }) => ({ variant, problem: CONFORMING_VARIANT_REJECTED }))
