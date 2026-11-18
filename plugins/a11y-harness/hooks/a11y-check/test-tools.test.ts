@@ -1,0 +1,39 @@
+import { describe, expect, it } from 'vitest'
+import { VITEST } from './test-tools.ts'
+
+const FILE = '/project/src/Form.tsx'
+const REPORT_FILE = '/tmp/a11y-check/vitest.json'
+const WCAG_PLAN = { filePath: FILE, cwd: '/project', standard: 'wcag-2.2' as const }
+const VITEST_REPORT = JSON.stringify({
+  testResults: [
+    {
+      assertionResults: [
+        { fullName: 'Form names the field', status: 'failed', failureMessages: ['Unable to find the label'] },
+      ],
+    },
+  ],
+})
+
+describe('VITEST', () => {
+  it('runs the tests related to the planned file with the Vitest of the package, leaving the RGAA-only tests out under WCAG', () => {
+    expect(VITEST).toMatchObject({ name: 'vitest', binary: 'node_modules/.bin/vitest' })
+    expect(VITEST.args(WCAG_PLAN, REPORT_FILE)).toEqual([
+      'related',
+      FILE,
+      '--run',
+      '--reporter=json',
+      `--outputFile=${REPORT_FILE}`,
+      '--passWithNoTests',
+      '--exclude',
+      '**/*.rgaa.test.tsx',
+    ])
+  })
+
+  it('leaves the WCAG-only tests out under RGAA', () => {
+    expect(VITEST.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE).at(-1)).toBe('**/*.wcag.test.tsx')
+  })
+
+  it('reads the failing tests from the Vitest report', () => {
+    expect(VITEST.readReport(VITEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+  })
+})
