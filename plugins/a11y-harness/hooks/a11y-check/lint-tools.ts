@@ -3,11 +3,13 @@ import type { CheckPlan } from './plan-checks.ts'
 import { readBiomeReport } from './read-reports.ts'
 
 const BIOME_NAME = 'biome'
+const BIOME_PACKAGE = '@biomejs/biome'
 const BIOME_BINARY = 'node_modules/.bin/biome'
 const BIOME_ARGS = ['lint', '--reporter=json']
 
 export type LintTool = {
   name: string
+  package: string
   binary: string
   args: (plan: CheckPlan) => string[]
   readReport: (output: string) => LintError[]
@@ -15,6 +17,7 @@ export type LintTool = {
 
 export const BIOME: LintTool = {
   name: BIOME_NAME,
+  package: BIOME_PACKAGE,
   binary: BIOME_BINARY,
   args: (plan) => [...BIOME_ARGS, plan.filePath],
   readReport: readBiomeReport,

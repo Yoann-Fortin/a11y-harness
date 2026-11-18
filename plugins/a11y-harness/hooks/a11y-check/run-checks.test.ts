@@ -18,6 +18,7 @@ const CANNOT_RUN: CommandResult = { ok: false, failure: 'command not found' }
 
 const LINTER: LintTool = {
   name: 'linter',
+  package: 'linter',
   binary: 'node_modules/.bin/linter',
   args: (plan) => ['check', plan.filePath],
   readReport: (output) => (output === LINT_OUTPUT ? [LINT_ERROR] : []),
@@ -25,6 +26,7 @@ const LINTER: LintTool = {
 
 const TEST_RUNNER: TestTool = {
   name: 'runner',
+  package: 'runner',
   binary: 'node_modules/.bin/runner',
   args: (plan, reportFile) => ['related', plan.filePath, reportFile],
   readReport: (report) => (report === TEST_REPORT ? [FAILING_TEST] : []),

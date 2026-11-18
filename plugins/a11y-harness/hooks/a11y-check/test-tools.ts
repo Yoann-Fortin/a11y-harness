@@ -3,6 +3,7 @@ import type { CheckPlan, Standard } from './plan-checks.ts'
 import { readVitestReport } from './read-reports.ts'
 
 const VITEST_NAME = 'vitest'
+const VITEST_PACKAGE = 'vitest'
 const VITEST_BINARY = 'node_modules/.bin/vitest'
 const VITEST_EXCLUDED_TESTS: Record<Standard, string> = {
   'wcag-2.2': '**/*.rgaa.test.tsx',
@@ -11,6 +12,7 @@ const VITEST_EXCLUDED_TESTS: Record<Standard, string> = {
 
 export type TestTool = {
   name: string
+  package: string
   binary: string
   args: (plan: CheckPlan, reportFile: string) => string[]
   readReport: (report: string) => FailingTest[]
@@ -18,6 +20,7 @@ export type TestTool = {
 
 export const VITEST: TestTool = {
   name: VITEST_NAME,
+  package: VITEST_PACKAGE,
   binary: VITEST_BINARY,
   args: (plan, reportFile) => [
     'related',
