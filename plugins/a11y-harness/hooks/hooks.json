@@ -1,5 +1,5 @@
 {
-  "description": "Checks the accessibility of a React component after Claude writes or edits it",
+  "description": "Checks the accessibility of a React component after Claude writes or edits it, and keeps the a11y-reviewer agent read-only",
   "hooks": {
     "PostToolUse": [
       {
@@ -9,6 +9,18 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/a11y-check/main.ts\"",
             "timeout": 120
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/reviewer-guard/main.ts\"",
+            "timeout": 10
           }
         ]
       }
