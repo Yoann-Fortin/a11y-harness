@@ -34,6 +34,11 @@ const NOT_FORM_FIELDS = [
   '<input type="hidden" name="token" />',
 ]
 
+const PASSWORD_FIELDS = [
+  '<input type="password" />',
+  "type={isPasswordVisible ? 'text' : 'password'}",
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -41,5 +46,9 @@ describe('form criteria table', () => {
 
   it.each(NOT_FORM_FIELDS)('finds no form field in %s, which the RGAA glossary leaves out of form fields', (source) => {
     expect(elementsIn(source)).not.toContain('form-field')
+  })
+
+  it.each(PASSWORD_FIELDS)('finds a password field in %s', (source) => {
+    expect(elementsIn(source)).toContain('password-field')
   })
 })
