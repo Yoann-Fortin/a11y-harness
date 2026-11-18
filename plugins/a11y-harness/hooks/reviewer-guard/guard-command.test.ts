@@ -45,4 +45,11 @@ describe('guardCommand', () => {
 
     expect(guardCommand(bashCall(`${SCRIPTS} validate '${report}' && rm -rf src`, REVIEWER))).not.toBeNull()
   })
+
+  it.each(['git diff --name-only main', 'git log --oneline -5', 'git show HEAD:src/Form.tsx'])(
+    'lets the reviewer read the history with %s',
+    (command) => {
+      expect(guardCommand(bashCall(command, REVIEWER))).toBeNull()
+    },
+  )
 })
