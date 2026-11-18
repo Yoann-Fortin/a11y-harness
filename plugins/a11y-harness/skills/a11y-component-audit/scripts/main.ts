@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
-import { inventoryOf } from './inventory.ts'
-import { missingCriteria, validateReport } from './validate-report.ts'
+import { type CriteriaTable, inventoryOf } from './inventory.ts'
+import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
 const WCAG_FILE = 'wcag-2.2.json'
@@ -43,12 +43,20 @@ const inventoryCriteria = (components: string[], standard: string) => [
   ),
 ]
 
+const tableCriteria = (standard: string) => {
+  const table: CriteriaTable = readJson(FORM_CRITERIA_FILE)
+  return [...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? []))]
+}
+
 const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }
   const report = readReport(reportArgument)
+  const opened = inventoryCriteria(components, report.standard)
+  const cited = report.findings.flatMap(({ criterion }: { criterion?: string }) => (criterion === undefined ? [] : [criterion]))
   const problems = [
     ...validateReport(report, references),
-    ...missingCriteria(report, inventoryCriteria(components, report.standard)),
+    ...missingCriteria(report, opened),
+    ...(components.length > 0 ? unopenedCriteria(cited, opened, tableCriteria(report.standard)) : []),
   ]
   return { output: problems, failed: problems.length > 0 }
 }
