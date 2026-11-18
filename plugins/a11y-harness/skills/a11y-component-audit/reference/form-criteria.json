@@ -92,7 +92,7 @@
       "id": "submit-button",
       "description": "Button that submits or resets a form",
       "signals": [
-        "<button",
+        "<button(?![^>]*type=[\"']button[\"'])",
         "type=[\"'](?:submit|reset)[\"']"
       ],
       "criteria": {
