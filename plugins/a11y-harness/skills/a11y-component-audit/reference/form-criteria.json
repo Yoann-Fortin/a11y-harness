@@ -51,6 +51,23 @@
           "11.10"
         ]
       }
+    },
+    {
+      "id": "user-information",
+      "description": "Field that collects information about the user, among the input purposes of WCAG 2.2 section 7",
+      "signals": [
+        "auto[Cc]omplete=",
+        "type=[\"'](?:email|tel|url|password)[\"']",
+        "name=[\"'](?:name|given-name|family-name|username|email|tel|street-address|postal-code|country|bday)[\"']"
+      ],
+      "criteria": {
+        "wcag-2.2": [
+          "1.3.5"
+        ],
+        "rgaa-4.1.2": [
+          "11.13"
+        ]
+      }
     }
   ]
 }
