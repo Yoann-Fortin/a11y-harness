@@ -11,5 +11,5 @@ export type TestFileTools = {
 export async function passesTestFile(_testFile: string, _cwd: string, tools: TestFileTools) {
   const [testRunner] = tools.testRunners
   const report = await tools.readText(tools.reportFile)
-  return testRunner.readReport(report).length === 0
+  return testRunner.readReport(report).length === 0 && testRunner.countTests(report) > 0
 }
