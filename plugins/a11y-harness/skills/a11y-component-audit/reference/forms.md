@@ -25,6 +25,10 @@ WCAG 2.2 does not require required fields to be indicated before submission. H90
 
 A button needs an accessible name: 4.1.2, ACT rule 97a4e1 "Button has non-empty accessible name". For a button that only shows an icon, 1.1.1 may be cited as well (Understanding 1.1.1, "Controls, Input"), but 4.1.2 is the criterion that the button fails.
 
+### Toggle buttons
+
+A button that shows or hides something exposes its state in one of two ways, never both: a fixed name with `aria-pressed` (the ARIA Authoring Practices, Button pattern, ask that a toggle's label not change with its state), or a name that changes with the state and no `aria-pressed`. ARIA5, exposing the state through ARIA attributes, is a sufficient technique of 4.1.2. A changing name together with `aria-pressed` announces the state twice, or in contradiction.
+
 ### Status messages: 4.1.3 Status Messages (AA)
 
 The success criterion requires that a status message be exposed through a role or properties, so that assistive technologies present it without it receiving focus. F103 covers a message exposed by neither.
