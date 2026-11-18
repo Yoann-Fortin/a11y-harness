@@ -79,6 +79,13 @@ const FIELD_ERRORS = [
   '<input pattern="[0-9]{5}" />',
 ]
 
+const STATUS_MESSAGES = [
+  '<p role="alert">',
+  '<div role="status">',
+  '<div role="log">',
+  '<div aria-live="polite">',
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -114,5 +121,9 @@ describe('form criteria table', () => {
 
   it.each(FIELD_ERRORS)('finds an error message or a native validation in %s', (source) => {
     expect(elementsIn(source)).toContain('field-error')
+  })
+
+  it.each(STATUS_MESSAGES)('finds a status message in %s', (source) => {
+    expect(elementsIn(source)).toContain('status-message')
   })
 })
