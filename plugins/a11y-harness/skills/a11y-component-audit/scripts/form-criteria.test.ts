@@ -39,6 +39,14 @@ const PASSWORD_FIELDS = [
   "type={isPasswordVisible ? 'text' : 'password'}",
 ]
 
+const REQUIRED_FIELDS = [
+  '<input required />',
+  '<input aria-required="true" />',
+  '<label htmlFor={id}>Nom (obligatoire)</label>',
+  "const EMAIL_REQUIRED_ERROR = 'Saisissez votre adresse e-mail'",
+  "if (field.value === '') {",
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -50,5 +58,9 @@ describe('form criteria table', () => {
 
   it.each(PASSWORD_FIELDS)('finds a password field in %s', (source) => {
     expect(elementsIn(source)).toContain('password-field')
+  })
+
+  it.each(REQUIRED_FIELDS)('finds a required field in %s', (source) => {
+    expect(elementsIn(source)).toContain('required-field')
   })
 })
