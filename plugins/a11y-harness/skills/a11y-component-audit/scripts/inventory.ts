@@ -8,5 +8,7 @@ export type CriteriaTable = {
   elements: FormElement[]
 }
 
-export const inventoryOf = (table: CriteriaTable, _source: string, standard: string) =>
-  table.elements.map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
+export const inventoryOf = (table: CriteriaTable, source: string, standard: string) =>
+  table.elements
+    .filter(({ signals: [signal] }) => source.includes(signal))
+    .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
