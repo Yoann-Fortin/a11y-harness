@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ActReference, RgaaReference, WcagReference } from './find-criterion.ts'
-import { validateReport } from './validate-report.ts'
+import { missingCriteria, validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
 const RGAA_TITLE = 'Required\u202ftitle\u00a0?'
@@ -149,5 +149,13 @@ describe('validateReport', () => {
     const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['H90', 'F81'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
+  })
+})
+
+describe('missingCriteria', () => {
+  it('flags a criterion of the inventory that the report does not rule on', () => {
+    const report = { standard: 'wcag-2.2', findings: [WCAG_FINDING] }
+
+    expect(missingCriteria(report, ['3.3.2', '4.1.2'])).toEqual([{ criterion: '4.1.2', problem: 'missing-criterion' }])
   })
 })
