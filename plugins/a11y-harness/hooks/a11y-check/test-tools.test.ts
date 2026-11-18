@@ -61,3 +61,12 @@ describe('JEST', () => {
     expect(JEST.readReport(TEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
   })
 })
+
+describe('test counts', () => {
+  it.each([
+    ['Vitest', VITEST],
+    ['Jest', JEST],
+  ])('counts the tests %s ran', (_, tool) => {
+    expect(tool.countTests(JSON.stringify({ numTotalTests: 3, testResults: [] }))).toBe(3)
+  })
+})
