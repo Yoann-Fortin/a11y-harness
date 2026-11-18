@@ -10,5 +10,5 @@ export type CriteriaTable = {
 
 export const inventoryOf = (table: CriteriaTable, source: string, standard: string) =>
   table.elements
-    .filter(({ signals }) => signals.some((signal) => source.includes(signal)))
+    .filter(({ signals }) => signals.some((signal) => new RegExp(signal).test(source)))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
