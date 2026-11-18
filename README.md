@@ -6,7 +6,7 @@ It adds four things to Claude Code:
 
 - **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on. When no test covers the component, it asks Claude to write its accessibility tests first. When the file holds a form, it asks Claude to audit the form with the skill.
 - **A skill, `a11y-component-audit`.** It audits a form, with the components rendered inside it, and quotes every criterion from the official texts bundled with it. It first lists, from a table of form elements and the criteria they open, every criterion the component calls for. A check rejects any report whose criterion, level, title or evidence is not in those texts, or that leaves out one of those criteria.
-- **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them.
+- **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them. A `verify-tests` command checks it: it runs the tests on one variant of the component per conforming technique, and on the faulty component, and reports every variant they misjudge.
 - **An agent, `a11y-reviewer`.** It reviews the forms of several components, a folder or the changes of a branch with the skill, without editing any file.
 
 ## Install
