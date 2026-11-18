@@ -68,6 +68,8 @@ const SUBMIT_BUTTONS = [
   '<input type="reset" />',
 ]
 
+const BUTTONS_THAT_DO_NOT_SUBMIT = ['<button type="button" onClick={onToggle}>', "<button\n  type='button'\n  aria-pressed={isPasswordVisible}\n>"]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -95,5 +97,9 @@ describe('form criteria table', () => {
 
   it.each(SUBMIT_BUTTONS)('finds a button that submits or resets a form in %s', (source) => {
     expect(elementsIn(source)).toContain('submit-button')
+  })
+
+  it.each(BUTTONS_THAT_DO_NOT_SUBMIT)('finds no button that submits a form in %s', (source) => {
+    expect(elementsIn(source)).not.toContain('submit-button')
   })
 })
