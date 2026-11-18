@@ -21,7 +21,7 @@ The a11y-check hook leaves out the family of the other standard. A test whose cr
 
 ## Test the requirement, not a technique
 
-A test must not fail a solution the standard accepts. Before you write an assertion, list the techniques that meet the requirement, and check that every one of them passes.
+A test must not fail a solution the standard accepts. Before you write an assertion, list the techniques that meet the requirement, and check that a component using any one of them would pass the test.
 
 - **A name shown on the page (WCAG 3.3.2).** A visible `<label>`, with `for` or around the field, `aria-labelledby` pointing at visible text, and an adjacent button whose text gives the purpose of the field (G167) all meet it; `aria-label`, `title` and `placeholder` alone do not. Collect the text of the field's labels, of the elements its `aria-labelledby` references and of a button right before or after it, and check that it gives the purpose of the field.
 - **A field label under RGAA 11.1.** `<label for>`, `aria-label`, `aria-labelledby`, `title` and an adjacent button all meet 11.1.1. A label that is not visible (`aria-label`, hidden label) also needs, for 11.1.3, a `title` that explains the expected input, or a text passage next to the field, visible or made visible on focus. A text passage, in the RGAA glossary, is linked to the field by `aria-labelledby` or `aria-describedby`.
