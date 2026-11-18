@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
 import { inventoryOf } from './inventory.ts'
-import { validateReport } from './validate-report.ts'
+import { missingCriteria, validateReport } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
 const WCAG_FILE = 'wcag-2.2.json'
@@ -36,9 +36,23 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
   return { output: criterion, failed: criterion === null }
 }
 
-const validate = ([report = '']: string[]): Outcome => {
+const inventoryCriteria = (components: string[], standard: string) => [
+  ...new Set(
+    components.flatMap((component) =>
+      inventoryOf(readJson(FORM_CRITERIA_FILE), readFileSync(component, TEXT_ENCODING), standard).flatMap(
+        ({ criteria }) => criteria,
+      ),
+    ),
+  ),
+]
+
+const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }
-  const problems = validateReport(readReport(report), references)
+  const report = readReport(reportArgument)
+  const problems = [
+    ...validateReport(report, references),
+    ...missingCriteria(report, inventoryCriteria(components, report.standard)),
+  ]
   return { output: problems, failed: problems.length > 0 }
 }
 
