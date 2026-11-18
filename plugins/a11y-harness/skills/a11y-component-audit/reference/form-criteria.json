@@ -1,4 +1,11 @@
 {
+  "form": {
+    "description": "Form, as the RGAA glossary defines it (« Formulaire »): a form element, or an element with role=\"form\"",
+    "signals": [
+      "<form",
+      "role=[\"']form[\"']"
+    ]
+  },
   "elements": [
     {
       "id": "form-field",
