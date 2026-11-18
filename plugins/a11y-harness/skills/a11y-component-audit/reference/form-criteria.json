@@ -87,6 +87,23 @@
           "7.3"
         ]
       }
+    },
+    {
+      "id": "submit-button",
+      "description": "Button that submits or resets a form",
+      "signals": [
+        "<button",
+        "type=[\"'](?:submit|reset)[\"']"
+      ],
+      "criteria": {
+        "wcag-2.2": [
+          "2.5.3",
+          "4.1.2"
+        ],
+        "rgaa-4.1.2": [
+          "11.9"
+        ]
+      }
     }
   ]
 }
