@@ -11,4 +11,10 @@ describe('problemsOf', () => {
   it('accepts a conforming variant that the tests pass', () => {
     expect(problemsOf([{ variant: 'with-label.tsx', kind: 'conforming', passed: true }])).toEqual([])
   })
+
+  it('flags a faulty variant that the tests accept', () => {
+    expect(problemsOf([{ variant: 'original.tsx', kind: 'faulty', passed: true }])).toEqual([
+      { variant: 'original.tsx', problem: 'faulty-variant-accepted' },
+    ])
+  })
 })
