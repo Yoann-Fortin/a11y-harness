@@ -19,7 +19,9 @@ Visual context can stand for a label (Understanding 3.3.2 examples): a wizard pa
 
 ### Required fields
 
-WCAG 2.2 does not require required fields to be indicated before submission. H90 and ARIA2 are sufficient techniques of 3.3.2, not obligations. After submission, 3.3.1 Error Identification applies to the fields left empty.
+WCAG 2.2 does not require required fields to be indicated before submission. H90, with G131, is a sufficient technique of 3.3.2, not an obligation, and ARIA2 is only an advisory technique of 3.3.2 and 1.3.1. After submission, 3.3.1 Error Identification applies to the fields left empty.
+
+A general mention placed before the fields, such as « Tous les champs sont obligatoires », meets 3.3.2: G184, text instructions at the beginning of a form, is a sufficient technique with G131. It is also information available in text, which the normative text of 1.3.1 accepts. Understanding 1.3.1 strongly encourages determining relationships programmatically rather than describing them in text, but does not require it: `required` and `aria-required` are not mandatory under WCAG.
 
 ### Buttons
 
