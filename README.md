@@ -128,7 +128,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
 - **The tests run in jsdom, without CSS.** They cannot judge contrast, visible focus, zoom or what a screen reader actually says, and a visually hidden label passes them. The skill lists these points as checks to make by hand.
-- **The agent is read-only by instruction.** It has no `Write` or `Edit` tool, but it keeps `Bash` to run the skill's scripts and read-only git commands.
+- **The agent is read-only.** It has no `Write` or `Edit` tool, and a `PreToolUse` hook of the plugin only lets its `Bash` run the skill's scripts and `git diff`, `git log` or `git show`, each on its own. Claude Code ignores the hooks written in a plugin agent's own definition, so the hook is declared for the whole plugin and recognises the agent by its name.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
 
 ## Roadmap
