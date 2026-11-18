@@ -13,11 +13,12 @@ const FINDINGS: CheckResults = {
 const WRITE_EVENT = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: COMPONENT_PATH }, cwd: SESSION_DIR })
 const PACKAGE_DIR = '/repo/playground'
 
-const fakePorts = (results: CheckResults, packageRoot: string | null = null) => {
+const fakePorts = (results: CheckResults, packageRoot: string | null = null, formFile = '') => {
   const plans: CheckPlan[] = []
   return {
     plans,
     packageRootOf: () => packageRoot,
+    holdsForm: async (filePath: string) => filePath === formFile,
     check: async (plan: CheckPlan) => {
       plans.push(plan)
       return results
@@ -66,5 +67,11 @@ describe('handleEvent', () => {
     await handleEvent(WRITE_EVENT, 'rgaa-4.1.2', ports)
 
     expect(ports.plans[0]?.standard).toBe('rgaa-4.1.2')
+  })
+
+  it('asks for an audit when the written file holds a form', async () => {
+    const output = JSON.parse(await handleEvent(WRITE_EVENT, undefined, fakePorts(NO_RESULTS, null, COMPONENT_PATH)))
+
+    expect(JSON.parse(output.reason)).toMatchObject({ holdsForm: true, audit: expect.stringContaining('a11y-component-audit') })
   })
 })
