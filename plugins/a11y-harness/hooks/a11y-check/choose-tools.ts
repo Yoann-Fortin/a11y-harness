@@ -1,7 +1,7 @@
-import { BIOME, type LintTool } from './lint-tools.ts'
+import { BIOME, ESLINT, type LintTool } from './lint-tools.ts'
 import { type TestTool, VITEST } from './test-tools.ts'
 
-const LINTERS = [BIOME]
+const LINTERS = [BIOME, ESLINT]
 const TEST_RUNNERS = [VITEST]
 
 export type ToolChoice = {
