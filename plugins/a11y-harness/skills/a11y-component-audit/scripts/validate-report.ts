@@ -106,5 +106,7 @@ export const missingCriteria = (report: Report, expected: string[]): Problem[] =
     .filter((criterion) => !report.findings.map((finding) => finding.criterion).includes(criterion))
     .map((criterion) => ({ criterion, problem: MISSING_CRITERION }))
 
-export const unopenedCriteria = (cited: string[], opened: string[], _tableCriteria: string[]): Problem[] =>
-  cited.filter((criterion) => !opened.includes(criterion)).map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))
+export const unopenedCriteria = (cited: string[], opened: string[], tableCriteria: string[]): Problem[] =>
+  cited
+    .filter((criterion) => tableCriteria.includes(criterion) && !opened.includes(criterion))
+    .map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))
