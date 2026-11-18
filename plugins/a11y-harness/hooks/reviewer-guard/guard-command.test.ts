@@ -39,4 +39,10 @@ describe('guardCommand', () => {
 
     expect(guardCommand(bashCall(`${SCRIPTS} validate '${report}' src/Form.tsx`, REVIEWER))).toBeNull()
   })
+
+  it('denies the reviewer an inline validation followed by another command', () => {
+    const report = '{"standard":"wcag-2.2","findings":[]}'
+
+    expect(guardCommand(bashCall(`${SCRIPTS} validate '${report}' && rm -rf src`, REVIEWER))).not.toBeNull()
+  })
 })

@@ -1,8 +1,10 @@
 const REVIEWER_SUFFIX = 'a11y-reviewer'
+const SINGLE_QUOTED = /'[^']*'/g
 const SHELL_OPERATOR = /[;&|<>`$()]/
 const AUDIT_COMMAND = /^node "[^"]*\/skills\/a11y-component-audit\/scripts\/main\.ts" (?:lookup|validate|inventory) /
 
-const isPlainAuditCommand = (command: string) => AUDIT_COMMAND.test(command) && !SHELL_OPERATOR.test(command)
+const isPlainAuditCommand = (command: string) =>
+  AUDIT_COMMAND.test(command) && !command.split(SINGLE_QUOTED).some((unquoted) => SHELL_OPERATOR.test(unquoted))
 
 export type BashCall = {
   agent_type?: string
