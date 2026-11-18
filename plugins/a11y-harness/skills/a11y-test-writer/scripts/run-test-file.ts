@@ -8,4 +8,8 @@ export type TestFileTools = {
   testRunners: TestTool[]
 }
 
-export const passesTestFile = async (_testFile: string, _cwd: string, _tools: TestFileTools) => true
+export async function passesTestFile(_testFile: string, _cwd: string, tools: TestFileTools) {
+  const [testRunner] = tools.testRunners
+  const report = await tools.readText(tools.reportFile)
+  return testRunner.readReport(report).length === 0
+}
