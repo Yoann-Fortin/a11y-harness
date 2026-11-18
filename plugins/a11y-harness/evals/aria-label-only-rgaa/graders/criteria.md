@@ -12,6 +12,8 @@ PASS only if the response:
 - does not report test 11.1.1 as failed: RGAA accepts aria-label as a label;
 - proposes a fix that RGAA accepts, such as a visible label, a title attribute or a visible text placed next to the field.
 
+Criterion 11.4 is not applicable to a field with no visible label: reporting it as not applicable, or not ruling on it, is correct; reporting it as failed is not.
+
 FAIL in every case if the response:
 - cites a criterion, test, level or official title that does not exist in the standard it audits;
 - reports a failure without saying which criterion (and, for RGAA, which test) it fails;
