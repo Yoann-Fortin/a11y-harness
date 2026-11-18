@@ -41,7 +41,7 @@ The WCAG references listed under an RGAA criterion follow WCAG 2.1: `lookup` pri
 
 - Test 11.1.1 accepts `<label for>`, `aria-label`, `aria-labelledby`, `title`, and a button adjacent to the field that gives it a visible label while a hidden `<label>`, `aria-label`, `aria-labelledby` or `title` gives it an accessible name. A placeholder alone is not accepted.
 - Adjacent, per the glossary ("Lien ou bouton adjacent"): next to the field visually and in the code, right before or right after it.
-- Test 11.1.3 concerns a label that is not visible or not next to the field (hidden label, `aria-label`, distant `aria-labelledby`). Such a field also needs a `title` that explains the expected input, or a text next to the field that becomes visible on focus, or a visible text next to the field. A field whose adjacent button already gives it a visible label passes 11.1.
+- Test 11.1.3 concerns a label that is not visible or not next to the field (hidden label, `aria-label`, distant `aria-labelledby`). Such a field also needs a `title` that explains the expected input, or a text passage next to the field, visible or made visible on focus. The glossary defines a text passage as one linked to the field by `aria-labelledby` or `aria-describedby`. A field whose adjacent button already gives it a visible label passes 11.1.
 - Hence: `title` alone passes 11.1 (it meets 11.1.1 and the first condition of 11.1.3); `aria-label` alone with nothing visible fails 11.1 through 11.1.3, while passing 11.1.1.
 
 ### Required fields: criterion 11.10
