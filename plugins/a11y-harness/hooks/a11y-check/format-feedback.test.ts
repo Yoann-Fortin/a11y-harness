@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { formatFeedback } from './format-feedback.ts'
 
-const NO_RESULTS = { lintErrors: [], failingTests: [], toolFailures: [], untestedBy: [] }
+const NO_RESULTS = { lintErrors: [], failingTests: [], toolFailures: [], untestedBy: [], holdsForm: false }
 const LINT_ERROR = {
   file: 'src/Form.tsx',
   line: 3,
@@ -41,6 +41,15 @@ describe('formatFeedback', () => {
     expect(readFeedback(formatFeedback(results))).toEqual({
       ...results,
       instruction: expect.stringContaining('a11y-test-writer'),
+    })
+  })
+
+  it('asks for an audit with the audit skill when the file holds a form', () => {
+    const results = { ...NO_RESULTS, holdsForm: true }
+
+    expect(readFeedback(formatFeedback(results))).toEqual({
+      ...results,
+      audit: expect.stringContaining('a11y-component-audit'),
     })
   })
 })
