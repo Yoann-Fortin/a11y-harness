@@ -13,6 +13,8 @@ const PLAN = {
   ],
 }
 
+const RUNNER_CRASH = 'the test runner crashed'
+
 const fakeProject = (passesOn: string[]) => {
   const files: Record<string, string> = { [COMPONENT]: ORIGINAL, [WITH_LABEL]: LABELLED }
   const tested: string[] = []
@@ -50,6 +52,18 @@ describe('verifyVariants', () => {
 
     await verifyVariants({ component: COMPONENT, variants: [{ file: WITH_LABEL, kind: 'conforming' }] }, project)
 
+    expect(project.files[COMPONENT]).toBe(ORIGINAL)
+  })
+
+  it('puts the original component back even when the tests cannot run', async () => {
+    const project = {
+      ...fakeProject([]),
+      runTests: async () => {
+        throw new Error(RUNNER_CRASH)
+      },
+    }
+
+    await expect(verifyVariants(PLAN, project)).rejects.toThrow(RUNNER_CRASH)
     expect(project.files[COMPONENT]).toBe(ORIGINAL)
   })
 })
