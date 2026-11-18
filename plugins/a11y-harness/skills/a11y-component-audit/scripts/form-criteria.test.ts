@@ -47,6 +47,13 @@ const REQUIRED_FIELDS = [
   "if (field.value === '') {",
 ]
 
+const USER_INFORMATION_FIELDS = [
+  '<input autoComplete="email" />',
+  '<input type="email" />',
+  '<input type="tel" />',
+  '<input name="username" />',
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -62,5 +69,9 @@ describe('form criteria table', () => {
 
   it.each(REQUIRED_FIELDS)('finds a required field in %s', (source) => {
     expect(elementsIn(source)).toContain('required-field')
+  })
+
+  it.each(USER_INFORMATION_FIELDS)('finds a field about the user in %s', (source) => {
+    expect(elementsIn(source)).toContain('user-information')
   })
 })
