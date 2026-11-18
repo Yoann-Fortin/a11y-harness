@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { text } from 'node:stream/consumers'
+import { holdsForm } from '../../skills/a11y-component-audit/scripts/inventory.ts'
 import { chooseTools } from './choose-tools.ts'
 import { findPackageRoot } from './find-package-root.ts'
 import { handleEvent } from './handle-event.ts'
@@ -16,6 +17,7 @@ const REPORT_FILE = 'report.json'
 const PACKAGE_FILE = 'package.json'
 const TEXT_ENCODING = 'utf8'
 const NO_DEPENDENCIES: string[] = []
+const FORM_CRITERIA_FILE = join(import.meta.dirname, '../../skills/a11y-component-audit/reference/form-criteria.json')
 
 const readText = (path: string) => readFile(path, TEXT_ENCODING)
 const dependenciesOf = (cwd: string) =>
@@ -31,6 +33,7 @@ const output = await handleEvent(await text(process.stdin), process.env[STANDARD
       reportFile: join(reportDir, REPORT_FILE),
       ...chooseTools(await dependenciesOf(plan.cwd)),
     }),
+  holdsForm: async (filePath) => holdsForm(JSON.parse(await readText(FORM_CRITERIA_FILE)), await readText(filePath)),
 })
 await rm(reportDir, { recursive: true, force: true })
 process.stdout.write(output)
