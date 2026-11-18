@@ -39,7 +39,7 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
 const inventoryCriteria = (components: string[], standard: string) => [
   ...new Set(
     components.flatMap((component) =>
-      inventoryOf(readJson(FORM_CRITERIA_FILE), readFileSync(component, TEXT_ENCODING), standard).flatMap(
+      inventoryOf(readJson(FORM_CRITERIA_FILE), [readFileSync(component, TEXT_ENCODING)], standard).flatMap(
         ({ criteria }) => criteria,
       ),
     ),
@@ -57,7 +57,7 @@ const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
 }
 
 const inventory = ([standard = '', component = '']: string[]): Outcome => ({
-  output: inventoryOf(readJson(FORM_CRITERIA_FILE), readFileSync(component, TEXT_ENCODING), standard),
+  output: inventoryOf(readJson(FORM_CRITERIA_FILE), [readFileSync(component, TEXT_ENCODING)], standard),
   failed: false,
 })
 
