@@ -44,6 +44,6 @@ Run each command on its own, starting with `node` and written as above: no shell
 Answer in the user's language, with:
 
 1. **Verdict**: compliant or not, against which standard.
-2. **Failures**, one per criterion: number and official title, level (WCAG) or deciding test (RGAA), the code that fails, why according to the official text, and the fixes the standard accepts. When several fixes are accepted, list them and let the developer choose: it is a design decision.
+2. **Failures**, one per criterion: number and official title, level (WCAG) or deciding test (RGAA), the code that fails, why according to the official text, and the fixes the standard accepts. When several fixes are accepted, list them and let the developer choose: it is a design decision. Apply a fix only when the user asks for it or agrees to it.
 3. **Compliant criteria** you checked, in one line each.
 4. **To check manually**: what the code alone cannot settle, without a verdict.
