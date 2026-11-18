@@ -12,6 +12,7 @@ const WRONG_LEVEL = 'wrong-level'
 const QUOTE_MISMATCH = 'quote-mismatch'
 const UNRELATED_EVIDENCE = 'unrelated-evidence'
 const MISSING_CRITERION = 'missing-criterion'
+const UNOPENED_CRITERION = 'unopened-criterion'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 const TECHNIQUE_ID_OPENING = '"id":"'
 const TECHNIQUE_ID_CLOSING = '"'
@@ -104,3 +105,6 @@ export const missingCriteria = (report: Report, expected: string[]): Problem[] =
   expected
     .filter((criterion) => !report.findings.map((finding) => finding.criterion).includes(criterion))
     .map((criterion) => ({ criterion, problem: MISSING_CRITERION }))
+
+export const unopenedCriteria = (cited: string[], _opened: string[], _tableCriteria: string[]): Problem[] =>
+  cited.map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))
