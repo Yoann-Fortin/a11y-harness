@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest'
+import { verifyVariants } from './verify-variants.ts'
+
+const COMPONENT = 'src/ProductFilter.tsx'
+const ORIGINAL = 'export const ProductFilter = () => <input aria-label="Filtrer" />'
+const WITH_LABEL = 'with-label.tsx'
+const LABELLED = 'export const ProductFilter = () => <><label htmlFor="q">Filtrer</label><input id="q" /></>'
+const PLAN = {
+  component: COMPONENT,
+  variants: [
+    { file: WITH_LABEL, kind: 'conforming' as const },
+    { file: COMPONENT, kind: 'faulty' as const },
+  ],
+}
+
+const fakeProject = (passesOn: string[]) => {
+  const files: Record<string, string> = { [COMPONENT]: ORIGINAL, [WITH_LABEL]: LABELLED }
+  const tested: string[] = []
+  return {
+    files,
+    tested,
+    readText: async (path: string) => files[path] ?? '',
+    writeText: async (path: string, content: string) => {
+      files[path] = content
+    },
+    runTests: async () => {
+      tested.push(files[COMPONENT] ?? '')
+      return passesOn.includes(files[COMPONENT] ?? '')
+    },
+  }
+}
+
+describe('verifyVariants', () => {
+  it('runs the tests on each variant in place of the component', async () => {
+    const project = fakeProject([LABELLED])
+
+    await verifyVariants(PLAN, project)
+
+    expect(project.tested).toEqual([LABELLED, ORIGINAL])
+  })
+})
