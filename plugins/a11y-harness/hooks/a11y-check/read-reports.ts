@@ -40,3 +40,13 @@ export function readVitestReport(report: string): FailingTest[] {
       })),
   )
 }
+
+type PackageManifest = {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+}
+
+export function readDependencies(packageJson: string): string[] {
+  const { dependencies = {}, devDependencies = {} }: PackageManifest = JSON.parse(packageJson)
+  return [...Object.keys(dependencies), ...Object.keys(devDependencies)]
+}
