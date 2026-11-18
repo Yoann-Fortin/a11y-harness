@@ -10,6 +10,15 @@ const VITEST_EXCLUDED_TESTS: Record<Standard, string> = {
   'rgaa-4.1.2': '**/*.wcag.test.tsx',
 }
 
+const JEST_NAME = 'jest'
+const JEST_PACKAGE = 'jest'
+const JEST_BINARY = 'node_modules/.bin/jest'
+const JEST_DEFAULT_IGNORED_PATHS = '/node_modules/'
+const JEST_EXCLUDED_TESTS: Record<Standard, string> = {
+  'wcag-2.2': '\\.rgaa\\.test\\.tsx$',
+  'rgaa-4.1.2': '\\.wcag\\.test\\.tsx$',
+}
+
 export type TestTool = {
   name: string
   package: string
@@ -31,6 +40,23 @@ export const VITEST: TestTool = {
     '--passWithNoTests',
     '--exclude',
     VITEST_EXCLUDED_TESTS[plan.standard],
+  ],
+  readReport: readVitestReport,
+}
+
+export const JEST: TestTool = {
+  name: JEST_NAME,
+  package: JEST_PACKAGE,
+  binary: JEST_BINARY,
+  args: (plan, reportFile) => [
+    '--findRelatedTests',
+    plan.filePath,
+    '--json',
+    `--outputFile=${reportFile}`,
+    '--passWithNoTests',
+    '--testPathIgnorePatterns',
+    JEST_DEFAULT_IGNORED_PATHS,
+    JEST_EXCLUDED_TESTS[plan.standard],
   ],
   readReport: readVitestReport,
 }
