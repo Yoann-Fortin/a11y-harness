@@ -60,4 +60,10 @@ describe('guardCommand', () => {
   it('denies the reviewer a git command that writes its output to a file', () => {
     expect(guardCommand(bashCall('git diff --output=changes.patch main', REVIEWER))).not.toBeNull()
   })
+
+  it('tells the reviewer why the command is denied and what it may run', () => {
+    expect(guardCommand(bashCall('rm -rf src', REVIEWER))?.hookSpecificOutput.permissionDecisionReason).toMatch(
+      /read-only[\s\S]*a11y-component-audit[\s\S]*git diff/,
+    )
+  })
 })
