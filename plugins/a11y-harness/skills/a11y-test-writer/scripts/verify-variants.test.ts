@@ -44,4 +44,12 @@ describe('verifyVariants', () => {
       { variant: WITH_LABEL, problem: 'conforming-variant-rejected' },
     ])
   })
+
+  it('puts the original component back once every variant has run', async () => {
+    const project = fakeProject([LABELLED])
+
+    await verifyVariants({ component: COMPONENT, variants: [{ file: WITH_LABEL, kind: 'conforming' }] }, project)
+
+    expect(project.files[COMPONENT]).toBe(ORIGINAL)
+  })
 })
