@@ -2,10 +2,11 @@
 
 A Claude Code plugin that checks the accessibility of React components against WCAG 2.2 AA, or against the French RGAA 4.1.2.
 
-It adds three things to Claude Code:
+It adds four things to Claude Code:
 
-- **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on.
+- **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on. When no test covers the component, it asks Claude to write its accessibility tests first.
 - **A skill, `a11y-component-audit`.** It audits a component and quotes every criterion from the official texts bundled with it. A check rejects any report whose criterion, level, title or evidence is not in those texts.
+- **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them.
 - **An agent, `a11y-reviewer`.** It reviews several components, a folder or the changes of a branch with the skill, without editing any file.
 
 ## Install
@@ -36,7 +37,9 @@ The hook runs the tools of the package that holds the component, chosen from the
 | `*.wcag.test.tsx` | yes | no |
 | `*.rgaa.test.tsx` | no | yes |
 
-The skill and the agent need nothing else: ask Claude to audit a component, or to review a folder or a branch.
+When a test runner finds no test related to the changed component, the hook blocks and asks Claude to write the component's accessibility tests with `a11y-test-writer`. A team without accessibility tests gets them, and the hook runs them from then on.
+
+The skills and the agent need nothing else: ask Claude to audit a component, to write its accessibility tests, or to review a folder or a branch.
 
 ## See the two verdicts
 
@@ -113,6 +116,7 @@ On 17 November 2026, with Claude Code 2.1.326, this command and `--runs 3`, Clau
 ## Roadmap
 
 - Skills to fix a defect by offering the fixes the standard accepts, to fill a complete RGAA audit grid for a page, and to write the accessibility statement the RGAA requires.
+- A generic set of tests, shipped with the plugin, that the hook runs on any component that renders without props.
 - An agent that drives a real browser, for what jsdom cannot see.
 - A hook that refuses a report until `validate` accepts it.
 - Oxlint as a linter, and a plugin option to choose the tools instead of detecting them.
