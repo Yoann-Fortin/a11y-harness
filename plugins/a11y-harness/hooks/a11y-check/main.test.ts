@@ -8,6 +8,7 @@ const execFileAsync = promisify(execFile)
 const REPO_DIR = join(import.meta.dirname, '../../../..')
 const HOOK = join(import.meta.dirname, 'main.ts')
 const LOGIN_FORM = join(REPO_DIR, 'playground/src/login-form/LoginForm.tsx')
+const VISIBILITY_TOGGLE = join(REPO_DIR, 'playground/src/login-form/PasswordVisibilityToggle.tsx')
 const FIXTURE_DIR = join(REPO_DIR, 'playground/src/a11y-check-fixture')
 const FIXTURE = join(FIXTURE_DIR, 'Fixture.tsx')
 const FIXTURE_COMPONENT = 'export const Fixture = () => <input type="email" />\n'
@@ -40,9 +41,24 @@ describe('a11y-check hook, end to end on the playground', () => {
   })
 
   it(
-    'stays silent on the accessible login form',
+    'stays silent on an accessible component that holds no form',
     async () => {
-      expect(await runHook(LOGIN_FORM)).toBe('')
+      expect(await runHook(VISIBILITY_TOGGLE)).toBe('')
+    },
+    END_TO_END_TIME_LIMIT_MS,
+  )
+
+  it(
+    'asks for an audit of the login form, although its checks pass',
+    async () => {
+      const output = JSON.parse(await runHook(LOGIN_FORM))
+
+      expect(JSON.parse(output.reason)).toMatchObject({
+        lintErrors: [],
+        failingTests: [],
+        holdsForm: true,
+        audit: expect.stringContaining('a11y-component-audit'),
+      })
     },
     END_TO_END_TIME_LIMIT_MS,
   )
