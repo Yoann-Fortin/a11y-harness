@@ -28,7 +28,11 @@ export type TestTool = {
   countTests: (report: string) => number
 }
 
-export const VITEST: TestTool = {
+export type FileTestTool = TestTool & {
+  fileArgs: (testFile: string, reportFile: string) => string[]
+}
+
+export const VITEST: FileTestTool = {
   name: VITEST_NAME,
   package: VITEST_PACKAGE,
   binary: VITEST_BINARY,
@@ -42,6 +46,7 @@ export const VITEST: TestTool = {
     '--exclude',
     VITEST_EXCLUDED_TESTS[plan.standard],
   ],
+  fileArgs: (testFile, reportFile) => ['run', testFile, '--reporter=json', `--outputFile=${reportFile}`],
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
