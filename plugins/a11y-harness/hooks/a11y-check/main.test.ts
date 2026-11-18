@@ -22,6 +22,8 @@ const FIXTURE_TEST = [
   '})',
   '',
 ].join('\n')
+const BARE_PACKAGE_DIR = join(REPO_DIR, 'playground/src/a11y-check-bare-package')
+const BARE_COMPONENT = join(BARE_PACKAGE_DIR, 'Bare.tsx')
 const END_TO_END_TIME_LIMIT_MS = 60_000
 
 const runHook = async (filePath: string) => {
@@ -34,6 +36,7 @@ const runHook = async (filePath: string) => {
 describe('a11y-check hook, end to end on the playground', () => {
   afterEach(async () => {
     await rm(FIXTURE_DIR, { recursive: true, force: true })
+    await rm(BARE_PACKAGE_DIR, { recursive: true, force: true })
   })
 
   it(
@@ -57,6 +60,18 @@ describe('a11y-check hook, end to end on the playground', () => {
       expect(JSON.parse(output.reason).failingTests).toEqual([
         { name: 'names the email field', message: expect.any(String) },
       ])
+    },
+    END_TO_END_TIME_LIMIT_MS,
+  )
+
+  it(
+    'stays silent in a package that uses none of the supported tools',
+    async () => {
+      await mkdir(BARE_PACKAGE_DIR, { recursive: true })
+      await writeFile(join(BARE_PACKAGE_DIR, 'package.json'), '{}')
+      await writeFile(BARE_COMPONENT, FIXTURE_COMPONENT)
+
+      expect(await runHook(BARE_COMPONENT)).toBe('')
     },
     END_TO_END_TIME_LIMIT_MS,
   )
