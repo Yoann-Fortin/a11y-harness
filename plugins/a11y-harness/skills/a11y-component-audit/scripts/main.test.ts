@@ -15,6 +15,14 @@ const run = async (...args: string[]) => {
   return JSON.parse(stdout)
 }
 
+const LOGIN_FIELD = '<form>\n  <label htmlFor="email">Adresse e-mail</label>\n  <input id="email" type="email" autoComplete="email" />\n</form>\n'
+
+const writeComponent = async (source: string) => {
+  const path = join(await mkdtemp(join(tmpdir(), 'a11y-component-')), 'Component.tsx')
+  await writeFile(path, source)
+  return path
+}
+
 const writeReport = async (finding: object) => {
   const path = join(await mkdtemp(join(tmpdir(), 'a11y-report-')), 'report.json')
   await writeFile(path, JSON.stringify({ standard: 'wcag-2.2', findings: [finding] }))
@@ -62,6 +70,15 @@ describe('skill scripts, on the official reference files', () => {
     await expect(run('validate', report)).rejects.toMatchObject({
       code: FAILURE_EXIT_CODE,
       stdout: JSON.stringify([{ criterion: '3.3.2', problem: 'wrong-level' }]),
+    })
+  })
+
+  it('lists the form elements of a component with their criteria, from the criteria table', async () => {
+    const component = await writeComponent(LOGIN_FIELD)
+
+    expect(await run('inventory', 'wcag-2.2', component)).toContainEqual({
+      element: 'form-field',
+      criteria: ['1.3.1', '2.4.6', '2.5.3', '3.3.2', '4.1.2'],
     })
   })
 })
