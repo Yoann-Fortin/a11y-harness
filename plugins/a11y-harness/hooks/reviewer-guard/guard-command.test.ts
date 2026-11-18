@@ -33,4 +33,10 @@ describe('guardCommand', () => {
   it('denies the reviewer another program that takes an audit command as its arguments', () => {
     expect(guardCommand(bashCall(`rm -rf src ${SCRIPTS} lookup rgaa-4.1.2 11.1`, REVIEWER))).not.toBeNull()
   })
+
+  it('lets the reviewer validate a report given inline, whose quotes hold parentheses', () => {
+    const report = '{"standard":"rgaa-4.1.2","findings":[{"criterion":"11.10","quote":"(hors cas particuliers) ?"}]}'
+
+    expect(guardCommand(bashCall(`${SCRIPTS} validate '${report}' src/Form.tsx`, REVIEWER))).toBeNull()
+  })
 })
