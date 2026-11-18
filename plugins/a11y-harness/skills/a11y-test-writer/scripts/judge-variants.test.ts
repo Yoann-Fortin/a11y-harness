@@ -7,4 +7,8 @@ describe('problemsOf', () => {
 
     expect(problemsOf(runs)).toEqual([{ variant: 'with-label.tsx', problem: 'conforming-variant-rejected' }])
   })
+
+  it('accepts a conforming variant that the tests pass', () => {
+    expect(problemsOf([{ variant: 'with-label.tsx', kind: 'conforming', passed: true }])).toEqual([])
+  })
 })
