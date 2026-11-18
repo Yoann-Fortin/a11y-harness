@@ -5,9 +5,8 @@
       "description": "Form field, as the RGAA glossary defines it (« Champ de saisie de formulaire »)",
       "signals": [
         "<input(?![^>]*type=[\"'](?:submit|reset|button|image|hidden)[\"'])",
-        "<textarea",
-        "<select",
-        "role=[\"']combobox[\"']"
+        "<(?:textarea|select|datalist|output|progress|meter)\\b",
+        "role=[\"'](?:textbox|searchbox|combobox|listbox|checkbox|radio|switch|slider|spinbutton|progressbar)[\"']"
       ],
       "criteria": {
         "wcag-2.2": [
