@@ -52,4 +52,10 @@ describe('formatFeedback', () => {
       audit: expect.stringContaining('a11y-component-audit'),
     })
   })
+
+  it('asks Claude to write the tests only with the agreement of the user', () => {
+    const feedback = readFeedback(formatFeedback({ ...NO_RESULTS, untestedBy: ['vitest'] }))
+
+    expect(feedback.instruction).toMatch(/only with (?:the|their) agreement/)
+  })
 })
