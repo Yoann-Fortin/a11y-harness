@@ -1,7 +1,7 @@
 const AUDIT_REQUEST =
   'This file holds a form: audit it with the a11y-component-audit skill for the chosen standard, together with the components rendered inside it.'
 const WRITE_TESTS_INSTRUCTION =
-  'No test covers this component: write its accessibility tests with the a11y-test-writer skill for the chosen standard, then make them pass.'
+  'No test covers this component. Offer the user to write its accessibility tests with the a11y-test-writer skill for the chosen standard, and write them only with their agreement.'
 
 export type LintError = {
   file: string
