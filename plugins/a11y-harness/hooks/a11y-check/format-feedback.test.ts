@@ -26,7 +26,7 @@ describe('formatFeedback', () => {
   it('reports a failing test', () => {
     const results = { ...NO_RESULTS, failingTests: [FAILING_TEST] }
 
-    expect(readFeedback(formatFeedback(results))).toEqual(results)
+    expect(readFeedback(formatFeedback(results))).toEqual({ ...results, failingTestsRule: expect.any(String) })
   })
 
   it('reports a tool that could not run', () => {

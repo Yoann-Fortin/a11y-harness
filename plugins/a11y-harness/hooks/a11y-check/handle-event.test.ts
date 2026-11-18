@@ -38,9 +38,10 @@ describe('handleEvent', () => {
   })
 
   it('asks Claude to fix a component with findings', async () => {
-    const decision = JSON.stringify({ decision: 'block', reason: JSON.stringify({ ...FINDINGS, holdsForm: false }) })
+    const output = JSON.parse(await handleEvent(WRITE_EVENT, undefined, fakePorts(FINDINGS)))
 
-    await expect(handleEvent(WRITE_EVENT, undefined, fakePorts(FINDINGS))).resolves.toBe(decision)
+    expect(output.decision).toBe('block')
+    expect(JSON.parse(output.reason)).toMatchObject({ ...FINDINGS, holdsForm: false })
   })
 
   it('stays silent on a Write event without a file path', async () => {
