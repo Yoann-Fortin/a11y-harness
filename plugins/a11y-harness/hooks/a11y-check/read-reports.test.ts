@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readBiomeReport, readVitestReport } from './read-reports.ts'
+import { readBiomeReport, readDependencies, readVitestReport } from './read-reports.ts'
 
 const BIOME_REPORT = JSON.stringify({
   diagnostics: [
@@ -40,5 +40,14 @@ describe('readVitestReport', () => {
     expect(readVitestReport(VITEST_REPORT)).toEqual([
       { name: 'Form names the password field', message: 'Unable to find the label' },
     ])
+  })
+})
+
+describe('readDependencies', () => {
+  it.each([
+    ['its dependencies and development dependencies', { dependencies: { react: '^19.3.1' }, devDependencies: { vitest: '^5.1.0' } }, ['react', 'vitest']],
+    ['no dependency when it declares none', {}, []],
+  ])('lists %s from a package.json', (_, packageJson, expected) => {
+    expect(readDependencies(JSON.stringify(packageJson))).toEqual(expected)
   })
 })
