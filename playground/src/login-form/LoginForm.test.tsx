@@ -31,6 +31,17 @@ const announcesErrors = (regionsBeforeSubmission: Element[]) =>
     (region) => region.isConnected && ERROR_SUMMARY.test(region.textContent ?? ''),
   ) || [emailField(), passwordField()].some((field) => field === document.activeElement)
 
+const OBSERVED_CHANGES = { childList: true, characterData: true, subtree: true }
+
+const watchRegions = (regions: Element[]) => {
+  const changes: MutationRecord[] = []
+  const observer = new MutationObserver((records) => changes.push(...records))
+  for (const region of regions) {
+    observer.observe(region, OBSERVED_CHANGES)
+  }
+  return () => [...changes, ...observer.takeRecords()]
+}
+
 const TOGGLE_ACTIVATIONS = [
   ['a click', (user: User, toggle: HTMLElement) => user.click(toggle)],
   [
@@ -140,6 +151,20 @@ describe('LoginForm', () => {
     await user.click(submitButton())
 
     expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+  })
+
+  it('announces the errors again when the same empty form is submitted twice, or moves focus to them', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const regionsBeforeSubmission = alertRegions()
+    await user.click(submitButton())
+    const changesSince = watchRegions(regionsBeforeSubmission)
+
+    await user.click(submitButton())
+
+    const isAnnouncedAgain = changesSince().length > 0 && announcesErrors(regionsBeforeSubmission)
+    const movesFocus = [emailField(), passwordField()].some((field) => field === document.activeElement)
+    expect(isAnnouncedAgain || movesFocus).toBe(true)
   })
 
   it.each(FILLED_FIELD_CASES)(
