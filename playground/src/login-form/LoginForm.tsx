@@ -1,4 +1,5 @@
 import { type SubmitEvent, useId, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle'
 
 const EMAIL_FIELD_NAME = 'email'
@@ -36,6 +37,7 @@ export function LoginForm() {
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
+    flushSync(() => setErrors({}))
     const formData = new FormData(event.currentTarget)
     setErrors({
       email: emailErrorOf(event.currentTarget.elements.namedItem(EMAIL_FIELD_NAME) as HTMLInputElement),
