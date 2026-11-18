@@ -1,5 +1,5 @@
 const AUDIT_REQUEST =
-  'This file holds a form: audit it with the a11y-component-audit skill for the chosen standard, together with the components rendered inside it.'
+  'This file holds a form: audit it with the a11y-component-audit skill for the chosen standard, together with the components rendered inside it. Report the failures and their fixes, and apply a fix only with the agreement of the user.'
 const WRITE_TESTS_INSTRUCTION =
   'No test covers this component. Offer the user to write its accessibility tests with the a11y-test-writer skill for the chosen standard, and write them only with their agreement.'
 
