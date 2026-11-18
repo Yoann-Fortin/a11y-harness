@@ -56,6 +56,8 @@ const WCAG_REFERENCE = {
 const REQUIRED_WCAG_REFERENCES = ['3.3.1 Error Identification (A)', '3.3.2 Labels or Instructions (A)']
 const REQUIRED_TECHNIQUES = ['H90', 'F81']
 
+const REQUIRED_PARTICULAR_CASES = ['Not applicable to a form with a single field.']
+
 const RGAA_REFERENCE: RgaaReference = {
   wcag: { version: 2.1 },
   topics: [
@@ -75,6 +77,7 @@ const RGAA_REFERENCE: RgaaReference = {
             number: 10,
             title: 'Required title',
             tests: { 1: ['First test'], 2: ['Second test'] },
+            particularCases: REQUIRED_PARTICULAR_CASES,
             references: [{ wcag: REQUIRED_WCAG_REFERENCES }, { techniques: REQUIRED_TECHNIQUES }],
           },
         },
@@ -116,6 +119,7 @@ describe('findRgaaCriteria', () => {
           id: '11.10',
           title: 'Required title',
           tests: { '11.10.1': ['First test'], '11.10.2': ['Second test'] },
+          particularCases: REQUIRED_PARTICULAR_CASES,
           references: { wcag: { version: 2.1, criteria: REQUIRED_WCAG_REFERENCES }, techniques: REQUIRED_TECHNIQUES },
         },
       ],
