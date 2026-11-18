@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { findRgaaCriteria, findWcagCriteria } from './find-criterion.ts'
-import { inventoryOf } from './inventory.ts'
+import { holdsForm, inventoryOf } from './inventory.ts'
 
 const TABLE_FILE = join(import.meta.dirname, '../reference/form-criteria.json')
 const STANDARDS_DIR = join(import.meta.dirname, '../reference/standards')
@@ -19,6 +19,8 @@ const rgaa = readJson(join(STANDARDS_DIR, RGAA_FILE))
 const criteriaOf = (standard: string): string[] =>
   table.elements.flatMap(({ criteria }: { criteria: Record<string, string[]> }) => criteria[standard])
 const elementsIn = (source: string) => inventoryOf(table, source, WCAG).map(({ element }) => element)
+
+const FORMS = ['<form onSubmit={handleSubmit}>', '<form noValidate onSubmit={handleSubmit}>', '<section role="form" aria-label="Contact">', "<div role='form'>"]
 
 const FORM_FIELDS = [
   '<input id={emailFieldId} type="email" name="email" />',
@@ -97,6 +99,10 @@ const STATUS_MESSAGES = [
 ]
 
 describe('form criteria table', () => {
+  it.each(FORMS)('finds a form, as the RGAA glossary defines it, in %s', (source) => {
+    expect(holdsForm(table, source)).toBe(true)
+  })
+
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
   })
