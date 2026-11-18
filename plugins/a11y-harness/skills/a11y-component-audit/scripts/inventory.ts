@@ -9,9 +9,11 @@ export type CriteriaTable = {
   elements: FormElement[]
 }
 
-export const holdsForm = (_table: CriteriaTable, _source: string) => true
+const matchesAny = (signals: string[], source: string) => signals.some((signal) => new RegExp(signal).test(source))
+
+export const holdsForm = (table: CriteriaTable, source: string) => matchesAny(table.form.signals, source)
 
 export const inventoryOf = (table: CriteriaTable, source: string, standard: string) =>
   table.elements
-    .filter(({ signals }) => signals.some((signal) => new RegExp(signal).test(source)))
+    .filter(({ signals }) => matchesAny(signals, source))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
