@@ -54,6 +54,13 @@ const USER_INFORMATION_FIELDS = [
   '<input name="username" />',
 ]
 
+const SCRIPT_BUTTONS = [
+  '<button type="button" onClick={onToggle}>',
+  '<div role="button" tabIndex={0}>',
+  '<button aria-pressed={isPasswordVisible}>',
+  '<input type="button" value="Ajouter" />',
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -73,5 +80,9 @@ describe('form criteria table', () => {
 
   it.each(USER_INFORMATION_FIELDS)('finds a field about the user in %s', (source) => {
     expect(elementsIn(source)).toContain('user-information')
+  })
+
+  it.each(SCRIPT_BUTTONS)('finds a button driven by a script in %s', (source) => {
+    expect(elementsIn(source)).toContain('script-button')
   })
 })
