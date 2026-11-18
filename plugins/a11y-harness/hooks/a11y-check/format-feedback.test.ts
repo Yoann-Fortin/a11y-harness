@@ -64,4 +64,10 @@ describe('formatFeedback', () => {
 
     expect(feedback.audit).toMatch(/only with (?:the|their) agreement/)
   })
+
+  it('asks Claude to keep the existing tests and to ask the user, explaining why, before changing one', () => {
+    const feedback = readFeedback(formatFeedback({ ...NO_RESULTS, failingTests: [FAILING_TEST] }))
+
+    expect(feedback.failingTestsRule).toMatch(/do not change a test[\s\S]*ask the user[\s\S]*why/i)
+  })
 })
