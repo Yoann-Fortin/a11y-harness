@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { VITEST } from './test-tools.ts'
+import { JEST, VITEST } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
@@ -35,5 +35,29 @@ describe('VITEST', () => {
 
   it('reads the failing tests from the Vitest report', () => {
     expect(VITEST.readReport(VITEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+  })
+})
+
+describe('JEST', () => {
+  it('runs the tests related to the planned file with the Jest of the package, leaving the RGAA-only tests out under WCAG', () => {
+    expect(JEST).toMatchObject({ name: 'jest', package: 'jest', binary: 'node_modules/.bin/jest' })
+    expect(JEST.args(WCAG_PLAN, REPORT_FILE)).toEqual([
+      '--findRelatedTests',
+      FILE,
+      '--json',
+      `--outputFile=${REPORT_FILE}`,
+      '--passWithNoTests',
+      '--testPathIgnorePatterns',
+      '/node_modules/',
+      '\\.rgaa\\.test\\.tsx$',
+    ])
+  })
+
+  it('leaves the WCAG-only tests out under RGAA', () => {
+    expect(JEST.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE).at(-1)).toBe('\\.wcag\\.test\\.tsx$')
+  })
+
+  it('reads the failing tests from the Jest report', () => {
+    expect(JEST.readReport(VITEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
   })
 })
