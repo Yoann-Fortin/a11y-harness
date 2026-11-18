@@ -52,4 +52,8 @@ describe('guardCommand', () => {
       expect(guardCommand(bashCall(command, REVIEWER))).toBeNull()
     },
   )
+
+  it('denies the reviewer another program that takes a git command as its arguments', () => {
+    expect(guardCommand(bashCall('rm -rf src git log --oneline', REVIEWER))).not.toBeNull()
+  })
 })
