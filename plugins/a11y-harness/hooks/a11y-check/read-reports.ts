@@ -21,6 +21,7 @@ type JestFormatAssertion = {
 }
 
 type JestFormatReport = {
+  numTotalTests: number
   testResults: { assertionResults: JestFormatAssertion[] }[]
 }
 
@@ -66,4 +67,9 @@ type PackageManifest = {
 export function readDependencies(packageJson: string): string[] {
   const { dependencies = {}, devDependencies = {} }: PackageManifest = JSON.parse(packageJson)
   return [...Object.keys(dependencies), ...Object.keys(devDependencies)]
+}
+
+export function countJestFormatTests(report: string): number {
+  const { numTotalTests }: JestFormatReport = JSON.parse(report)
+  return numTotalTests
 }

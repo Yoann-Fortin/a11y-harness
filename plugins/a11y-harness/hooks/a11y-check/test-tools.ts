@@ -1,6 +1,6 @@
 import type { FailingTest } from './format-feedback.ts'
 import type { CheckPlan, Standard } from './plan-checks.ts'
-import { readJestFormatReport } from './read-reports.ts'
+import { countJestFormatTests, readJestFormatReport } from './read-reports.ts'
 
 const VITEST_NAME = 'vitest'
 const VITEST_PACKAGE = 'vitest'
@@ -25,6 +25,7 @@ export type TestTool = {
   binary: string
   args: (plan: CheckPlan, reportFile: string) => string[]
   readReport: (report: string) => FailingTest[]
+  countTests: (report: string) => number
 }
 
 export const VITEST: TestTool = {
@@ -42,6 +43,7 @@ export const VITEST: TestTool = {
     VITEST_EXCLUDED_TESTS[plan.standard],
   ],
   readReport: readJestFormatReport,
+  countTests: countJestFormatTests,
 }
 
 export const JEST: TestTool = {
@@ -59,4 +61,5 @@ export const JEST: TestTool = {
     JEST_EXCLUDED_TESTS[plan.standard],
   ],
   readReport: readJestFormatReport,
+  countTests: countJestFormatTests,
 }
