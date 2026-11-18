@@ -3,10 +3,25 @@
     {
       "id": "form-field",
       "description": "Form field, as the RGAA glossary defines it (« Champ de saisie de formulaire »)",
-      "signals": ["<input", "<textarea", "<select", "role=[\"']combobox[\"']"],
+      "signals": [
+        "<input(?![^>]*type=[\"'](?:submit|reset|button|image|hidden)[\"'])",
+        "<textarea",
+        "<select",
+        "role=[\"']combobox[\"']"
+      ],
       "criteria": {
-        "wcag-2.2": ["1.3.1", "2.4.6", "2.5.3", "3.3.2", "4.1.2"],
-        "rgaa-4.1.2": ["11.1", "11.2", "11.4"]
+        "wcag-2.2": [
+          "1.3.1",
+          "2.4.6",
+          "2.5.3",
+          "3.3.2",
+          "4.1.2"
+        ],
+        "rgaa-4.1.2": [
+          "11.1",
+          "11.2",
+          "11.4"
+        ]
       }
     }
   ]
