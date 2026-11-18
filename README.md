@@ -4,10 +4,10 @@ A Claude Code plugin that checks the accessibility of React components against W
 
 It adds four things to Claude Code:
 
-- **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on. When no test covers the component, it asks Claude to write its accessibility tests first.
-- **A skill, `a11y-component-audit`.** It audits a component and quotes every criterion from the official texts bundled with it. It first lists, from a table of form elements and the criteria they open, every criterion the component calls for. A check rejects any report whose criterion, level, title or evidence is not in those texts, or that leaves out one of those criteria.
+- **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on. When no test covers the component, it asks Claude to write its accessibility tests first. When the file holds a form, it asks Claude to audit the form with the skill.
+- **A skill, `a11y-component-audit`.** It audits a form, with the components rendered inside it, and quotes every criterion from the official texts bundled with it. It first lists, from a table of form elements and the criteria they open, every criterion the component calls for. A check rejects any report whose criterion, level, title or evidence is not in those texts, or that leaves out one of those criteria.
 - **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them.
-- **An agent, `a11y-reviewer`.** It reviews several components, a folder or the changes of a branch with the skill, without editing any file.
+- **An agent, `a11y-reviewer`.** It reviews the forms of several components, a folder or the changes of a branch with the skill, without editing any file.
 
 ## Install
 
@@ -38,6 +38,8 @@ The hook runs the tools of the package that holds the component, chosen from the
 | `*.rgaa.test.tsx` | no | yes |
 
 When a test runner finds no test related to the changed component, the hook blocks and asks Claude to write the component's accessibility tests with `a11y-test-writer`. A team without accessibility tests gets them, and the hook runs them from then on.
+
+The audit only covers forms for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. When Claude writes or edits a file that holds a form, the hook asks for its audit even if every check passes.
 
 The skills and the agent need nothing else: ask Claude to audit a component, to write its accessibility tests, or to review a folder or a branch.
 
