@@ -1,3 +1,6 @@
+const WRITE_TESTS_INSTRUCTION =
+  'No test covers this component: write its accessibility tests with the a11y-test-writer skill for the chosen standard, then make them pass.'
+
 export type LintError = {
   file: string
   line: number
@@ -23,9 +26,14 @@ export type CheckResults = {
 }
 
 export function formatFeedback(results: CheckResults): string | null {
+  const isUntested = results.untestedBy.length > 0
   const hasFindings =
     results.lintErrors.length > 0 ||
     results.failingTests.length > 0 ||
-    results.toolFailures.length > 0
-  return hasFindings ? JSON.stringify(results) : null
+    results.toolFailures.length > 0 ||
+    isUntested
+  if (!hasFindings) {
+    return null
+  }
+  return JSON.stringify(isUntested ? { ...results, instruction: WRITE_TESTS_INSTRUCTION } : results)
 }
