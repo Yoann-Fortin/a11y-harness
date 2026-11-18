@@ -30,14 +30,14 @@ const TEST_RUNNER: TestTool = {
   binary: 'node_modules/.bin/runner',
   args: (plan, reportFile) => ['related', plan.filePath, reportFile],
   readReport: (report) => (report === TEST_REPORT ? [FAILING_TEST] : []),
-  countTests: () => 1,
+  countTests: (report) => (report === TEST_REPORT ? 1 : 0),
 }
 
 const OUTPUT = (stdout: string): CommandResult => ({ ok: true, stdout })
 
 type Call = { command: string; args: string[]; cwd: string }
 
-const fakeTools = (outputs: Record<string, CommandResult>) => {
+const fakeTools = (outputs: Record<string, CommandResult>, report = TEST_REPORT) => {
   const calls: Call[] = []
   return {
     calls,
@@ -45,7 +45,7 @@ const fakeTools = (outputs: Record<string, CommandResult>) => {
       calls.push({ command, args, cwd })
       return outputs[command] ?? CANNOT_RUN
     },
-    readText: async (path: string) => (path === REPORT_FILE ? TEST_REPORT : ''),
+    readText: async (path: string) => (path === REPORT_FILE ? report : ''),
     reportFile: REPORT_FILE,
     linters: [LINTER],
     testRunners: [TEST_RUNNER],
@@ -72,6 +72,7 @@ describe('runChecks', () => {
       lintErrors: [],
       failingTests: [FAILING_TEST],
       toolFailures: [{ tool: 'linter', message: 'command not found' }],
+      untestedBy: [],
     })
   })
 
@@ -93,6 +94,15 @@ describe('runChecks', () => {
       lintErrors: [LINT_ERROR],
       failingTests: [],
       toolFailures: [{ tool: 'runner', message: 'command not found' }],
+      untestedBy: [],
     })
+  })
+
+  it('names the test runner that found no test related to the planned file', async () => {
+    const tools = fakeTools({ [LINTER_PATH]: OUTPUT(''), [RUNNER_PATH]: OUTPUT('') }, '')
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(results.untestedBy).toEqual(['runner'])
   })
 })
