@@ -17,6 +17,13 @@ const FORM_FIELDS = [
   '<textarea name="message" />',
   '<select name="country">',
   '<div role="combobox" aria-expanded="false">',
+  '<datalist id="countries">',
+  '<output name="total">',
+  '<progress value={70} max={100} />',
+  '<meter value={0.6} />',
+  ...['textbox', 'searchbox', 'listbox', 'checkbox', 'radio', 'switch', 'slider', 'spinbutton', 'progressbar'].map(
+    (role) => `<div role="${role}">`,
+  ),
 ]
 
 const NOT_FORM_FIELDS = [
