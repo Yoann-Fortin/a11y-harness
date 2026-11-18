@@ -13,7 +13,7 @@ const matchesAny = (signals: string[], source: string) => signals.some((signal) 
 
 export const holdsForm = (table: CriteriaTable, source: string) => matchesAny(table.form.signals, source)
 
-export const inventoryOf = (table: CriteriaTable, [source]: string[], standard: string) =>
+export const inventoryOf = (table: CriteriaTable, sources: string[], standard: string) =>
   table.elements
-    .filter(({ signals }) => holdsForm(table, source) && matchesAny(signals, source))
+    .filter(({ signals }) => holdsForm(table, sources[0]) && sources.some((source) => matchesAny(signals, source)))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
