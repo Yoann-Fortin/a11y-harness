@@ -34,4 +34,13 @@ describe('formatFeedback', () => {
 
     expect(readFeedback(formatFeedback(results))).toEqual(results)
   })
+
+  it('asks for accessibility tests written with the test-writing skill when no test covers the file', () => {
+    const results = { ...NO_RESULTS, untestedBy: ['vitest'] }
+
+    expect(readFeedback(formatFeedback(results))).toEqual({
+      ...results,
+      instruction: expect.stringContaining('a11y-test-writer'),
+    })
+  })
 })
