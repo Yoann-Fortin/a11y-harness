@@ -37,11 +37,11 @@ The hook runs the tools of the package that holds the component, chosen from the
 | `*.wcag.test.tsx` | yes | no |
 | `*.rgaa.test.tsx` | no | yes |
 
-When a test runner finds no test related to the changed component, the hook blocks and asks Claude to write the component's accessibility tests with `a11y-test-writer`. A team without accessibility tests gets them, and the hook runs them from then on.
+When a test runner finds no test related to the changed component, the hook asks Claude to offer the component's accessibility tests, written with `a11y-test-writer`. Once the team agrees, it gets them, and the hook runs them from then on.
 
 The audit only covers forms for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. When Claude writes or edits a file that holds a form, the hook asks for its audit even if every check passes.
 
-The skills and the agent need nothing else: ask Claude to audit a component, to write its accessibility tests, or to review a folder or a branch.
+The skills and the agent need nothing else: ask Claude to audit a form, to write the accessibility tests of a component, or to review the forms of a folder or a branch.
 
 ## See the two verdicts
 
@@ -59,7 +59,7 @@ pnpm --dir playground test
 pnpm --dir playground test:rgaa
 ```
 
-The first command passes, the second fails on 11.10. In a Claude Code session with the plugin, an edit of `LoginForm.tsx` goes through silently under WCAG 2.2, and is blocked under RGAA 4.1.2 with the failing tests named.
+The first command passes, the second fails on 11.10. In a Claude Code session with the plugin, an edit of `LoginForm.tsx` makes the hook ask for the audit of the form under both standards, and under RGAA 4.1.2 it also names the failing tests.
 
 ## How it is built
 
@@ -78,6 +78,18 @@ The hook follows a light hexagonal architecture:
 | `read-reports.ts` | Anti-corruption layer: turns each tool's report, and the package dependencies, into domain types |
 | `main.ts` | Composition root: reads the event, the plugin option and the package dependencies, wires the adapters |
 
+The skills keep the same split in their scripts:
+
+| File | Role |
+| --- | --- |
+| `a11y-component-audit/scripts/find-criterion.ts` | Domain: finds a criterion, its tests and methodology in the official texts |
+| `a11y-component-audit/scripts/inventory.ts` | Domain: finds the form and its elements in the code, with the criteria each one opens |
+| `a11y-component-audit/scripts/validate-report.ts` | Domain: rejects a report that misquotes a criterion or leaves one of the inventory out |
+| `a11y-test-writer/scripts/judge-variants.ts` | Domain: flags a conforming variant that the tests reject, or a faulty one they accept |
+| `a11y-test-writer/scripts/verify-variants.ts` | Use case: puts each variant in place of the component, runs the tests, puts the component back |
+| `a11y-test-writer/scripts/run-test-file.ts` | Adapter: runs a test file with the Vitest or Jest of the package |
+| `main.ts` of each skill | Composition root: the `lookup`, `validate`, `inventory` and `verify-tests` commands |
+
 The skill bundles the official texts it quotes, unmodified, with their sources and licences in [`NOTICE.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/standards/NOTICE.md): WCAG 2.2 and the ACT rules mapping from the W3C, the RGAA 4.1.2 criteria and test methodology from the DINUM. Its rulings on forms, buttons and status messages, each with its source, are in [`reference/forms.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/forms.md).
 
 Everything was written test-first, one test at a time. Stryker requires a 100% mutation score in both places, and each mutant was replayed to check that a failing assertion kills it, not a crash.
@@ -92,7 +104,7 @@ claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" 
 
 `--scaffold` copies the components the agent reviews into each run, `--allow-tools` lets the skill run its scripts, and `--no-publish` keeps the report on your machine. Run it from a clean Claude Code profile (`CLAUDE_CONFIG_DIR`), so that no personal configuration skews the results.
 
-On 18 November 2026, with Claude Code 2.1.326, this command and `--runs 3`, Claude passed 38 runs out of 39 with the plugin, and 16 out of 39 without it:
+On the morning of 18 November 2026, with the 13 cases of the time, Claude Code 2.1.326, this command and `--runs 3`, Claude passed 38 runs out of 39 with the plugin, and 16 out of 39 without it. The suite has since grown to 18 cases, and its isolated fields now sit inside a form: the table will be refreshed with a new series.
 
 | Case | Standard | With the plugin | Without |
 | --- | --- | --- | --- |
