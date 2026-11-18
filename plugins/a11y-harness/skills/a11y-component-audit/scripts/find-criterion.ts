@@ -38,6 +38,7 @@ type RgaaCriterium = {
   number: number
   title: string
   tests: Record<string, string[]>
+  particularCases?: unknown[]
   references: RgaaCriteriumReferences
 }
 
@@ -51,6 +52,7 @@ export type RgaaCriterion = {
   id: string
   title: string
   tests: Record<string, string[]>
+  particularCases?: unknown[]
   references: { wcag: { version: number; criteria: string[] }; techniques: string[] }
 }
 
@@ -87,6 +89,7 @@ export function findRgaaCriteria(reference: RgaaReference, id: string): RgaaCrit
             {},
             ...Object.entries(criterium.tests).map(([test, lines]) => ({ [`${id}${NUMBER_SEPARATOR}${test}`]: lines })),
           ),
+          particularCases: criterium.particularCases,
           references: {
             wcag: {
               version: reference.wcag.version,
