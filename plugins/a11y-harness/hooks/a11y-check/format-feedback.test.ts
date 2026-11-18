@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { formatFeedback } from './format-feedback.ts'
 
-const NO_RESULTS = { lintErrors: [], failingTests: [], toolFailures: [] }
+const NO_RESULTS = { lintErrors: [], failingTests: [], toolFailures: [], untestedBy: [] }
 const LINT_ERROR = {
   file: 'src/Form.tsx',
   line: 3,

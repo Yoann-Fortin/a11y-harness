@@ -21,6 +21,7 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
   const lintErrors: LintError[] = []
   const failingTests: FailingTest[] = []
   const toolFailures: ToolFailure[] = []
+  const untestedBy: string[] = []
   for (const linter of tools.linters) {
     const output = await tools.run(join(plan.cwd, linter.binary), linter.args(plan), plan.cwd, TOOL_TIME_LIMIT_MS)
     if (output.ok) {
@@ -37,10 +38,14 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
       TOOL_TIME_LIMIT_MS,
     )
     if (output.ok) {
-      failingTests.push(...testRunner.readReport(await tools.readText(tools.reportFile)))
+      const report = await tools.readText(tools.reportFile)
+      failingTests.push(...testRunner.readReport(report))
+      if (testRunner.countTests(report) === 0) {
+        untestedBy.push(testRunner.name)
+      }
     } else {
       toolFailures.push({ tool: testRunner.name, message: output.failure })
     }
   }
-  return { lintErrors, failingTests, toolFailures }
+  return { lintErrors, failingTests, toolFailures, untestedBy }
 }

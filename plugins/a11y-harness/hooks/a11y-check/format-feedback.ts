@@ -19,6 +19,7 @@ export type CheckResults = {
   lintErrors: LintError[]
   failingTests: FailingTest[]
   toolFailures: ToolFailure[]
+  untestedBy: string[]
 }
 
 export function formatFeedback(results: CheckResults): string | null {
