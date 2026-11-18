@@ -33,7 +33,7 @@ const output = await handleEvent(await text(process.stdin), process.env[STANDARD
       reportFile: join(reportDir, REPORT_FILE),
       ...chooseTools(await dependenciesOf(plan.cwd)),
     }),
-  holdsForm: async (filePath) => holdsForm(JSON.parse(await readText(FORM_CRITERIA_FILE)), await readText(filePath)),
+  holdsForm: async (plan) => holdsForm(JSON.parse(await readText(FORM_CRITERIA_FILE)), await readText(plan.filePath)),
 })
 await rm(reportDir, { recursive: true, force: true })
 process.stdout.write(output)

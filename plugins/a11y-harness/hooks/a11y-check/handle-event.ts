@@ -7,7 +7,7 @@ const BLOCK_DECISION = 'block'
 export type HookPorts = {
   packageRootOf: (filePath: string) => string | null
   check: (plan: CheckPlan) => Promise<CheckResults>
-  holdsForm: (filePath: string) => Promise<boolean>
+  holdsForm: (plan: CheckPlan) => Promise<boolean>
 }
 
 const planFrom = (
@@ -32,6 +32,6 @@ export async function handleEvent(
   if (plan === null) {
     return SILENCE
   }
-  const feedback = formatFeedback({ ...(await ports.check(plan)), holdsForm: await ports.holdsForm(plan.filePath) })
+  const feedback = formatFeedback(Object.assign({}, await ports.check(plan), { holdsForm: await ports.holdsForm(plan) }))
   return feedback === null ? SILENCE : JSON.stringify({ decision: BLOCK_DECISION, reason: feedback })
 }

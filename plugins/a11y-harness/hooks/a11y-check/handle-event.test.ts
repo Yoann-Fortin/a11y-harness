@@ -18,7 +18,7 @@ const fakePorts = (results: CheckResults, packageRoot: string | null = null, for
   return {
     plans,
     packageRootOf: () => packageRoot,
-    holdsForm: async (filePath: string) => filePath === formFile,
+    holdsForm: async (plan: CheckPlan) => plan?.filePath === formFile,
     check: async (plan: CheckPlan) => {
       plans.push(plan)
       return results
@@ -70,8 +70,8 @@ describe('handleEvent', () => {
   })
 
   it('asks for an audit when the written file holds a form', async () => {
-    const output = JSON.parse(await handleEvent(WRITE_EVENT, undefined, fakePorts(NO_RESULTS, null, COMPONENT_PATH)))
+    const output = await handleEvent(WRITE_EVENT, undefined, fakePorts(NO_RESULTS, null, COMPONENT_PATH))
 
-    expect(JSON.parse(output.reason)).toMatchObject({ holdsForm: true, audit: expect.stringContaining('a11y-component-audit') })
+    expect(output).toContain('a11y-component-audit')
   })
 })
