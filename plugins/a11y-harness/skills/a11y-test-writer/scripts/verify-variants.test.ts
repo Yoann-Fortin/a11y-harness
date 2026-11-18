@@ -38,4 +38,10 @@ describe('verifyVariants', () => {
 
     expect(project.tested).toEqual([LABELLED, ORIGINAL])
   })
+
+  it('reports a conforming variant that the tests reject', async () => {
+    expect(await verifyVariants(PLAN, fakeProject([]))).toEqual([
+      { variant: WITH_LABEL, problem: 'conforming-variant-rejected' },
+    ])
+  })
 })
