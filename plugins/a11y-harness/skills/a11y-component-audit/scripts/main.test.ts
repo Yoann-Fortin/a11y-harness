@@ -17,6 +17,8 @@ const run = async (...args: string[]) => {
 
 const LOGIN_FIELD = '<form>\n  <label htmlFor="email">Adresse e-mail</label>\n  <input id="email" type="email" autoComplete="email" />\n</form>\n'
 
+const TOGGLE = '<button type="button" aria-pressed={isVisible}>\n'
+
 const writeComponent = async (source: string) => {
   const path = join(await mkdtemp(join(tmpdir(), 'a11y-component-')), 'Component.tsx')
   await writeFile(path, source)
@@ -80,6 +82,13 @@ describe('skill scripts, on the official reference files', () => {
       element: 'form-field',
       criteria: ['1.3.1', '2.4.6', '2.5.3', '3.3.2', '4.1.2'],
     })
+  })
+
+  it('lists the elements of the components rendered inside the form', async () => {
+    const form = await writeComponent(LOGIN_FIELD)
+    const toggle = await writeComponent(TOGGLE)
+
+    expect(await run('inventory', 'rgaa-4.1.2', form, toggle)).toContainEqual({ element: 'script-button', criteria: ['7.1', '7.3'] })
   })
 
   it('rejects a report that leaves out a criterion of the inventory of the component', async () => {
