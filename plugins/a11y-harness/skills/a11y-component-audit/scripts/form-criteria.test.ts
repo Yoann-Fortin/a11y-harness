@@ -70,6 +70,15 @@ const SUBMIT_BUTTONS = [
 
 const BUTTONS_THAT_DO_NOT_SUBMIT = ['<button type="button" onClick={onToggle}>', "<button\n  type='button'\n  aria-pressed={isPasswordVisible}\n>"]
 
+const FIELD_ERRORS = [
+  '<input aria-invalid={hasError} />',
+  '<input aria-errormessage={errorId} />',
+  "const EMAIL_FORMAT_ERROR = 'Saisissez une adresse e-mail valide'",
+  'setErrors({ email: undefined })',
+  '<input type="email" />',
+  '<input pattern="[0-9]{5}" />',
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -101,5 +110,9 @@ describe('form criteria table', () => {
 
   it.each(BUTTONS_THAT_DO_NOT_SUBMIT)('finds no button that submits a form in %s', (source) => {
     expect(elementsIn(source)).not.toContain('submit-button')
+  })
+
+  it.each(FIELD_ERRORS)('finds an error message or a native validation in %s', (source) => {
+    expect(elementsIn(source)).toContain('field-error')
   })
 })
