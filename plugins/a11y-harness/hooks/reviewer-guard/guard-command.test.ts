@@ -10,4 +10,8 @@ describe('guardCommand', () => {
       hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny' },
     })
   })
+
+  it('leaves the commands of other agents and of the main conversation alone', () => {
+    expect(guardCommand(bashCall('rm -rf src'))).toBeNull()
+  })
 })
