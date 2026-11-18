@@ -14,14 +14,14 @@ type EslintFileReport = {
   messages: { ruleId: string; message: string; line: number }[]
 }
 
-type VitestAssertion = {
+type JestFormatAssertion = {
   fullName: string
   status: string
   failureMessages: string[]
 }
 
-type VitestReport = {
-  testResults: { assertionResults: VitestAssertion[] }[]
+type JestFormatReport = {
+  testResults: { assertionResults: JestFormatAssertion[] }[]
 }
 
 export function readBiomeReport(report: string): LintError[] {
@@ -46,8 +46,8 @@ export function readEslintReport(report: string): LintError[] {
   )
 }
 
-export function readVitestReport(report: string): FailingTest[] {
-  const { testResults }: VitestReport = JSON.parse(report)
+export function readJestFormatReport(report: string): FailingTest[] {
+  const { testResults }: JestFormatReport = JSON.parse(report)
   return testResults.flatMap((file) =>
     file.assertionResults
       .filter((assertion) => assertion.status === FAILED_STATUS)

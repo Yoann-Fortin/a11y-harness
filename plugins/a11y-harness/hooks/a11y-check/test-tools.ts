@@ -1,6 +1,6 @@
 import type { FailingTest } from './format-feedback.ts'
 import type { CheckPlan, Standard } from './plan-checks.ts'
-import { readVitestReport } from './read-reports.ts'
+import { readJestFormatReport } from './read-reports.ts'
 
 const VITEST_NAME = 'vitest'
 const VITEST_PACKAGE = 'vitest'
@@ -41,7 +41,7 @@ export const VITEST: TestTool = {
     '--exclude',
     VITEST_EXCLUDED_TESTS[plan.standard],
   ],
-  readReport: readVitestReport,
+  readReport: readJestFormatReport,
 }
 
 export const JEST: TestTool = {
@@ -58,5 +58,5 @@ export const JEST: TestTool = {
     JEST_DEFAULT_IGNORED_PATHS,
     JEST_EXCLUDED_TESTS[plan.standard],
   ],
-  readReport: readVitestReport,
+  readReport: readJestFormatReport,
 }

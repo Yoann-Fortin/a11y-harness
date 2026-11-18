@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readBiomeReport, readDependencies, readVitestReport } from './read-reports.ts'
+import { readBiomeReport, readDependencies, readJestFormatReport } from './read-reports.ts'
 
 const BIOME_REPORT = JSON.stringify({
   diagnostics: [
@@ -35,9 +35,9 @@ describe('readBiomeReport', () => {
   })
 })
 
-describe('readVitestReport', () => {
+describe('readJestFormatReport', () => {
   it('keeps each failed test with the first line of its message', () => {
-    expect(readVitestReport(VITEST_REPORT)).toEqual([
+    expect(readJestFormatReport(VITEST_REPORT)).toEqual([
       { name: 'Form names the password field', message: 'Unable to find the label' },
     ])
   })

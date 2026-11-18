@@ -4,7 +4,7 @@ import { JEST, VITEST } from './test-tools.ts'
 const FILE = '/project/src/Form.tsx'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
 const WCAG_PLAN = { filePath: FILE, cwd: '/project', standard: 'wcag-2.2' as const }
-const VITEST_REPORT = JSON.stringify({
+const TEST_REPORT = JSON.stringify({
   testResults: [
     {
       assertionResults: [
@@ -34,7 +34,7 @@ describe('VITEST', () => {
   })
 
   it('reads the failing tests from the Vitest report', () => {
-    expect(VITEST.readReport(VITEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+    expect(VITEST.readReport(TEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
   })
 })
 
@@ -58,6 +58,6 @@ describe('JEST', () => {
   })
 
   it('reads the failing tests from the Jest report', () => {
-    expect(JEST.readReport(VITEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+    expect(JEST.readReport(TEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
   })
 })
