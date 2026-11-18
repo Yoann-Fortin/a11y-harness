@@ -6,10 +6,11 @@ allowed-tools: Read, Glob, Grep, Bash(node:*)
 
 # Accessibility audit of a component
 
-Every criterion, test, level and technique you cite comes from the official reference files bundled with this skill, never from memory. Two commands give access to them:
+Every criterion, test, level and technique you cite comes from the official reference files bundled with this skill, never from memory. Three commands give access to them:
 
 - **Look up a criterion**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" lookup <standard> <number>`, where `<standard>` is `wcag-2.2` or `rgaa-4.1.2` and `<number>` a criterion such as `3.3.2` or `11.1`. It prints the official title, the level and the techniques and failures of a WCAG success criterion, or the tests, their official methodology and the references of an RGAA criterion. It prints `null` for a criterion that does not exist.
 - **Check a report**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" validate '<report>'`, with the report as JSON on one line between single quotes, where an apostrophe `'` is written `'\''`. It prints `[]` when every citation matches the official texts, or the list of problems.
+- **List the criteria a component opens**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" inventory <standard> <file>`. It finds the form elements of the component file with the signals of [reference/form-criteria.json](reference/form-criteria.json), and prints each element with the criteria it opens.
 
 Run each command on its own, starting with `node` and written as above: no shell variable, loop or pipe, which the permission rules would refuse.
 
@@ -17,12 +18,12 @@ Run each command on its own, starting with `node` and written as above: no shell
 
 1. **Standard.** Audit against the standard the user names. When none is named, audit against WCAG 2.2 AA and say so.
 2. **Code.** Read the component and the components it renders.
-3. **Criteria.** List the criteria the code touches: form fields, buttons, images and icons, state changes, error messages.
-4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. Then run `lookup` for each criterion and rule from the official text only: For a React component, read [reference/react.md](reference/react.md) too: it records the defects that come from how React renders, to report as failures.
+3. **Criteria.** Run `inventory` on each component file, and rule on every criterion it prints. When the code is pasted instead of saved in a file, read [reference/form-criteria.json](reference/form-criteria.json) and match its signals yourself. Then add the criteria the code touches beyond forms, such as images.
+4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. For a React component, read [reference/react.md](reference/react.md) too: it records the defects that come from how React renders, to report as failures. Then run `lookup` for each criterion and rule from the official text only:
    - RGAA: apply the methodology of each test, step by step, and give the test number that decides the verdict.
    - WCAG: read the success criterion, then its sufficient techniques and documented failures.
    - A criterion fails only when the official text requires what the code lacks. Good practice that the standard does not require is advice, never a failure.
-5. **Report.** Write one finding per criterion you rule on, failed or compliant, and run `validate` until it prints `[]`:
+5. **Report.** Write one finding per criterion you rule on, failed or compliant, and run `validate` until it prints `[]`. Pass the component files after the report: `validate` then also rejects a report that leaves out a criterion of their inventory.
 
    ```json
    {
