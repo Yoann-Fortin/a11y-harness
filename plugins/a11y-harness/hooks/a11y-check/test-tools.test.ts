@@ -3,6 +3,7 @@ import { JEST, VITEST } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
+const TEST_FILE = '/project/src/Form.wcag.test.tsx'
 const WCAG_PLAN = { filePath: FILE, cwd: '/project', standard: 'wcag-2.2' as const }
 const TEST_REPORT = JSON.stringify({
   testResults: [
@@ -35,6 +36,10 @@ describe('VITEST', () => {
 
   it('reads the failing tests from the Vitest report', () => {
     expect(VITEST.readReport(TEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
+  })
+
+  it('runs a single test file with a JSON report', () => {
+    expect(VITEST.fileArgs(TEST_FILE, REPORT_FILE)).toEqual(['run', TEST_FILE, '--reporter=json', `--outputFile=${REPORT_FILE}`])
   })
 })
 
