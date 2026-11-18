@@ -9,8 +9,16 @@ const PASSWORD_LABEL = 'Mot de passe'
 const PASSWORD_AUTOCOMPLETE = 'current-password'
 const SUBMIT_LABEL = 'Se connecter'
 const EMAIL_REQUIRED_ERROR = 'Saisissez votre adresse e-mail'
+const EMAIL_FORMAT_ERROR = 'Saisissez une adresse e-mail valide, par exemple nom@domaine.fr'
 const PASSWORD_REQUIRED_ERROR = 'Saisissez votre mot de passe'
 const ERROR_SUMMARY = 'Le formulaire contient des erreurs'
+
+const emailErrorOf = (field: HTMLInputElement) => {
+  if (field.value === '') {
+    return EMAIL_REQUIRED_ERROR
+  }
+  return field.validity.typeMismatch ? EMAIL_FORMAT_ERROR : undefined
+}
 
 type FieldErrors = {
   email?: string
@@ -30,13 +38,13 @@ export function LoginForm() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     setErrors({
-      email: formData.get(EMAIL_FIELD_NAME) ? undefined : EMAIL_REQUIRED_ERROR,
+      email: emailErrorOf(event.currentTarget.elements.namedItem(EMAIL_FIELD_NAME) as HTMLInputElement),
       password: formData.get(PASSWORD_FIELD_NAME) ? undefined : PASSWORD_REQUIRED_ERROR,
     })
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit}>
       <p role="alert">{hasErrors && ERROR_SUMMARY}</p>
       <label htmlFor={emailFieldId}>{EMAIL_LABEL}</label>
       <input
