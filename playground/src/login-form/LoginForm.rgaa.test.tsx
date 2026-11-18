@@ -14,6 +14,8 @@ const REQUIRED_ATTRIBUTE = 'required'
 const ARIA_REQUIRED_ATTRIBUTE = 'aria-required'
 const ARIA_TRUE = 'true'
 const ANY_ELEMENT = '*'
+const MALFORMED_EMAIL = 'nom.domaine.fr'
+const ARIA_INVALID_ATTRIBUTE = 'aria-invalid'
 
 const emailField = () => screen.getByRole('textbox', { name: EMAIL_FIELD_NAME })
 const passwordField = () => screen.getByLabelText(PASSWORD_FIELD_LABEL)
@@ -49,6 +51,8 @@ const namesAsRequiredElsewhere = (field: HTMLElement) => {
   })
 }
 
+const mentionsOf = (name: RegExp) => (document.body.textContent ?? '').split(name).length
+
 const showsRequiredBeforeSubmission = (field: HTMLElement) =>
   isMarkedRequired(field)
     ? indicates(`${namingText(field)} ${describingText(field)}`, field)
@@ -72,5 +76,17 @@ describe('LoginForm, RGAA 4.1.2 only', () => {
 
     const alerts = Array.from(document.querySelectorAll(ALERT_SELECTOR))
     expect(alerts.some((alert) => (alert.textContent ?? '').trim() !== '')).toBe(true)
+  })
+
+  it('RGAA 11.10.6: names the email field in an error message, or marks it as invalid, when a malformed address is submitted', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
+    const mentionsBefore = mentionsOf(EMAIL_FIELD_NAME)
+
+    await user.type(emailField(), MALFORMED_EMAIL)
+    await user.click(screen.getByRole('button', { name: SUBMIT_BUTTON_NAME }))
+
+    const isMarkedInvalid = emailField().getAttribute(ARIA_INVALID_ATTRIBUTE) === ARIA_TRUE
+    expect(isMarkedInvalid || mentionsOf(EMAIL_FIELD_NAME) > mentionsBefore).toBe(true)
   })
 })
