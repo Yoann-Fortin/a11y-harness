@@ -38,4 +38,8 @@ describe('passesTestFile', () => {
   it('fails a test file with a failing test', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(FAILING_REPORT))).toBe(false)
   })
+
+  it('fails a test file that runs no test', async () => {
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(''))).toBe(false)
+  })
 })
