@@ -23,6 +23,10 @@ WCAG 2.2 does not require required fields to be indicated before submission. H90
 
 A general mention placed before the fields, such as « Tous les champs sont obligatoires », meets 3.3.2: G184, text instructions at the beginning of a form, is a sufficient technique with G131. It is also information available in text, which the normative text of 1.3.1 accepts. Understanding 1.3.1 strongly encourages determining relationships programmatically rather than describing them in text, but does not require it: `required` and `aria-required` are not mandatory under WCAG.
 
+### Native validation: 3.3.1 Error Identification (A)
+
+Understanding 3.3.1 states that the browser's native validation meets the success criterion, while warning that only the first error is exposed, that its messages are generic, and that its accessibility support must be checked. Do not fail 3.3.1 on native validation alone; list its support as a point to check.
+
 ### Buttons
 
 A button needs an accessible name: 4.1.2, ACT rule 97a4e1 "Button has non-empty accessible name". For a button that only shows an icon, 1.1.1 may be cited as well (Understanding 1.1.1, "Controls, Input"), but 4.1.2 is the criterion that the button fails.
@@ -56,6 +60,7 @@ The WCAG references listed under an RGAA criterion follow WCAG 2.1: `lookup` pri
 - That reading follows the letter of the test, and it is disputed: of two answers on the `rgaa` list of Renater (18 November 2026), one accepts the general mention when it comes before the fields, the other reads the test as above. When a form fails on this ground, say that the reading is disputed, and give first the fix that meets both: `required` on each field, and the mention linked to each field by `aria-describedby`, which also meets 11.10.2.
 - Test 11.10.2 only concerns fields that carry `required` or `aria-required="true"`: their visible indication must be in the label or in a text linked to the field by `aria-labelledby` or `aria-describedby`.
 - Glossary ("Indication de champ obligatoire"): an indication that is not explicit text, such as `*` or an icon, must be explained before its first use, visually and in the source order.
+- Test 11.10.6: an error message about an expected data type or format must be visible and identify the field by name (the official methodology says « nommément »), or the field must carry `aria-invalid="true"`. The browser's native validation fails it: a field of `type` `email`, `url` or `number`, or with `pattern`, `min` or `max`, in a form without `noValidate`, gets a generic message that names no field, and the browser adds no `aria-invalid` attribute. Fixes: `noValidate` with the form's own message naming the field, or `aria-invalid="true"` with the format indicated in the label or a linked text (test 11.10.7).
 - Particular case: 11.10.1 and 11.10.2 are not applicable to a form with a single field, or one that marks its optional fields visibly in the label or legend. They remain applicable when every field is required.
 
 ### Status messages: criterion 7.5
