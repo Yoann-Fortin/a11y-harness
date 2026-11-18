@@ -168,4 +168,8 @@ describe('unopenedCriteria', () => {
   it('accepts a criterion that the inventory opened', () => {
     expect(unopenedCriteria(['7.1'], ['7.1'], ['7.1', '11.9'])).toEqual([])
   })
+
+  it('leaves alone a criterion outside the criteria table, such as one about images', () => {
+    expect(unopenedCriteria(['1.1'], ['7.1'], ['7.1', '11.9'])).toEqual([])
+  })
 })
