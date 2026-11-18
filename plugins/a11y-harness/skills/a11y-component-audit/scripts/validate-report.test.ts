@@ -164,4 +164,8 @@ describe('unopenedCriteria', () => {
   it('flags a criterion of the report that belongs to the criteria table but that the inventory of the component did not open', () => {
     expect(unopenedCriteria(['11.9'], ['7.1'], ['7.1', '11.9'])).toEqual([{ criterion: '11.9', problem: 'unopened-criterion' }])
   })
+
+  it('accepts a criterion that the inventory opened', () => {
+    expect(unopenedCriteria(['7.1'], ['7.1'], ['7.1', '11.9'])).toEqual([])
+  })
 })
