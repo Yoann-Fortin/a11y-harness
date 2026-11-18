@@ -46,7 +46,7 @@ The WCAG references listed under an RGAA criterion follow WCAG 2.1: `lookup` pri
 
 ### Required fields: criterion 11.10
 
-- Test 11.10.1: before submission, each required field either has a visible indication that identifies it by name, or carries `required` or `aria-required="true"`.
+- Test 11.10.1: before submission, each required field either has a visible indication that identifies it by name, or carries `required` or `aria-required="true"`. A general mention placed before the fields, such as « Tous les champs sont obligatoires », identifies every field and meets the test without those attributes; placed after the fields, it does not (answer on the `rgaa` list of Renater, 18 November 2026).
 - Test 11.10.2 only concerns fields that carry `required` or `aria-required="true"`: their visible indication must be in the label or in a text linked to the field by `aria-labelledby` or `aria-describedby`.
 - Glossary ("Indication de champ obligatoire"): an indication that is not explicit text, such as `*` or an icon, must be explained before its first use, visually and in the source order.
 - Particular case: 11.10.1 and 11.10.2 are not applicable to a form with a single field, or one that marks its optional fields visibly in the label or legend. They remain applicable when every field is required.
