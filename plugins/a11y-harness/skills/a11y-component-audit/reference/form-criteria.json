@@ -104,6 +104,23 @@
           "11.9"
         ]
       }
+    },
+    {
+      "id": "field-error",
+      "description": "Error message of a field, or the native validation of the browser",
+      "signals": [
+        "aria-invalid|aria-errormessage|[Ee]rror|ERROR",
+        "type=[\"'](?:email|url|number)[\"']",
+        "\\b(?:pattern|min|max)="
+      ],
+      "criteria": {
+        "wcag-2.2": [
+          "3.3.1"
+        ],
+        "rgaa-4.1.2": [
+          "11.10"
+        ]
+      }
     }
   ]
 }
