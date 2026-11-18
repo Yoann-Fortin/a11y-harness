@@ -12,11 +12,13 @@ export type ProjectPorts = {
 }
 
 export async function verifyVariants(plan: VariantPlan, project: ProjectPorts) {
+  const original = await project.readText(plan.component)
   const contents = await Promise.all(plan.variants.map(({ file }) => project.readText(file)))
   const runs: VariantRun[] = []
   for (const [index, variant] of plan.variants.entries()) {
     await project.writeText(plan.component, contents[index])
     runs.push({ ...variant, variant: variant.file, passed: await project.runTests() })
   }
+  await project.writeText(plan.component, original)
   return problemsOf(runs)
 }
