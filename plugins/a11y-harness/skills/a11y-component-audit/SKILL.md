@@ -18,7 +18,7 @@ Run each command on its own, starting with `node` and written as above: no shell
 1. **Standard.** Audit against the standard the user names. When none is named, audit against WCAG 2.2 AA and say so.
 2. **Code.** Read the component and the components it renders.
 3. **Criteria.** List the criteria the code touches: form fields, buttons, images and icons, state changes, error messages.
-4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. Then run `lookup` for each criterion and rule from the official text only:
+4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. Then run `lookup` for each criterion and rule from the official text only: For a React component, read [reference/react.md](reference/react.md) too: it records the defects that come from how React renders, to report as failures.
    - RGAA: apply the methodology of each test, step by step, and give the test number that decides the verdict.
    - WCAG: read the success criterion, then its sufficient techniques and documented failures.
    - A criterion fails only when the official text requires what the code lacks. Good practice that the standard does not require is advice, never a failure.
