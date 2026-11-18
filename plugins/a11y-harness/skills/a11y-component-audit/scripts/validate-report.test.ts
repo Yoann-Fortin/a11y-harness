@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ActReference, RgaaReference, WcagReference } from './find-criterion.ts'
-import { missingCriteria, validateReport } from './validate-report.ts'
+import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
 const RGAA_TITLE = 'Required\u202ftitle\u00a0?'
@@ -157,5 +157,11 @@ describe('missingCriteria', () => {
     const report = { standard: 'wcag-2.2', findings: [WCAG_FINDING] }
 
     expect(missingCriteria(report, ['3.3.2', '4.1.2'])).toEqual([{ criterion: '4.1.2', problem: 'missing-criterion' }])
+  })
+})
+
+describe('unopenedCriteria', () => {
+  it('flags a criterion of the report that belongs to the criteria table but that the inventory of the component did not open', () => {
+    expect(unopenedCriteria(['11.9'], ['7.1'], ['7.1', '11.9'])).toEqual([{ criterion: '11.9', problem: 'unopened-criterion' }])
   })
 })
