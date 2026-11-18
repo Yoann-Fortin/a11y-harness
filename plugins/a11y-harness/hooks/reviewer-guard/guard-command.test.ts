@@ -56,4 +56,8 @@ describe('guardCommand', () => {
   it('denies the reviewer another program that takes a git command as its arguments', () => {
     expect(guardCommand(bashCall('rm -rf src git log --oneline', REVIEWER))).not.toBeNull()
   })
+
+  it('denies the reviewer a git command that writes its output to a file', () => {
+    expect(guardCommand(bashCall('git diff --output=changes.patch main', REVIEWER))).not.toBeNull()
+  })
 })
