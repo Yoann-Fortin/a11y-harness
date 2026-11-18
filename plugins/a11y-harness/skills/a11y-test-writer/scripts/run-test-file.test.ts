@@ -42,4 +42,10 @@ describe('passesTestFile', () => {
   it('fails a test file that runs no test', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(''))).toBe(false)
   })
+
+  it('fails a test file that the test runner cannot run', async () => {
+    const tools = { ...fakeTools(PASSING_REPORT), run: async (): Promise<CommandResult> => ({ ok: false, failure: 'command not found' }) }
+
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(false)
+  })
 })
