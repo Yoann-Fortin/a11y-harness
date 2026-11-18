@@ -37,7 +37,7 @@ describe('handleEvent', () => {
   })
 
   it('asks Claude to fix a component with findings', async () => {
-    const decision = JSON.stringify({ decision: 'block', reason: JSON.stringify(FINDINGS) })
+    const decision = JSON.stringify({ decision: 'block', reason: JSON.stringify({ ...FINDINGS, holdsForm: false }) })
 
     await expect(handleEvent(WRITE_EVENT, undefined, fakePorts(FINDINGS))).resolves.toBe(decision)
   })
