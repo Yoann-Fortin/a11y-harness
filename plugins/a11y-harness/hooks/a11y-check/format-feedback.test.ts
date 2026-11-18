@@ -58,4 +58,10 @@ describe('formatFeedback', () => {
 
     expect(feedback.instruction).toMatch(/only with (?:the|their) agreement/)
   })
+
+  it('asks Claude to apply the fixes of the audit only with the agreement of the user', () => {
+    const feedback = readFeedback(formatFeedback({ ...NO_RESULTS, holdsForm: true }))
+
+    expect(feedback.audit).toMatch(/only with (?:the|their) agreement/)
+  })
 })
