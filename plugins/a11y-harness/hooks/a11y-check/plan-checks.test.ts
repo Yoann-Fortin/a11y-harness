@@ -5,6 +5,7 @@ const PROJECT_DIR = '/project'
 const COMPONENT_PATH = '/project/src/LoginForm.tsx'
 const MODULE_PATH = '/project/src/format-date.ts'
 const JSX_COMPONENT_PATH = '/project/src/LoginForm.jsx'
+const VARIANT_PATH = '/project/src/a11y-variants/label.tsx'
 const WCAG_STANDARD = 'wcag-2.2'
 const RGAA_STANDARD = 'rgaa-4.1.2'
 
@@ -52,5 +53,11 @@ describe('planChecks', () => {
     )
 
     expect(plan?.standard).toBe(RGAA_STANDARD)
+  })
+
+  it('ignores the variants written to check the accessibility tests', () => {
+    const plan = planChecks({ tool_name: 'Write', tool_input: { file_path: VARIANT_PATH }, cwd: PROJECT_DIR })
+
+    expect(plan).toBeNull()
   })
 })
