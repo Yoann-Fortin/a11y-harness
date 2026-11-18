@@ -61,6 +61,13 @@ const SCRIPT_BUTTONS = [
   '<input type="button" value="Ajouter" />',
 ]
 
+const SUBMIT_BUTTONS = [
+  '<button type="submit">{SUBMIT_LABEL}</button>',
+  '<button>Se connecter</button>',
+  '<input type="submit" value="Envoyer" />',
+  '<input type="reset" />',
+]
+
 describe('form criteria table', () => {
   it.each(FORM_FIELDS)('finds a form field in %s', (source) => {
     expect(elementsIn(source)).toContain('form-field')
@@ -84,5 +91,9 @@ describe('form criteria table', () => {
 
   it.each(SCRIPT_BUTTONS)('finds a button driven by a script in %s', (source) => {
     expect(elementsIn(source)).toContain('script-button')
+  })
+
+  it.each(SUBMIT_BUTTONS)('finds a button that submits or resets a form in %s', (source) => {
+    expect(elementsIn(source)).toContain('submit-button')
   })
 })
