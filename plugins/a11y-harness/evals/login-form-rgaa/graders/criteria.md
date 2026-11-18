@@ -15,6 +15,8 @@ PASS only if the response:
 
 Reporting in addition, under 4.1.3 (WCAG) or 7.5 (RGAA), that a repeated identical message is not announced again because React leaves its live region unchanged is correct: it is a failure the plugin reports for React components. It does not make the response fail.
 
+Reporting in addition that the email field fails test 11.10.6, because the form has no noValidate and the browser's native message on a malformed address names no field and sets no aria-invalid, is correct. It does not make the response fail.
+
 FAIL in every case if the response:
 - cites a criterion, test, level or official title that does not exist in the standard it audits;
 - reports a failure without saying which criterion (and, for RGAA, which test) it fails;

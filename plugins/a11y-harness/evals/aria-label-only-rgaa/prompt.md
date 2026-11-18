@@ -10,11 +10,13 @@ Audit the accessibility of this React component against RGAA 4.1.2. It is render
 ```tsx
 export function ProductFilter({ onFilter }: { onFilter: (query: string) => void }) {
   return (
-    <input
-      type="text"
-      aria-label="Filtrer les produits"
-      onChange={(event) => onFilter(event.target.value)}
-    />
+    <form onSubmit={(event) => event.preventDefault()}>
+      <input
+        type="text"
+        aria-label="Filtrer les produits"
+        onChange={(event) => onFilter(event.target.value)}
+      />
+    </form>
   )
 }
 ```

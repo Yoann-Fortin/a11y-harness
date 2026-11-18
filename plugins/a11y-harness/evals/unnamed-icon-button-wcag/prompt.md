@@ -15,7 +15,7 @@ export function PasswordField() {
   const [isVisible, setIsVisible] = useState(false)
 
   return (
-    <>
+    <form onSubmit={(event) => event.preventDefault()}>
       <label htmlFor={fieldId}>Mot de passe</label>
       <input id={fieldId} type={isVisible ? 'text' : 'password'} autoComplete="current-password" />
       <button type="button" aria-pressed={isVisible} onClick={() => setIsVisible(!isVisible)}>
@@ -23,7 +23,7 @@ export function PasswordField() {
           <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
         </svg>
       </button>
-    </>
+    </form>
   )
 }
 ```

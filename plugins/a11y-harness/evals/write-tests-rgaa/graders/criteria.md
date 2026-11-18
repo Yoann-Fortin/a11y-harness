@@ -27,4 +27,6 @@ PASS only if this test file:
 - has a test named after 11.1.3 or criterion 11.1 that fails on the component above, because its label is not visible and it has neither a title attribute that explains the expected input nor a text passage next to it;
 - accepts every solution RGAA accepts for 11.1.3: a title attribute that explains the expected input, a visible label, or a text passage next to the field, visible or made visible on focus. In the RGAA glossary, a text passage is linked to the field by aria-labelledby or aria-describedby, so a test may require that link.
 
+A test may refuse a label element that wraps the field without a for attribute: the list of test 11.1.1, and its official methodology, only name « un élément <label> ayant un attribut for ».
+
 FAIL if a test asserts a hard-coded technique that a conforming solution would fail.

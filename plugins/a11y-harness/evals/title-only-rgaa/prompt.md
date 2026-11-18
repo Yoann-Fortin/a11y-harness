@@ -9,6 +9,10 @@ Audit the accessibility of this React component against RGAA 4.1.2. It is render
 
 ```tsx
 export function PhoneField() {
-  return <input type="tel" name="phone" autoComplete="tel" title="Numéro de téléphone" />
+  return (
+    <form onSubmit={(event) => event.preventDefault()}>
+      <input type="tel" name="phone" autoComplete="tel" title="Numéro de téléphone" />
+    </form>
+  )
 }
 ```

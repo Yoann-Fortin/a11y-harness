@@ -9,6 +9,10 @@ Audit the accessibility of this React component against WCAG 2.2 AA. It is rende
 
 ```tsx
 export function PhoneField() {
-  return <input type="tel" name="phone" autoComplete="tel" placeholder="Numéro de téléphone" />
+  return (
+    <form onSubmit={(event) => event.preventDefault()}>
+      <input type="tel" name="phone" autoComplete="tel" placeholder="Numéro de téléphone" />
+    </form>
+  )
 }
 ```
