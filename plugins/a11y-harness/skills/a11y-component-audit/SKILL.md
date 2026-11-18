@@ -22,7 +22,7 @@ Run each command on its own, starting with `node` and written as above: no shell
 4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. For a React component, read [reference/react.md](reference/react.md) too: it records the defects that come from how React renders, to report as failures. Then run `lookup` for each criterion and rule from the official text only:
    - RGAA: apply the methodology of each test, step by step, and give the test number that decides the verdict.
    - WCAG: read the success criterion, then its sufficient techniques and documented failures.
-   - A criterion fails only when the official text requires what the code lacks. Good practice that the standard does not require is advice, never a failure.
+   - Report only what the standard requires. A criterion fails when the official text requires what the code lacks; a missing good practice that the standard does not require is not reported.
 5. **Report.** Write one finding per criterion you rule on, failed or compliant, and run `validate` until it prints `[]`. Pass the form file and the files of the components inside it after the report: `validate` then also rejects a report that leaves out a criterion of their inventory, or that cites a criterion of the table that their inventory did not open, such as 11.9 without a button that submits the form.
 
    ```json

@@ -126,7 +126,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 
 ## Limits
 
-- **Conformance is not accessibility.** The skill separates failures, which the standard requires, from advice, which good practice suggests. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
+- **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
 - **The tests run in jsdom, without CSS.** They cannot judge contrast, visible focus, zoom or what a screen reader actually says, and a visually hidden label passes them. The skill lists these points as checks to make by hand.
 - **The agent is read-only by instruction.** It has no `Write` or `Edit` tool, but it keeps `Bash` to run the skill's scripts and read-only git commands.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
@@ -138,6 +138,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 - An agent that drives a real browser, for what jsdom cannot see.
 - A hook that refuses a report until `validate` accepts it.
 - Oxlint as a linter, and a plugin option to choose the tools instead of detecting them.
+- When the project already uses Stryker, a mutation run of the accessibility tests on the component, reporting only the survivors that touch accessibility attributes (`aria-*`, `role`, `label`, `htmlFor`).
 - Reference files for modals, menus and comboboxes.
 
 ## Licence
