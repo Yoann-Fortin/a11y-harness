@@ -81,4 +81,14 @@ describe('skill scripts, on the official reference files', () => {
       criteria: ['1.3.1', '2.4.6', '2.5.3', '3.3.2', '4.1.2'],
     })
   })
+
+  it('rejects a report that leaves out a criterion of the inventory of the component', async () => {
+    const report = await writeReport({ criterion: '3.3.2', level: 'A', quote: LABELS_TITLE })
+    const component = await writeComponent(LOGIN_FIELD)
+
+    await expect(run('validate', report, component)).rejects.toMatchObject({
+      code: FAILURE_EXIT_CODE,
+      stdout: expect.stringContaining(JSON.stringify({ criterion: '4.1.2', problem: 'missing-criterion' })),
+    })
+  })
 })
