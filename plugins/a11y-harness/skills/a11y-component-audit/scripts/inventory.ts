@@ -15,5 +15,5 @@ export const holdsForm = (table: CriteriaTable, source: string) => matchesAny(ta
 
 export const inventoryOf = (table: CriteriaTable, source: string, standard: string) =>
   table.elements
-    .filter(({ signals }) => matchesAny(signals, source))
+    .filter(({ signals }) => holdsForm(table, source) && matchesAny(signals, source))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
