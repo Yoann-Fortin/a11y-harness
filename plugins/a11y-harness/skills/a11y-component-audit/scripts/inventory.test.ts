@@ -32,4 +32,8 @@ describe('holdsForm', () => {
   it.each(['<form onSubmit={handleSubmit}>', '<div role="form">'])('finds a form in %s', (source) => {
     expect(holdsForm(TABLE, source)).toBe(true)
   })
+
+  it.each(['<fieldset>', '<div role="group">'])('finds no form in %s', (source) => {
+    expect(holdsForm(TABLE, source)).toBe(false)
+  })
 })
