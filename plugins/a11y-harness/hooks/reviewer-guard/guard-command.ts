@@ -1,10 +1,12 @@
 const REVIEWER_SUFFIX = 'a11y-reviewer'
 const SINGLE_QUOTED = /'[^']*'/g
 const SHELL_OPERATOR = /[;&|<>`$()]/
+const READ_ONLY_GIT = /git (?:diff|log|show) /
 const AUDIT_COMMAND = /^node "[^"]*\/skills\/a11y-component-audit\/scripts\/main\.ts" (?:lookup|validate|inventory) /
 
-const isPlainAuditCommand = (command: string) =>
-  AUDIT_COMMAND.test(command) && !command.split(SINGLE_QUOTED).some((unquoted) => SHELL_OPERATOR.test(unquoted))
+const isReadOnlyCommand = (command: string) =>
+  (AUDIT_COMMAND.test(command) || READ_ONLY_GIT.test(command)) &&
+  !command.split(SINGLE_QUOTED).some((unquoted) => SHELL_OPERATOR.test(unquoted))
 
 export type BashCall = {
   agent_type?: string
@@ -12,6 +14,6 @@ export type BashCall = {
 }
 
 export const guardCommand = (call: BashCall) =>
-  String(call.agent_type).endsWith(REVIEWER_SUFFIX) && !isPlainAuditCommand(call.tool_input.command)
+  String(call.agent_type).endsWith(REVIEWER_SUFFIX) && !isReadOnlyCommand(call.tool_input.command)
     ? { hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny' } }
     : null
