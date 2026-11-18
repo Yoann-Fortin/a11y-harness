@@ -1,7 +1,7 @@
 const REVIEWER_SUFFIX = 'a11y-reviewer'
 const SINGLE_QUOTED = /'[^']*'/g
 const SHELL_OPERATOR = /[;&|<>`$()]/
-const READ_ONLY_GIT = /git (?:diff|log|show) /
+const READ_ONLY_GIT = /^git (?:diff|log|show) /
 const AUDIT_COMMAND = /^node "[^"]*\/skills\/a11y-component-audit\/scripts\/main\.ts" (?:lookup|validate|inventory) /
 
 const isReadOnlyCommand = (command: string) =>
