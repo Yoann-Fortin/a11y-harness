@@ -1,13 +1,23 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { findRgaaCriteria, findWcagCriteria } from './find-criterion.ts'
 import { inventoryOf } from './inventory.ts'
 
 const TABLE_FILE = join(import.meta.dirname, '../reference/form-criteria.json')
+const STANDARDS_DIR = join(import.meta.dirname, '../reference/standards')
+const WCAG_FILE = 'wcag-2.2.json'
+const RGAA_FILE = 'rgaa-4.1.2-criteres.json'
+const RGAA = 'rgaa-4.1.2'
 const TEXT_ENCODING = 'utf8'
 const WCAG = 'wcag-2.2'
 
-const table = JSON.parse(readFileSync(TABLE_FILE, TEXT_ENCODING))
+const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
+const table = readJson(TABLE_FILE)
+const wcag = readJson(join(STANDARDS_DIR, WCAG_FILE))
+const rgaa = readJson(join(STANDARDS_DIR, RGAA_FILE))
+const criteriaOf = (standard: string): string[] =>
+  table.elements.flatMap(({ criteria }: { criteria: Record<string, string[]> }) => criteria[standard])
 const elementsIn = (source: string) => inventoryOf(table, source, WCAG).map(({ element }) => element)
 
 const FORM_FIELDS = [
@@ -125,5 +135,13 @@ describe('form criteria table', () => {
 
   it.each(STATUS_MESSAGES)('finds a status message in %s', (source) => {
     expect(elementsIn(source)).toContain('status-message')
+  })
+
+  it.each(criteriaOf(WCAG))('opens WCAG 2.2 success criterion %s, which the official texts define', (id) => {
+    expect(findWcagCriteria(wcag, id)).not.toEqual([])
+  })
+
+  it.each(criteriaOf(RGAA))('opens RGAA 4.1.2 criterion %s, which the official texts define', (id) => {
+    expect(findRgaaCriteria(rgaa, id)).not.toEqual([])
   })
 })
