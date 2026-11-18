@@ -24,15 +24,12 @@ export type TestTool = {
   package: string
   binary: string
   args: (plan: CheckPlan, reportFile: string) => string[]
+  fileArgs: (testFile: string, reportFile: string) => string[]
   readReport: (report: string) => FailingTest[]
   countTests: (report: string) => number
 }
 
-export type FileTestTool = TestTool & {
-  fileArgs: (testFile: string, reportFile: string) => string[]
-}
-
-export const VITEST: FileTestTool = {
+export const VITEST: TestTool = {
   name: VITEST_NAME,
   package: VITEST_PACKAGE,
   binary: VITEST_BINARY,
@@ -51,7 +48,7 @@ export const VITEST: FileTestTool = {
   countTests: countJestFormatTests,
 }
 
-export const JEST: FileTestTool = {
+export const JEST: TestTool = {
   name: JEST_NAME,
   package: JEST_PACKAGE,
   binary: JEST_BINARY,

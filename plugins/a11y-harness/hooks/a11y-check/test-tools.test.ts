@@ -65,6 +65,10 @@ describe('JEST', () => {
   it('reads the failing tests from the Jest report', () => {
     expect(JEST.readReport(TEST_REPORT)).toEqual([{ name: 'Form names the field', message: 'Unable to find the label' }])
   })
+
+  it('runs a single test file with a JSON report', () => {
+    expect(JEST.fileArgs(TEST_FILE, REPORT_FILE)).toEqual([TEST_FILE, '--json', `--outputFile=${REPORT_FILE}`])
+  })
 })
 
 describe('test counts', () => {
@@ -73,9 +77,5 @@ describe('test counts', () => {
     ['Jest', JEST],
   ])('counts the tests %s ran', (_, tool) => {
     expect(tool.countTests(JSON.stringify({ numTotalTests: 3, testResults: [] }))).toBe(3)
-  })
-
-  it('runs a single test file with a JSON report', () => {
-    expect(JEST.fileArgs(TEST_FILE, REPORT_FILE)).toEqual([TEST_FILE, '--json', `--outputFile=${REPORT_FILE}`])
   })
 })

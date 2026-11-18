@@ -29,6 +29,7 @@ const TEST_RUNNER: TestTool = {
   package: 'runner',
   binary: 'node_modules/.bin/runner',
   args: (plan, reportFile) => ['related', plan.filePath, reportFile],
+  fileArgs: (testFile, reportFile) => ['run', testFile, reportFile],
   readReport: (report) => (report === TEST_REPORT ? [FAILING_TEST] : []),
   countTests: (report) => (report === TEST_REPORT ? 1 : 0),
 }
