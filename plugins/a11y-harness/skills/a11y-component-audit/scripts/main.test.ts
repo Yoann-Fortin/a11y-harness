@@ -100,4 +100,13 @@ describe('skill scripts, on the official reference files', () => {
       stdout: expect.stringContaining(JSON.stringify({ criterion: '4.1.2', problem: 'missing-criterion' })),
     })
   })
+
+  it('rejects a report that cites a criterion of the table that the inventory of the component did not open', async () => {
+    const report = JSON.stringify({ standard: 'rgaa-4.1.2', findings: [{ criterion: '11.9', quote: 'any title' }] })
+    const component = await writeComponent(LOGIN_FIELD)
+
+    await expect(run('validate', report, component)).rejects.toMatchObject({
+      stdout: expect.stringContaining(JSON.stringify({ criterion: '11.9', problem: 'unopened-criterion' })),
+    })
+  })
 })
