@@ -19,6 +19,7 @@ type Outcome = { output: unknown; failed: boolean }
 
 const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
 const readReference = (file: string) => readJson(join(REFERENCE_DIR, file))
+const readSource = (path: string) => readFileSync(path, TEXT_ENCODING)
 const readReport = (argument: string) =>
   argument.startsWith(INLINE_REPORT_START) ? JSON.parse(argument) : readJson(argument)
 
@@ -38,11 +39,7 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
 
 const inventoryCriteria = (components: string[], standard: string) => [
   ...new Set(
-    components.flatMap((component) =>
-      inventoryOf(readJson(FORM_CRITERIA_FILE), [readFileSync(component, TEXT_ENCODING)], standard).flatMap(
-        ({ criteria }) => criteria,
-      ),
-    ),
+    inventoryOf(readJson(FORM_CRITERIA_FILE), components.map(readSource), standard).flatMap(({ criteria }) => criteria),
   ),
 ]
 
@@ -56,8 +53,8 @@ const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   return { output: problems, failed: problems.length > 0 }
 }
 
-const inventory = ([standard = '', component = '']: string[]): Outcome => ({
-  output: inventoryOf(readJson(FORM_CRITERIA_FILE), [readFileSync(component, TEXT_ENCODING)], standard),
+const inventory = ([standard = '', ...components]: string[]): Outcome => ({
+  output: inventoryOf(readJson(FORM_CRITERIA_FILE), components.map(readSource), standard),
   failed: false,
 })
 
