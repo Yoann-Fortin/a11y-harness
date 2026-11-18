@@ -29,4 +29,8 @@ describe('guardCommand', () => {
       expect(guardCommand(bashCall(command, REVIEWER))).not.toBeNull()
     },
   )
+
+  it('denies the reviewer another program that takes an audit command as its arguments', () => {
+    expect(guardCommand(bashCall(`rm -rf src ${SCRIPTS} lookup rgaa-4.1.2 11.1`, REVIEWER))).not.toBeNull()
+  })
 })
