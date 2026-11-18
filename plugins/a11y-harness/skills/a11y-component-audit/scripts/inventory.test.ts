@@ -30,6 +30,12 @@ describe('inventoryOf', () => {
   it('lists nothing in a source that holds no form', () => {
     expect(inventoryOf(TABLE, ['<input type="email" />'], WCAG)).toEqual([])
   })
+
+  it('lists the elements of the components rendered inside the form', () => {
+    const sources = ['<form onSubmit={signIn}><PasswordToggle /></form>', '<button type="button">']
+
+    expect(inventoryOf(TABLE, sources, WCAG)).toEqual([{ element: 'submit-button', criteria: ['4.1.2'] }])
+  })
 })
 
 describe('holdsForm', () => {
