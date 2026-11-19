@@ -1,7 +1,7 @@
 import { basename, extname } from 'node:path'
 import type { FailingTest } from './format-feedback.ts'
 import type { CheckPlan, Standard } from './plan-checks.ts'
-import { countJestFormatTests, readJestFormatReport } from './read-reports.ts'
+import { countJestFormatTests, readJestFormatReport, readPlaywrightReport } from './read-reports.ts'
 
 const VITEST_NAME = 'vitest'
 const VITEST_PACKAGE = 'vitest'
@@ -97,6 +97,6 @@ export const PLAYWRIGHT: TestTool = {
   args: (plan) => ['test', specFilesOf(plan), '--reporter=json', '--pass-with-no-tests'],
   fileArgs: VITEST.fileArgs,
   env: (reportFile) => ({ [PLAYWRIGHT_REPORT_VARIABLE]: reportFile }),
-  readReport: readJestFormatReport,
+  readReport: readPlaywrightReport,
   countTests: countJestFormatTests,
 }

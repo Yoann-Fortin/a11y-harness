@@ -2,6 +2,7 @@ import type { FailingTest, LintError } from './format-feedback.ts'
 
 const FAILED_STATUS = 'failed'
 const LINE_BREAK = '\n'
+const TITLE_SEPARATOR = ' '
 
 type BiomeDiagnostic = {
   message: string
@@ -72,4 +73,28 @@ export function readDependencies(packageJson: string): string[] {
 export function countJestFormatTests(report: string): number {
   const { numTotalTests }: JestFormatReport = JSON.parse(report)
   return numTotalTests
+}
+
+type PlaywrightSpec = { title: string; ok: boolean; tests: { results: { errors: { message: string }[] }[] }[] }
+type PlaywrightSuite = { title: string; specs: PlaywrightSpec[]; suites?: PlaywrightSuite[] }
+type PlaywrightReport = { suites: PlaywrightSuite[] }
+
+const firstErrorOf = (spec: PlaywrightSpec) =>
+  spec.tests
+    .flatMap((test) => test.results)
+    .flatMap((result) => result.errors)
+    .map((error) => error.message)
+    .join(LINE_BREAK)
+    .split(LINE_BREAK)[0]
+
+const failuresIn = (suite: PlaywrightSuite, titles: string[]): FailingTest[] => [
+  ...suite.specs
+    .filter((spec) => !spec.ok)
+    .map((spec) => ({ name: [...titles, spec.title].join(TITLE_SEPARATOR), message: firstErrorOf(spec) })),
+  ...(suite.suites ?? []).flatMap((child) => failuresIn(child, [...titles, child.title])),
+]
+
+export function readPlaywrightReport(report: string): FailingTest[] {
+  const { suites }: PlaywrightReport = JSON.parse(report)
+  return suites.flatMap((file) => failuresIn(file, []))
 }
