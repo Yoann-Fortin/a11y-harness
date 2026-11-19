@@ -23,12 +23,15 @@ const JEST_EXCLUDED_TESTS: Record<Standard, string> = {
 const PLAYWRIGHT_NAME = 'playwright'
 const PLAYWRIGHT_PACKAGE = '@playwright/test'
 const PLAYWRIGHT_BINARY = 'node_modules/.bin/playwright'
-const PLAYWRIGHT_FAMILY = 'wcag'
+const PLAYWRIGHT_FAMILIES: Record<Standard, string> = {
+  'wcag-2.2': 'wcag',
+  'rgaa-4.1.2': 'rgaa',
+}
 
 const addsNoVariables = () => ({})
 
 const specFilesOf = (plan: CheckPlan) =>
-  `(?:^|[\\\\/])${basename(plan.filePath, extname(plan.filePath))}(?:\\.${PLAYWRIGHT_FAMILY})?\\.spec\\.[jt]sx?$`
+  `(?:^|[\\\\/])${basename(plan.filePath, extname(plan.filePath))}(?:\\.${PLAYWRIGHT_FAMILIES[plan.standard]})?\\.spec\\.[jt]sx?$`
 
 export type TestTool = {
   name: string
