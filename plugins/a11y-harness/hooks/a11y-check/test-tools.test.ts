@@ -127,6 +127,10 @@ describe('PLAYWRIGHT', () => {
     ])
   })
 
+  it('reads no failing test from a report whose suites it cannot read', () => {
+    expect(PLAYWRIGHT.readReport(JSON.stringify({ suites: [{ title: 'Form.spec.tsx' }] }))).toEqual([])
+  })
+
   it('counts every test Playwright Test ran, skipped or flaky ones included', () => {
     expect(PLAYWRIGHT.countTests(JSON.stringify({ suites: [], stats: { expected: 1, unexpected: 2, flaky: 4, skipped: 8 } }))).toBe(15)
   })
