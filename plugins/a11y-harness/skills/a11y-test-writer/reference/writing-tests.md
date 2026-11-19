@@ -39,6 +39,20 @@ A test must not fail a solution the standard accepts. Before you write an assert
 
 Drive interactions with `@testing-library/user-event`, by keyboard as well as by pointer when the requirement concerns operation (`Enter`, `Space`, `Tab`). Assert what the user perceives through the accessibility tree, never internal state.
 
-## Limits
+## Tests in a browser
 
-jsdom has no CSS: contrast, visible focus, zoom and reflow cannot be tested this way, and a visually hidden label passes. List those requirements in your answer instead of writing a test that cannot fail.
+jsdom has no CSS, so a requirement that depends on rendering is tested in a browser, when the package runs tests in one:
+
+- **The browser mode of Vitest**, when its config has a project with `browser.enabled`. Write the tests in the files that project includes, read from the config, and keep the families: `Component.browser.test.tsx`, `Component.browser.wcag.test.tsx` and `Component.browser.rgaa.test.tsx` when it includes `*.browser.*test.tsx`. Render with `vitest-browser-react`, find elements with its `getByRole`, and move the focus with `userEvent` from `vitest/browser`, which drives a real keyboard.
+- **Playwright Test**, when the package depends on `@playwright/test` and its config points `baseURL` at a component gallery. Write `Component.spec.tsx`, `Component.wcag.spec.tsx` or `Component.rgaa.spec.tsx` in its `testDir`, named after the component so that the a11y-check hook finds them, and mount a story of the component with the `mount` fixture: `Component.story.tsx` next to it, one export per state. Write the story when there is none. Move the focus with `page.keyboard.press('Tab')`.
+
+Without either, list these requirements in your answer as checks to make by hand, instead of writing a test that cannot fail. Zoom, reflow and what a screen reader says stay checks by hand in every case.
+
+Test each requirement on what the browser renders, whatever technique meets it:
+
+- **Visible focus (WCAG 2.4.7, RGAA 10.7).** Press Tab until the focus leaves the component. For each element it reaches, compare its computed look while it has the focus with its look before any focus: outline, box-shadow, border, background, colour and text decoration, of the element, of its `::before` and `::after`, and of its ancestors up to the component. Any change passes: an outline, a shadow, a border or a background all meet it. Record the look while the element has the focus, not once the focus has moved on.
+- **Target size (WCAG 2.5.8, WCAG only).** Measure each target of the component with `getBoundingClientRect()`. It passes at 24 by 24 CSS pixels or more, or when a 24 pixel circle centred on it intersects no other target and no circle of another undersized target.
+- **Text contrast (WCAG 1.4.3, RGAA 3.2).** Run the `color-contrast` rule of axe-core in the browser, in each state that shows text, such as before and after a submission with errors. Its incomplete results fail the test too: they need a check by hand.
+- **Label position (RGAA 11.4.2, RGAA only).** Each visible label sits right above its field, overlapping it horizontally, or to its left on the same line, to its right for a right-to-left language. Checkboxes and radio buttons follow 11.4.3 instead.
+
+For these tests the stylesheet is part of the component, so their variants are stylesheets: for each requirement, one conforming stylesheet per technique, such as an outline, a box-shadow and a border colour for the focus, or a padding and a spacing for a target. Run `verify-tests` with the stylesheet as the component file.
