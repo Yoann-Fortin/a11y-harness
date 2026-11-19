@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { chooseTools } from './choose-tools.ts'
 import { BIOME, ESLINT } from './lint-tools.ts'
-import { JEST, VITEST } from './test-tools.ts'
+import { JEST, PLAYWRIGHT, VITEST } from './test-tools.ts'
 
 describe('chooseTools', () => {
   it.each([
@@ -9,6 +9,7 @@ describe('chooseTools', () => {
     ['Vitest', ['react', 'vitest'], { linters: [], testRunners: [VITEST] }],
     ['ESLint', ['react', 'eslint'], { linters: [ESLINT], testRunners: [] }],
     ['Jest', ['react', 'jest'], { linters: [], testRunners: [JEST] }],
+    ['Jest and Playwright Test', ['react', 'jest', '@playwright/test'], { linters: [], testRunners: [JEST, PLAYWRIGHT] }],
   ])('picks %s when the package depends on it', (_, dependencies, expected) => {
     expect(chooseTools(dependencies)).toEqual(expected)
   })
