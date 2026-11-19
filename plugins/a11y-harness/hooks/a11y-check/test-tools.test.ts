@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { JEST, VITEST } from './test-tools.ts'
+import { JEST, PLAYWRIGHT, VITEST } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
@@ -68,6 +68,18 @@ describe('JEST', () => {
 
   it('runs a single test file with a JSON report', () => {
     expect(JEST.fileArgs(TEST_FILE, REPORT_FILE)).toEqual([TEST_FILE, '--json', `--outputFile=${REPORT_FILE}`])
+  })
+})
+
+describe('PLAYWRIGHT', () => {
+  it('runs the spec files named after the planned component with the Playwright Test of the package, leaving the RGAA-only ones out under WCAG', () => {
+    expect(PLAYWRIGHT).toMatchObject({ name: 'playwright', package: '@playwright/test', binary: 'node_modules/.bin/playwright' })
+    expect(PLAYWRIGHT.args(WCAG_PLAN, REPORT_FILE)).toEqual([
+      'test',
+      '(?:^|[\\\\/])Form(?:\\.wcag)?\\.spec\\.[jt]sx?$',
+      '--reporter=json',
+      '--pass-with-no-tests',
+    ])
   })
 })
 
