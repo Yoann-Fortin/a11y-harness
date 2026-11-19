@@ -8,7 +8,9 @@ const WHAT_TO_DO =
   'Remove them from the answer: the audit only reports the criteria of its validated reports, never as a possibility.'
 
 const unopenedIn = (answer: string, opened: string[], standard: string, criteria: string[]) =>
-  opened.length === 0 ? [] : unopenedCriteria(citedCriteria(answer, standard), opened, criteria)
+  opened.length === 0
+    ? []
+    : unopenedCriteria(citedCriteria(answer, standard), opened, criteria).map((problem) => problem.criterion)
 
 export type AnswerCheck = {
   answer: string
@@ -23,6 +25,6 @@ export const guardAnswer = ({ answer, transcript, tableCriteria, stopHookActive 
   )
   return stopHookActive || unopened.length === 0 ? null : {
         decision: BLOCK_DECISION,
-        reason: `${UNOPENED_REASON} ${unopened.map(({ criterion }) => criterion).join()}. ${WHAT_TO_DO}`,
+        reason: `${UNOPENED_REASON} ${unopened.join()}. ${WHAT_TO_DO}`,
       }
 }
