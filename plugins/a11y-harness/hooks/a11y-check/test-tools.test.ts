@@ -81,6 +81,12 @@ describe('PLAYWRIGHT', () => {
       '--pass-with-no-tests',
     ])
   })
+
+  it('leaves the WCAG-only spec files out under RGAA', () => {
+    expect(PLAYWRIGHT.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE)[1]).toBe(
+      '(?:^|[\\\\/])Form(?:\\.rgaa)?\\.spec\\.[jt]sx?$',
+    )
+  })
 })
 
 describe('test counts', () => {
