@@ -48,6 +48,22 @@ describe('passesTestFile', () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(true)
   })
 
+  it('judges a test file with the first test runner of the package that runs any of its tests', async () => {
+    const otherRunner = { ...TEST_RUNNER, name: 'other', binary: 'node_modules/.bin/other' }
+    let lastCommand = ''
+    const tools = {
+      ...fakeTools(PASSING_REPORT),
+      testRunners: [otherRunner, TEST_RUNNER],
+      run: async (command: string): Promise<CommandResult> => {
+        lastCommand = command
+        return { ok: true, stdout: '' }
+      },
+      readText: async () => (lastCommand === RUNNER_PATH ? PASSING_REPORT : ''),
+    }
+
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(true)
+  })
+
   it('fails a test file with a failing test', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(FAILING_REPORT))).toBe(false)
   })
