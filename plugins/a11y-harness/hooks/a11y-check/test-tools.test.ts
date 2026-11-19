@@ -91,6 +91,10 @@ describe('PLAYWRIGHT', () => {
     ])
   })
 
+  it('writes its JSON report to the report file, which Playwright Test only takes from the environment', () => {
+    expect(PLAYWRIGHT.env(REPORT_FILE)).toEqual({ PLAYWRIGHT_JSON_OUTPUT_FILE: REPORT_FILE })
+  })
+
   it('leaves the WCAG-only spec files out under RGAA', () => {
     expect(PLAYWRIGHT.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE)[1]).toBe(
       '(?:^|[\\\\/])Form(?:\\.rgaa)?\\.spec\\.[jt]sx?$',
