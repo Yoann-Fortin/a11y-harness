@@ -36,7 +36,7 @@ const variantsOf = (args: string[]) => {
 const verifyTests = async ([testFile = '', component = '', ...variantArgs]: string[]) => {
   const cwd = findPackageRoot(component, existsSync) ?? process.cwd()
   const dependencies = await readText(join(cwd, PACKAGE_FILE)).then(readDependencies, () => [])
-  const { testRunners } = chooseTools(dependencies)
+  const testRunners = chooseTools(dependencies).testRunners.filter((testRunner) => existsSync(join(cwd, testRunner.binary)))
   if (testRunners.length === 0) {
     return NO_TEST_RUNNER
   }
