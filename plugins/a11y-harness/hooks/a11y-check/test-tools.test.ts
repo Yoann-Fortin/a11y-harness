@@ -127,6 +127,12 @@ describe('PLAYWRIGHT', () => {
     ])
   })
 
+  it('removes the colour codes that Playwright Test keeps in its error messages', () => {
+    const report = JSON.stringify({ suites: [{ title: 'Form.spec.tsx', specs: [failedSpec('shows the focus', 'Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m)')] }] })
+
+    expect(PLAYWRIGHT.readReport(report)).toEqual([{ name: 'shows the focus', message: 'Error: expect(received)' }])
+  })
+
   it('reads no failing test from a report whose suites it cannot read', () => {
     expect(PLAYWRIGHT.readReport(JSON.stringify({ suites: [{ title: 'Form.spec.tsx' }] }))).toEqual([])
   })
