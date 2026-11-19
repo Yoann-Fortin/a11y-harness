@@ -131,6 +131,14 @@ describe('PLAYWRIGHT', () => {
     expect(PLAYWRIGHT.countTests(JSON.stringify({ suites: [], stats: { expected: 1, unexpected: 2, flaky: 4, skipped: 8 } }))).toBe(15)
   })
 
+  it('runs a single spec file, matched literally, with a JSON report', () => {
+    expect(PLAYWRIGHT.fileArgs('src/Form.wcag.spec.tsx', REPORT_FILE)).toEqual([
+      'test',
+      'src/Form\\.wcag\\.spec\\.tsx$',
+      '--reporter=json',
+    ])
+  })
+
   it('leaves the WCAG-only spec files out under RGAA', () => {
     expect(PLAYWRIGHT.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE)[1]).toBe(
       '(?:^|[\\\\/])Form(?:\\.rgaa)?\\.spec\\.[jt]sx?$',
