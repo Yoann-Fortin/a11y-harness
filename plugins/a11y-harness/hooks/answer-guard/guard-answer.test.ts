@@ -19,4 +19,10 @@ describe('guardAnswer', () => {
       guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: false }),
     ).toMatchObject({ decision: 'block', reason: expect.stringContaining('11.9') })
   })
+
+  it('lets an answer through when the inventory opened every criterion it cites', () => {
+    const answer = 'The toggle fails 7.1, test 7.1.1.'
+
+    expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: false })).toBeNull()
+  })
 })
