@@ -1,6 +1,7 @@
 import { type SubmitEvent, useId, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle'
+import './LoginForm.css'
 
 const EMAIL_FIELD_NAME = 'email'
 const EMAIL_LABEL = 'Adresse e-mail'
