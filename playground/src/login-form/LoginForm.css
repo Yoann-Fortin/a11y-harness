@@ -58,10 +58,6 @@ form button[aria-pressed] svg {
   height: 16px;
 }
 
-form button:focus {
-  outline: none;
-}
-
 form p {
   min-height: 1.25rem;
   margin: 4px 0 0;
