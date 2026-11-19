@@ -28,10 +28,15 @@ const PLAYWRIGHT_FAMILIES: Record<Standard, string> = {
   'rgaa-4.1.2': 'rgaa',
 }
 
+const REGEX_SPECIAL_CHARACTERS = /[.*+?^${}()|[\]\\]/g
+const ESCAPED_MATCH = '\\$&'
+
 const addsNoVariables = () => ({})
 
+const escapeRegex = (text: string) => text.replace(REGEX_SPECIAL_CHARACTERS, ESCAPED_MATCH)
+
 const specFilesOf = (plan: CheckPlan) =>
-  `(?:^|[\\\\/])${basename(plan.filePath, extname(plan.filePath))}(?:\\.${PLAYWRIGHT_FAMILIES[plan.standard]})?\\.spec\\.[jt]sx?$`
+  `(?:^|[\\\\/])${escapeRegex(basename(plan.filePath, extname(plan.filePath)))}(?:\\.${PLAYWRIGHT_FAMILIES[plan.standard]})?\\.spec\\.[jt]sx?$`
 
 export type TestTool = {
   name: string
