@@ -82,6 +82,15 @@ describe('PLAYWRIGHT', () => {
     ])
   })
 
+  it('matches the name of the component literally, even with characters that a regular expression reads otherwise', () => {
+    const specFiles = new RegExp(PLAYWRIGHT.args({ ...WCAG_PLAN, filePath: '/project/src/Form.v2+.tsx' }, REPORT_FILE)[1])
+
+    expect(['/project/src/Form.v2+.spec.tsx', '/project/src/Formxv22.spec.tsx'].map((file) => specFiles.test(file))).toEqual([
+      true,
+      false,
+    ])
+  })
+
   it('leaves the WCAG-only spec files out under RGAA', () => {
     expect(PLAYWRIGHT.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE)[1]).toBe(
       '(?:^|[\\\\/])Form(?:\\.rgaa)?\\.spec\\.[jt]sx?$',
