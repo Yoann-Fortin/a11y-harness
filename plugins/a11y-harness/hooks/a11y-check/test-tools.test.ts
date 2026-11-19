@@ -127,6 +127,10 @@ describe('PLAYWRIGHT', () => {
     ])
   })
 
+  it('counts every test Playwright Test ran, skipped or flaky ones included', () => {
+    expect(PLAYWRIGHT.countTests(JSON.stringify({ suites: [], stats: { expected: 1, unexpected: 2, flaky: 4, skipped: 8 } }))).toBe(15)
+  })
+
   it('leaves the WCAG-only spec files out under RGAA', () => {
     expect(PLAYWRIGHT.args({ ...WCAG_PLAN, standard: 'rgaa-4.1.2' }, REPORT_FILE)[1]).toBe(
       '(?:^|[\\\\/])Form(?:\\.rgaa)?\\.spec\\.[jt]sx?$',
