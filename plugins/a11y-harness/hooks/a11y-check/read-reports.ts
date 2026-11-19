@@ -3,6 +3,9 @@ import type { FailingTest, LintError } from './format-feedback.ts'
 const FAILED_STATUS = 'failed'
 const LINE_BREAK = '\n'
 const TITLE_SEPARATOR = ' '
+const ESCAPE_CHARACTER = String.fromCharCode(27)
+const COLOUR_CODES = new RegExp(`${ESCAPE_CHARACTER}\\[[0-9;]*m`, 'g')
+const NOTHING = ''
 
 type BiomeDiagnostic = {
   message: string
@@ -86,7 +89,7 @@ const firstErrorOf = (spec: PlaywrightSpec) =>
   spec.tests
     .flatMap((test) => test.results)
     .flatMap((result) => result.errors)
-    .map((error) => error.message)
+    .map((error) => error.message.replace(COLOUR_CODES, NOTHING))
     .join(LINE_BREAK)
     .split(LINE_BREAK)[0]
 
