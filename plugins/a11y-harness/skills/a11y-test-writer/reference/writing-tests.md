@@ -10,7 +10,7 @@ Put the tests next to the component, in the family their requirement belongs to:
 | `Component.wcag.test.tsx` | WCAG 2.2 requires and RGAA 4.1.2 does not |
 | `Component.rgaa.test.tsx` | RGAA 4.1.2 requires and WCAG 2.2 does not |
 
-The a11y-check hook leaves out the family of the other standard. A test whose criterion differs between the two standards goes in the family of the standard asked for. Start the name of a standard-specific test with its criterion or test number: `WCAG 3.3.2: names the email field with text shown on the page`, `RGAA 11.1.3: ...`.
+The a11y-check hook leaves out the family of the other standard. A requirement that both standards share goes in `Component.test.tsx`, even when only one standard was asked for: for instance errors identified in text (WCAG 3.3.1, RGAA 11.10) and errors announced without moving focus (WCAG 4.1.3, RGAA 7.5). A test whose criterion differs between the two standards goes in the family of the standard asked for. Start the name of a standard-specific test with its criterion or test number: `WCAG 3.3.2: names the email field with text shown on the page`, `RGAA 11.1.3: ...`.
 
 ## Queries
 
@@ -29,6 +29,11 @@ A test must not fail a solution the standard accepts. Before you write an assert
 - **Errors announced without moving focus (WCAG 4.1.3, RGAA 7.5.2).** The message must be in a region with `role="alert"` or `aria-live="assertive"` (RGAA also asks for `aria-atomic="true"` with `aria-live`), present before the submission. Moving focus to the errors is the other conforming way: accept it.
 - **Repeated errors under React (WCAG 4.1.3, RGAA 7.5.2).** React leaves an alert region untouched when its text does not change, so test a second identical submission too: watch the alert regions with a `MutationObserver` that collects its records in its callback, and expect a change in them, or focus moved to the errors.
 - **A toggle button.** Its state may be exposed by `aria-pressed` or by a name that changes; accept both.
+
+## Cover every case
+
+- **Each case on its own.** For a requirement that depends on what the user enters, test each case separately: each required field left empty while the others are filled, a malformed value, and the case with no error, where nothing is flagged or announced. A message shown only when every field is empty, or a field always flagged, passes a test that only submits an empty form.
+- **Through the form that renders it.** A child component, such as a toggle button, a field or an error summary, is tested by rendering the form and acting on it, so that a form that does not wire the child to its state fails. Testing the child on its own comes in addition, never instead.
 
 ## Behaviour
 
