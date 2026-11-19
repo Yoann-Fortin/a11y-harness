@@ -15,5 +15,5 @@ export const guardAnswer = ({ answer, transcript, tableCriteria }: AnswerCheck) 
   const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) =>
     unopenedCriteria(citedCriteria(answer, standard), openedCriteria(transcript, standard), criteria),
   )
-  return { decision: BLOCK_DECISION, reason: unopened.map(({ criterion }) => criterion).join() }
+  return unopened.length === 0 ? null : { decision: BLOCK_DECISION, reason: unopened.map(({ criterion }) => criterion).join() }
 }
