@@ -77,7 +77,10 @@ export function countJestFormatTests(report: string): number {
 
 type PlaywrightSpec = { title: string; ok: boolean; tests: { results: { errors: { message: string }[] }[] }[] }
 type PlaywrightSuite = { title: string; specs: PlaywrightSpec[]; suites?: PlaywrightSuite[] }
-type PlaywrightReport = { suites: PlaywrightSuite[] }
+type PlaywrightReport = {
+  suites: PlaywrightSuite[]
+  stats: { expected: number; unexpected: number; flaky: number; skipped: number }
+}
 
 const firstErrorOf = (spec: PlaywrightSpec) =>
   spec.tests
@@ -97,4 +100,9 @@ const failuresIn = (suite: PlaywrightSuite, titles: string[]): FailingTest[] => 
 export function readPlaywrightReport(report: string): FailingTest[] {
   const { suites }: PlaywrightReport = JSON.parse(report)
   return suites.flatMap((file) => failuresIn(file, []))
+}
+
+export function countPlaywrightTests(report: string): number {
+  const { stats }: PlaywrightReport = JSON.parse(report)
+  return stats.expected + stats.unexpected + stats.flaky + stats.skipped
 }
