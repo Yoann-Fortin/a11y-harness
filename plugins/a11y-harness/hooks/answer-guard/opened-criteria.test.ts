@@ -29,4 +29,11 @@ describe('openedCriteria', () => {
 
     expect(openedCriteria(transcript, RGAA)).toEqual(['11.1', '11.2'])
   })
+
+  it('leaves out an inventory run for the other standard', () => {
+    const wcagInventory = INVENTORY_COMMAND.replace('rgaa-4.1.2', 'wcag-2.2')
+    const transcript = [toolUse('toolu_1', wcagInventory), toolResult('toolu_1', '[{"element":"form-field","criteria":["3.3.2"]}]')]
+
+    expect(openedCriteria(transcript, RGAA)).toEqual([])
+  })
 })
