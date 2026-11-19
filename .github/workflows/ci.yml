@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  PNPM_VERSION: 10.20.0
+  CLAUDE_CODE_VERSION: 2.1.326
+  NODE_VERSION: '24'
+
+jobs:
+  plugin:
+    name: Plugin on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22.18', '24']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+
+  manifests:
+    name: Plugin and marketplace manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npx --yes @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }} plugin validate .
+      - run: npx --yes @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }} plugin validate plugins/a11y-harness
+
+  plugin-mutation:
+    name: Plugin mutation score
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:mutation
+
+  playground:
+    name: Playground
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir playground test
+      - run: pnpm --dir playground build
+      - run: pnpm --dir playground test:mutation

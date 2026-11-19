@@ -96,6 +96,8 @@ The skill bundles the official texts it quotes, unmodified, with their sources a
 
 Everything was written test-first, one test at a time. Stryker requires a 100% mutation score in both places, and each mutant was replayed to check that a failing assertion kills it, not a crash.
 
+The [CI workflow](.github/workflows/ci.yml) runs on each push to `main` and each pull request: type checking, lint and tests on Node 22.18 and 24, the validation of both manifests, the sandbox tests and build, and Stryker in both places.
+
 ## Evaluations
 
 The skill and the agent have evaluation cases in `plugins/a11y-harness/evals`, run with and without the plugin:
