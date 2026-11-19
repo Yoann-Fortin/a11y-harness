@@ -1,3 +1,4 @@
+import { basename, extname } from 'node:path'
 import type { FailingTest } from './format-feedback.ts'
 import type { CheckPlan, Standard } from './plan-checks.ts'
 import { countJestFormatTests, readJestFormatReport } from './read-reports.ts'
@@ -18,6 +19,16 @@ const JEST_EXCLUDED_TESTS: Record<Standard, string> = {
   'wcag-2.2': '\\.rgaa\\.test\\.tsx$',
   'rgaa-4.1.2': '\\.wcag\\.test\\.tsx$',
 }
+
+const PLAYWRIGHT_NAME = 'playwright'
+const PLAYWRIGHT_PACKAGE = '@playwright/test'
+const PLAYWRIGHT_BINARY = 'node_modules/.bin/playwright'
+const PLAYWRIGHT_FAMILY = 'wcag'
+
+const addsNoVariables = () => ({})
+
+const specFilesOf = (plan: CheckPlan) =>
+  `(?:^|[\\\\/])${basename(plan.filePath, extname(plan.filePath))}(?:\\.${PLAYWRIGHT_FAMILY})?\\.spec\\.[jt]sx?$`
 
 export type TestTool = {
   name: string
@@ -45,7 +56,7 @@ export const VITEST: TestTool = {
     VITEST_EXCLUDED_TESTS[plan.standard],
   ],
   fileArgs: (testFile, reportFile) => ['run', testFile, '--reporter=json', `--outputFile=${reportFile}`],
-  env: () => ({}),
+  env: addsNoVariables,
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
@@ -65,7 +76,18 @@ export const JEST: TestTool = {
     JEST_EXCLUDED_TESTS[plan.standard],
   ],
   fileArgs: (testFile, reportFile) => [testFile, '--json', `--outputFile=${reportFile}`],
-  env: () => ({}),
+  env: addsNoVariables,
+  readReport: readJestFormatReport,
+  countTests: countJestFormatTests,
+}
+
+export const PLAYWRIGHT: TestTool = {
+  name: PLAYWRIGHT_NAME,
+  package: PLAYWRIGHT_PACKAGE,
+  binary: PLAYWRIGHT_BINARY,
+  args: (plan) => ['test', specFilesOf(plan), '--reporter=json', '--pass-with-no-tests'],
+  fileArgs: VITEST.fileArgs,
+  env: addsNoVariables,
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
