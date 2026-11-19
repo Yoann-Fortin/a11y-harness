@@ -36,4 +36,8 @@ describe('openedCriteria', () => {
 
     expect(openedCriteria(transcript, RGAA)).toEqual([])
   })
+
+  it('reads no criterion from a transcript it cannot parse, so that the answer goes through', () => {
+    expect(openedCriteria(['{"type":"assistant","message":', toolResult('toolu_1', FIELD_INVENTORY)], RGAA)).toEqual([])
+  })
 })
