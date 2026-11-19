@@ -25,4 +25,10 @@ describe('guardAnswer', () => {
 
     expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: false })).toBeNull()
   })
+
+  it('lets the answer through when Claude is already answering a first block', () => {
+    const answer = 'Many auditors would also fail 11.9.'
+
+    expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: true })).toBeNull()
+  })
 })
