@@ -11,4 +11,8 @@ describe('citedCriteria', () => {
   it('reads every digit of a two-digit criterion number', () => {
     expect(citedCriteria('Criterion 11.10 fails.', RGAA)).toEqual(['11.10'])
   })
+
+  it('does not read the version of a standard as a criterion', () => {
+    expect(citedCriteria('Against RGAA 4.1.2 and WCAG 2.1, criterion 11.9 fails.', RGAA)).toEqual(['11.9'])
+  })
 })
