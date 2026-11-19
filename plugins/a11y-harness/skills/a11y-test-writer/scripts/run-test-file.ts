@@ -11,8 +11,7 @@ export type TestFileTools = {
   testRunners: TestTool[]
 }
 
-export async function passesTestFile(testFile: string, cwd: string, tools: TestFileTools) {
-  const [testRunner] = tools.testRunners
+async function verdictOf(testRunner: TestTool, testFile: string, cwd: string, tools: TestFileTools) {
   const output = await tools.run(
     join(cwd, testRunner.binary),
     testRunner.fileArgs(testFile, tools.reportFile),
@@ -21,8 +20,18 @@ export async function passesTestFile(testFile: string, cwd: string, tools: TestF
     testRunner.env(tools.reportFile),
   )
   if (!output.ok) {
-    return false
+    return undefined
   }
   const report = await tools.readText(tools.reportFile)
-  return testRunner.readReport(report).length === 0 && testRunner.countTests(report) > 0
+  return testRunner.countTests(report) === 0 ? undefined : testRunner.readReport(report).length === 0
+}
+
+export async function passesTestFile(testFile: string, cwd: string, tools: TestFileTools) {
+  for (const testRunner of tools.testRunners) {
+    const verdict = await verdictOf(testRunner, testFile, cwd, tools)
+    if (verdict !== undefined) {
+      return verdict
+    }
+  }
+  return false
 }
