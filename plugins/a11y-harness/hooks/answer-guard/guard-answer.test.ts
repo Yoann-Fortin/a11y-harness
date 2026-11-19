@@ -31,4 +31,10 @@ describe('guardAnswer', () => {
 
     expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: true })).toBeNull()
   })
+
+  it('lets through the answer of a session that ran no inventory', () => {
+    const answer = 'Criterion 11.9 of the RGAA covers the buttons of a form.'
+
+    expect(guardAnswer({ answer, transcript: [], tableCriteria: TABLE_CRITERIA, stopHookActive: false })).toBeNull()
+  })
 })
