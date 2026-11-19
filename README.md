@@ -111,10 +111,10 @@ The [CI workflow](.github/workflows/ci.yml) runs on each push to `main` and each
 The skill and the agent have evaluation cases in `plugins/a11y-harness/evals`, run with and without the plugin:
 
 ```bash
-claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" --no-publish
+claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" Write --no-publish
 ```
 
-`--scaffold` copies the components the agent reviews into each run, `--allow-tools` lets the skill run its scripts, and `--no-publish` keeps the report on your machine. Run it from a clean Claude Code profile (`CLAUDE_CONFIG_DIR`), so that no personal configuration skews the results.
+`--scaffold` copies the components the agent reviews into each run, `--allow-tools` lets the skills run their scripts and write the tests, and `--no-publish` keeps the report on your machine. Run it from a clean Claude Code profile (`CLAUDE_CONFIG_DIR`), so that no personal configuration skews the results.
 
 On the morning of 18 November 2026, with the 13 cases of the time, Claude Code 2.1.326, this command and `--runs 3`, Claude passed 38 runs out of 39 with the plugin, and 16 out of 39 without it. The suite has since grown to 18 cases, and its isolated fields now sit inside a form: the table will be refreshed with a new series.
 
