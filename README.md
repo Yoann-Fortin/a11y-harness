@@ -21,7 +21,13 @@ claude plugin marketplace add Yoann-Fortin/a11y-harness
 claude plugin install a11y-harness@a11y-harness
 ```
 
-The plugin follows WCAG 2.2 AA by default. To follow RGAA 4.1.2 instead:
+The plugin follows WCAG 2.2 AA by default. To follow RGAA 4.1.2 instead, set its option when you install it:
+
+```bash
+claude plugin install a11y-harness@a11y-harness --config standard=rgaa-4.1.2
+```
+
+Or change it later, then restart Claude Code:
 
 ```bash
 echo '{"standard":"rgaa-4.1.2"}' | claude plugin configure a11y-harness@a11y-harness --values-stdin
