@@ -1,11 +1,15 @@
 const INVENTORY_COMMAND = ' inventory '
 
 type Block = { type: string; id?: string; tool_use_id?: string; input?: { command?: string }; content?: string }
-type Entry = { message: { content: Block[] } }
+type Entry = { message?: { content?: Block[] | string } }
+type MessageEntry = { message: { content: Block[] } }
 type InventoryElement = { criteria: string[] }
 
 const blocksOf = (transcript: string[]) =>
-  transcript.map((line): Entry => JSON.parse(line)).flatMap((entry) => entry.message.content)
+  transcript
+    .map((line): Entry => JSON.parse(line))
+    .filter((entry): entry is MessageEntry => Array.isArray(entry.message?.content))
+    .flatMap((entry) => entry.message.content)
 
 const inventoriedCriteria = (transcript: string[], standard: string) => {
   const blocks = blocksOf(transcript)
