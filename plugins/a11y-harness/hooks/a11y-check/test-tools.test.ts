@@ -71,6 +71,31 @@ describe('JEST', () => {
   })
 })
 
+const failedSpec = (title: string, message: string) => ({
+  title,
+  ok: false,
+  tests: [{ results: [{ status: 'failed', errors: [{ message: `${message}\n\nExpected: []` }] }] }],
+})
+const PLAYWRIGHT_REPORT = JSON.stringify({
+  suites: [
+    { title: 'Toggle.spec.tsx', specs: [failedSpec('has a name', 'Error: name missing')] },
+    {
+      title: 'Form.spec.tsx',
+      specs: [],
+      suites: [
+        {
+          title: 'Form',
+          specs: [
+            failedSpec('shows the focus', 'Error: focus not visible'),
+            { title: 'has enough contrast', ok: true, tests: [{ results: [{ status: 'passed', errors: [] }] }] },
+          ],
+        },
+      ],
+    },
+  ],
+  stats: { expected: 1, unexpected: 2, flaky: 0, skipped: 0 },
+})
+
 describe('PLAYWRIGHT', () => {
   it('runs the spec files named after the planned component with the Playwright Test of the package, leaving the RGAA-only ones out under WCAG', () => {
     expect(PLAYWRIGHT).toMatchObject({ name: 'playwright', package: '@playwright/test', binary: 'node_modules/.bin/playwright' })
@@ -93,6 +118,13 @@ describe('PLAYWRIGHT', () => {
 
   it('writes its JSON report to the report file, which Playwright Test only takes from the environment', () => {
     expect(PLAYWRIGHT.env(REPORT_FILE)).toEqual({ PLAYWRIGHT_JSON_OUTPUT_FILE: REPORT_FILE })
+  })
+
+  it('reads the failing tests from the Playwright report, inside describe blocks or not', () => {
+    expect(PLAYWRIGHT.readReport(PLAYWRIGHT_REPORT)).toEqual([
+      { name: 'has a name', message: 'Error: name missing' },
+      { name: 'Form shows the focus', message: 'Error: focus not visible' },
+    ])
   })
 
   it('leaves the WCAG-only spec files out under RGAA', () => {
