@@ -23,6 +23,7 @@ const JEST_EXCLUDED_TESTS: Record<Standard, string> = {
 const PLAYWRIGHT_NAME = 'playwright'
 const PLAYWRIGHT_PACKAGE = '@playwright/test'
 const PLAYWRIGHT_BINARY = 'node_modules/.bin/playwright'
+const PLAYWRIGHT_REPORT_VARIABLE = 'PLAYWRIGHT_JSON_OUTPUT_FILE'
 const PLAYWRIGHT_FAMILIES: Record<Standard, string> = {
   'wcag-2.2': 'wcag',
   'rgaa-4.1.2': 'rgaa',
@@ -95,7 +96,7 @@ export const PLAYWRIGHT: TestTool = {
   binary: PLAYWRIGHT_BINARY,
   args: (plan) => ['test', specFilesOf(plan), '--reporter=json', '--pass-with-no-tests'],
   fileArgs: VITEST.fileArgs,
-  env: addsNoVariables,
+  env: (reportFile) => ({ [PLAYWRIGHT_REPORT_VARIABLE]: reportFile }),
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
