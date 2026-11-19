@@ -3,6 +3,7 @@ import type { RunCommand } from '../../../hooks/a11y-check/run-checks.ts'
 import type { TestTool } from '../../../hooks/a11y-check/test-tools.ts'
 
 const TEST_RUN_TIME_LIMIT_MS = 120_000
+const NO_VERDICT = null
 
 export type TestFileTools = {
   run: RunCommand
@@ -20,16 +21,20 @@ async function verdictOf(testRunner: TestTool, testFile: string, cwd: string, to
     testRunner.env(tools.reportFile),
   )
   if (!output.ok) {
-    return undefined
+    return NO_VERDICT
   }
-  const report = await tools.readText(tools.reportFile)
-  return testRunner.countTests(report) === 0 ? undefined : testRunner.readReport(report).length === 0
+  try {
+    const report = await tools.readText(tools.reportFile)
+    return testRunner.countTests(report) === 0 ? NO_VERDICT : testRunner.readReport(report).length === 0
+  } catch {
+    return NO_VERDICT
+  }
 }
 
 export async function passesTestFile(testFile: string, cwd: string, tools: TestFileTools) {
   for (const testRunner of tools.testRunners) {
     const verdict = await verdictOf(testRunner, testFile, cwd, tools)
-    if (verdict !== undefined) {
+    if (verdict !== NO_VERDICT) {
       return verdict
     }
   }
