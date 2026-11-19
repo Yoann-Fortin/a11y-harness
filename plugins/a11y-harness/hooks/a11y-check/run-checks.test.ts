@@ -41,10 +41,13 @@ type Call = { command: string; args: string[]; cwd: string }
 
 const fakeTools = (outputs: Record<string, CommandResult>, report = TEST_REPORT) => {
   const calls: Call[] = []
+  const variables: Record<string, Record<string, string> | undefined> = {}
   return {
     calls,
-    run: async (command: string, args: string[], cwd: string) => {
+    variables,
+    run: async (command: string, args: string[], cwd: string, _timeoutMs: number, given?: Record<string, string>) => {
       calls.push({ command, args, cwd })
+      variables[command] = given
       return outputs[command] ?? CANNOT_RUN
     },
     readText: async (path: string) => (path === REPORT_FILE ? report : ''),
@@ -85,6 +88,14 @@ describe('runChecks', () => {
 
     expect(tools.calls).toContainEqual({ command: RUNNER_PATH, args: ['related', FILE, REPORT_FILE], cwd: PROJECT_DIR })
     expect(results.failingTests).toEqual([FAILING_TEST])
+  })
+
+  it('runs each test runner with the variables it adds to the environment', async () => {
+    const tools = fakeTools({ [LINTER_PATH]: OUTPUT(''), [RUNNER_PATH]: OUTPUT('') })
+
+    await runChecks(PLAN, tools)
+
+    expect(tools.variables[RUNNER_PATH]).toEqual({ RUNNER_REPORT: REPORT_FILE })
   })
 
   it('reports a test runner that cannot run as a tool failure', async () => {
