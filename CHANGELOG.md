@@ -20,5 +20,6 @@ All notable changes to this project are documented here. The format follows [Kee
 - `a11y-reviewer` agent: reviews the forms of several components, a folder or the changes of a branch with the audit skill, without changing any file.
 - GitHub Actions workflow: type checking, lint and tests of the plugin on Node 22.18 and 24, validation of the marketplace and plugin manifests, tests and build of the sandbox, and a 100% mutation score in both places.
 - README: installation, choice of standard, the two verdicts of the playground, architecture, evaluations, limits and roadmap.
+- Browser tests in the playground: a `browser` Vitest project runs the `*.browser.*test.tsx` files in Chromium through Playwright, next to the `jsdom` project, and both leave out the tests of the other standard.
 - WCAG-only tests for the login form (3.3.2, each field named by text shown on the page), written from the first cycle.
 - RGAA-only tests for the login form: 7.5.2 (errors announced as an alert), 11.10.6 (a malformed email address gets an error naming the field, so the form turns off the browser's native validation), and 11.10.1 and 11.10.2 (required fields shown before submission), which the form fails on purpose. Under WCAG 2.2 the hook only asks for the audit of the form, under RGAA 4.1.2 it also names the failing tests and their criterion.

@@ -73,6 +73,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir playground exec playwright install --with-deps chromium-headless-shell
       - run: pnpm --dir playground test
       - run: pnpm --dir playground build
       - run: pnpm --dir playground test:mutation
