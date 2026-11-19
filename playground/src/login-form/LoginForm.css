@@ -21,7 +21,7 @@ form label {
   margin-bottom: 4px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #9ca3af;
+  color: #4b5563;
 }
 
 form input {
@@ -62,7 +62,7 @@ form p {
   min-height: 1.25rem;
   margin: 4px 0 0;
   font-size: 0.875rem;
-  color: #f87171;
+  color: #dc2626;
 }
 
 form p[role="alert"] {
@@ -76,7 +76,7 @@ form button[type="submit"] {
   font: inherit;
   font-weight: 600;
   color: #ffffff;
-  background: #6366f1;
+  background: #4f46e5;
   border: 0;
   border-radius: 8px;
   cursor: pointer;
