@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -63,4 +64,23 @@ describe('verify-tests, end to end on the playground', () => {
     },
     END_TO_END_TIME_LIMIT_MS,
   )
+
+  it('reports no test runner when the package names one that is not installed', async () => {
+    const projectDir = await mkdtemp(join(tmpdir(), 'a11y-verify-uninstalled-'))
+    await writeFile(join(projectDir, 'package.json'), JSON.stringify({ devDependencies: { vitest: '^5.1.1' } }))
+    await writeFile(join(projectDir, 'Filter.tsx'), NAMED_BY_ARIA_LABEL)
+    const component = join(projectDir, 'Filter.tsx')
+
+    const { stdout } = await execFileAsync(process.execPath, [
+      SCRIPTS,
+      'verify-tests',
+      join(projectDir, 'Filter.test.tsx'),
+      component,
+      '--faulty',
+      component,
+    ]).catch((error: { stdout: string }) => error)
+    await rm(projectDir, { recursive: true, force: true })
+
+    expect(JSON.parse(stdout)).toEqual([{ problem: 'no-test-runner' }])
+  })
 })
