@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { playwright } from '@vitest/browser-playwright'
 import svgr from 'vite-plugin-svgr'
-import { defineConfig } from 'vitest/config'
+import { defineConfig, type TestProjectInlineConfiguration } from 'vitest/config'
 
 const JSDOM_PROJECT = 'jsdom'
 const BROWSER_PROJECT = 'browser'
@@ -11,19 +11,21 @@ const JSDOM_TESTS = ['src/**/!(*.browser.*).test.tsx']
 const BROWSER_TESTS = ['src/**/*.browser.*test.tsx']
 const BROWSER = 'chromium'
 
+export const jsdomProject: TestProjectInlineConfiguration = {
+  extends: true,
+  test: {
+    name: JSDOM_PROJECT,
+    environment: TEST_ENVIRONMENT,
+    setupFiles: [TEST_SETUP_FILE],
+    include: JSDOM_TESTS,
+  },
+}
+
 export default defineConfig({
   plugins: [react(), svgr()],
   test: {
     projects: [
-      {
-        extends: true,
-        test: {
-          name: JSDOM_PROJECT,
-          environment: TEST_ENVIRONMENT,
-          setupFiles: [TEST_SETUP_FILE],
-          include: JSDOM_TESTS,
-        },
-      },
+      jsdomProject,
       {
         extends: true,
         test: {

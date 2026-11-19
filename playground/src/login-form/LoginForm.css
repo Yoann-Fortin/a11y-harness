@@ -45,7 +45,7 @@ form button[aria-pressed] {
   grid-column: 2;
   align-self: center;
   margin-left: -28px;
-  padding: 0;
+  padding: 4px;
   color: #6b7280;
   background: none;
   border: 0;
