@@ -42,6 +42,7 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
       testRunner.args(plan, tools.reportFile),
       plan.cwd,
       TOOL_TIME_LIMIT_MS,
+      testRunner.env(tools.reportFile),
     )
     if (output.ok) {
       const report = await tools.readText(tools.reportFile)
