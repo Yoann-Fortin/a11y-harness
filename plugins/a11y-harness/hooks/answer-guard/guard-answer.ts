@@ -11,9 +11,9 @@ export type AnswerCheck = {
   stopHookActive: boolean
 }
 
-export const guardAnswer = ({ answer, transcript, tableCriteria }: AnswerCheck) => {
+export const guardAnswer = ({ answer, transcript, tableCriteria, stopHookActive }: AnswerCheck) => {
   const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) =>
     unopenedCriteria(citedCriteria(answer, standard), openedCriteria(transcript, standard), criteria),
   )
-  return unopened.length === 0 ? null : { decision: BLOCK_DECISION, reason: unopened.map(({ criterion }) => criterion).join() }
+  return stopHookActive || unopened.length === 0 ? null : { decision: BLOCK_DECISION, reason: unopened.map(({ criterion }) => criterion).join() }
 }
