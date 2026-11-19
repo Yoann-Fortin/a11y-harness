@@ -7,6 +7,9 @@ const UNOPENED_REASON = 'The answer cites criteria that the inventory of the aud
 const WHAT_TO_DO =
   'Remove them from the answer: the audit only reports the criteria of its validated reports, never as a possibility.'
 
+const unopenedIn = (answer: string, opened: string[], standard: string, criteria: string[]) =>
+  opened.length === 0 ? [] : unopenedCriteria(citedCriteria(answer, standard), opened, criteria)
+
 export type AnswerCheck = {
   answer: string
   transcript: string[]
@@ -15,10 +18,9 @@ export type AnswerCheck = {
 }
 
 export const guardAnswer = ({ answer, transcript, tableCriteria, stopHookActive }: AnswerCheck) => {
-  const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) => {
-    const opened = openedCriteria(transcript, standard)
-    return opened.length === 0 ? [] : unopenedCriteria(citedCriteria(answer, standard), opened, criteria)
-  })
+  const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) =>
+    unopenedIn(answer, openedCriteria(transcript, standard), standard, criteria),
+  )
   return stopHookActive || unopened.length === 0 ? null : {
         decision: BLOCK_DECISION,
         reason: `${UNOPENED_REASON} ${unopened.map(({ criterion }) => criterion).join()}. ${WHAT_TO_DO}`,
