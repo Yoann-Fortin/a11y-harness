@@ -43,6 +43,18 @@ describe('runCommand', () => {
     expect(result).toEqual({ ok: true, stdout: '1' })
   })
 
+  it('adds the given variables to the environment of the command', async () => {
+    const result = await runCommand(
+      NODE,
+      ['-e', 'process.stdout.write(process.env.RUNNER_REPORT ?? "")'],
+      WORKING_DIR,
+      TIME_LIMIT_MS,
+      { RUNNER_REPORT: 'report.json' },
+    )
+
+    expect(result).toEqual({ ok: true, stdout: 'report.json' })
+  })
+
   it('stops a command that runs past the time limit', async () => {
     const result = await runCommand(NODE, ['-e', 'setTimeout(() => {}, 10000)'], WORKING_DIR, SHORT_TIME_LIMIT_MS)
 
