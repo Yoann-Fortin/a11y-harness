@@ -18,6 +18,7 @@ export async function passesTestFile(testFile: string, cwd: string, tools: TestF
     testRunner.fileArgs(testFile, tools.reportFile),
     cwd,
     TEST_RUN_TIME_LIMIT_MS,
+    testRunner.env(tools.reportFile),
   )
   if (!output.ok) {
     return false
