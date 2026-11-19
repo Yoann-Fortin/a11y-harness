@@ -35,13 +35,15 @@ echo '{"standard":"rgaa-4.1.2"}' | claude plugin configure a11y-harness@a11y-har
 
 ## Use it in a project
 
-The hook runs the tools of the package that holds the component, chosen from the dependencies in its `package.json`: Biome or ESLint to lint the file, Vitest or Jest to run the tests related to it. A package that uses none of them is left alone. The tests of the other standard are left out:
+The hook runs the tools of the package that holds the component, chosen from the dependencies in its `package.json`: Biome or ESLint to lint the file, Vitest, Jest or Playwright Test to run the tests related to it. A package that uses none of them is left alone. The tests of the other standard are left out:
 
 | Test file | Runs under WCAG 2.2 | Runs under RGAA 4.1.2 |
 | --- | --- | --- |
-| `*.test.tsx` | yes | yes |
-| `*.wcag.test.tsx` | yes | no |
-| `*.rgaa.test.tsx` | no | yes |
+| `*.test.tsx`, `*.browser.test.tsx`, `*.spec.tsx` | yes | yes |
+| `*.wcag.test.tsx`, `*.browser.wcag.test.tsx`, `*.wcag.spec.tsx` | yes | no |
+| `*.rgaa.test.tsx`, `*.browser.rgaa.test.tsx`, `*.rgaa.spec.tsx` | no | yes |
+
+What jsdom cannot see, such as visible focus, target size, contrast or where a label sits, is tested in a browser. With the browser mode of Vitest, a `browser` project runs the `*.browser.*test.tsx` files, as in the playground. With Playwright Test, the spec files are named after the component and mount its story through a component gallery, as the [Playwright documentation](https://playwright.dev/docs/test-components) describes: the hook runs those named after the edited component.
 
 When a test runner finds no test related to the changed component, the hook asks Claude to offer the component's accessibility tests, written with `a11y-test-writer`. Once the team agrees, it gets them, and the hook runs them from then on.
 
