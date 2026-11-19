@@ -40,4 +40,15 @@ describe('openedCriteria', () => {
   it('reads no criterion from a transcript it cannot parse, so that the answer goes through', () => {
     expect(openedCriteria(['{"type":"assistant","message":', toolResult('toolu_1', FIELD_INVENTORY)], RGAA)).toEqual([])
   })
+
+  it('reads past the lines that hold no message, such as the prompt or a summary', () => {
+    const transcript = [
+      JSON.stringify({ type: 'summary', summary: 'Review of the login form' }),
+      JSON.stringify({ type: 'user', message: { role: 'user', content: 'Review the login form' } }),
+      toolUse('toolu_1', INVENTORY_COMMAND),
+      toolResult('toolu_1', FIELD_INVENTORY),
+    ]
+
+    expect(openedCriteria(transcript, RGAA)).toEqual(['11.1', '11.2'])
+  })
 })
