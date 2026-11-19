@@ -32,7 +32,7 @@ A test must not fail a solution the standard accepts. Before you write an assert
 
 ## Cover every case
 
-- **Each case on its own.** For a requirement that depends on what the user enters, test each case separately: each required field left empty while the others are filled, a malformed value, and the case with no error, where nothing is flagged or announced. A message shown only when every field is empty, or a field always flagged, passes a test that only submits an empty form.
+- **Each case on its own.** For a requirement that depends on what the user enters, test each case separately, for every requirement it touches: each required field left empty while the others are filled, a malformed value, and the case with no error, where nothing is flagged or announced. Errors that must be announced (4.1.3, 7.5.2) are tested in each of these cases too, not only when every field is empty. A message shown only when every field is empty, or a field always flagged, passes a test that only submits an empty form.
 - **Through the form that renders it.** A child component, such as a toggle button, a field or an error summary, is tested by rendering the form and acting on it, so that a form that does not wire the child to its state fails. Testing the child on its own comes in addition, never instead.
 
 ## Behaviour
