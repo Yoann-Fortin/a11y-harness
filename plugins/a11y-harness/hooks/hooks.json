@@ -1,5 +1,5 @@
 {
-  "description": "Checks the accessibility of a React component after Claude writes or edits it, and keeps the a11y-reviewer agent read-only",
+  "description": "Checks the accessibility of a React component after Claude writes or edits it, keeps the a11y-reviewer agent read-only, and sends back an answer that cites a criterion the audit did not open",
   "hooks": {
     "PostToolUse": [
       {
@@ -21,6 +21,17 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/reviewer-guard/main.ts\"",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/answer-guard/main.ts\"",
+            "timeout": 30
           }
         ]
       }
