@@ -64,6 +64,27 @@ describe('passesTestFile', () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(true)
   })
 
+  it('moves on to the next test runner when one writes no report, as Jest does when it finds no test', async () => {
+    const otherRunner = { ...TEST_RUNNER, name: 'other', binary: 'node_modules/.bin/other' }
+    let lastCommand = ''
+    const tools = {
+      ...fakeTools(PASSING_REPORT),
+      testRunners: [otherRunner, TEST_RUNNER],
+      run: async (command: string): Promise<CommandResult> => {
+        lastCommand = command
+        return { ok: true, stdout: '' }
+      },
+      readText: async () => {
+        if (lastCommand !== RUNNER_PATH) {
+          throw new Error('no report')
+        }
+        return PASSING_REPORT
+      },
+    }
+
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(true)
+  })
+
   it('fails a test file with a failing test', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(FAILING_REPORT))).toBe(false)
   })
