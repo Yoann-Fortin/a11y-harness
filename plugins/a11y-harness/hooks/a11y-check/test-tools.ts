@@ -95,7 +95,7 @@ export const PLAYWRIGHT: TestTool = {
   package: PLAYWRIGHT_PACKAGE,
   binary: PLAYWRIGHT_BINARY,
   args: (plan) => ['test', specFilesOf(plan), '--reporter=json', '--pass-with-no-tests'],
-  fileArgs: VITEST.fileArgs,
+  fileArgs: (testFile) => ['test', `${escapeRegex(testFile)}$`, '--reporter=json'],
   env: (reportFile) => ({ [PLAYWRIGHT_REPORT_VARIABLE]: reportFile }),
   readReport: readPlaywrightReport,
   countTests: countPlaywrightTests,
