@@ -99,7 +99,11 @@ const failuresIn = (suite: PlaywrightSuite, titles: string[]): FailingTest[] => 
 
 export function readPlaywrightReport(report: string): FailingTest[] {
   const { suites }: PlaywrightReport = JSON.parse(report)
-  return suites.flatMap((file) => failuresIn(file, []))
+  try {
+    return suites.flatMap((file) => failuresIn(file, []))
+  } catch {
+    return []
+  }
 }
 
 export function countPlaywrightTests(report: string): number {
