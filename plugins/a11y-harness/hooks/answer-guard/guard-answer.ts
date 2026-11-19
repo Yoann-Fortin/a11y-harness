@@ -23,8 +23,7 @@ export const guardAnswer = ({ answer, transcript, tableCriteria, stopHookActive 
   const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) =>
     unopenedIn(answer, openedCriteria(transcript, standard), standard, criteria),
   )
-  return stopHookActive || unopened.length === 0 ? null : {
-        decision: BLOCK_DECISION,
-        reason: `${UNOPENED_REASON} ${unopened.join()}. ${WHAT_TO_DO}`,
-      }
+  return stopHookActive || unopened.length === 0
+    ? null
+    : { decision: BLOCK_DECISION, reason: `${UNOPENED_REASON} ${unopened.join()}. ${WHAT_TO_DO}` }
 }
