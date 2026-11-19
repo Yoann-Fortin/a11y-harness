@@ -37,4 +37,11 @@ describe('guardAnswer', () => {
 
     expect(guardAnswer({ answer, transcript: [], tableCriteria: TABLE_CRITERIA, stopHookActive: false })).toBeNull()
   })
+
+  it('tells Claude why the answer is sent back and what to do', () => {
+    const answer = 'Many auditors would also fail 11.9.'
+    const decision = guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, stopHookActive: false })
+
+    expect(decision?.reason).toMatch(/inventory[\s\S]*11\.9[\s\S]*remove/i)
+  })
 })
