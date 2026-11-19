@@ -36,6 +36,18 @@ describe('passesTestFile', () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(PASSING_REPORT))).toBe(true)
   })
 
+  it('runs the test file with the variables its test runner adds to the environment', async () => {
+    const tools = {
+      ...fakeTools(PASSING_REPORT),
+      run: async (_command: string, _args: string[], _cwd: string, _timeoutMs: number, variables?: Record<string, string>) =>
+        variables?.RUNNER_REPORT === REPORT_FILE
+          ? { ok: true as const, stdout: '' }
+          : { ok: false as const, failure: 'report file unknown' },
+    }
+
+    expect(await passesTestFile(TEST_FILE, PROJECT_DIR, tools)).toBe(true)
+  })
+
   it('fails a test file with a failing test', async () => {
     expect(await passesTestFile(TEST_FILE, PROJECT_DIR, fakeTools(FAILING_REPORT))).toBe(false)
   })
