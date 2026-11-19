@@ -7,7 +7,13 @@ import type { TestTool } from './test-tools.ts'
 
 const TOOL_TIME_LIMIT_MS = 60_000
 
-export type RunCommand = (command: string, args: string[], cwd: string, timeoutMs: number) => Promise<CommandResult>
+export type RunCommand = (
+  command: string,
+  args: string[],
+  cwd: string,
+  timeoutMs: number,
+  variables?: Record<string, string>,
+) => Promise<CommandResult>
 
 export type Tools = {
   run: RunCommand

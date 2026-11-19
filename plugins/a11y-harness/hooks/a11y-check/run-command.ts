@@ -11,12 +11,13 @@ export async function runCommand(
   args: string[],
   cwd: string,
   timeoutMs: number,
+  variables: Record<string, string> = {},
 ): Promise<CommandResult> {
   try {
     const { stdout } = await execFileAsync(command, args, {
       cwd,
       timeout: timeoutMs,
-      env: { ...process.env, ...COLOURLESS_ENV },
+      env: { ...process.env, ...COLOURLESS_ENV, ...variables },
     })
     return { ok: true, stdout }
   } catch (error) {
