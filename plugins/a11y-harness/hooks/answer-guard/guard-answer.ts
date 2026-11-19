@@ -3,6 +3,9 @@ import { citedCriteria } from './cited-criteria.ts'
 import { openedCriteria } from './opened-criteria.ts'
 
 const BLOCK_DECISION = 'block'
+const UNOPENED_REASON = 'The answer cites criteria that the inventory of the audited form did not open:'
+const WHAT_TO_DO =
+  'Remove them from the answer: the audit only reports the criteria of its validated reports, never as a possibility.'
 
 export type AnswerCheck = {
   answer: string
@@ -16,5 +19,8 @@ export const guardAnswer = ({ answer, transcript, tableCriteria, stopHookActive 
     const opened = openedCriteria(transcript, standard)
     return opened.length === 0 ? [] : unopenedCriteria(citedCriteria(answer, standard), opened, criteria)
   })
-  return stopHookActive || unopened.length === 0 ? null : { decision: BLOCK_DECISION, reason: unopened.map(({ criterion }) => criterion).join() }
+  return stopHookActive || unopened.length === 0 ? null : {
+        decision: BLOCK_DECISION,
+        reason: `${UNOPENED_REASON} ${unopened.map(({ criterion }) => criterion).join()}. ${WHAT_TO_DO}`,
+      }
 }
