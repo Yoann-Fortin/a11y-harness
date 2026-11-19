@@ -79,3 +79,12 @@ describe('test counts', () => {
     expect(tool.countTests(JSON.stringify({ numTotalTests: 3, testResults: [] }))).toBe(3)
   })
 })
+
+describe('test environment', () => {
+  it.each([
+    ['Vitest', VITEST],
+    ['Jest', JEST],
+  ])('adds nothing to the environment of %s, which takes its report file as an argument', (_, tool) => {
+    expect(tool.env?.(REPORT_FILE)).toEqual({})
+  })
+})
