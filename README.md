@@ -41,6 +41,8 @@ When a test runner finds no test related to the changed component, the hook asks
 
 The audit only covers forms for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. When Claude writes or edits a file that holds a form, the hook asks for its audit even if every check passes.
 
+When Claude's final answer cites a criterion of the table that the inventory of the audited form did not open, a `Stop` hook, `answer-guard`, sends the answer back once: the audit reports the criteria of its validated reports, never one more as a possibility.
+
 The skills and the agent need nothing else: ask Claude to audit a form, to write the accessibility tests of a component, or to review the forms of a folder or a branch.
 
 ## See the two verdicts
@@ -122,13 +124,14 @@ On the morning of 18 November 2026, with the 13 cases of the time, Claude Code 2
 | Tests written for a component | WCAG 2.2 | 3/3 | 0/3 |
 | Tests written for a component | RGAA 4.1.2 | 3/3 | 0/3 |
 
-Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the last two cases had nothing to read. The failed review with the plugin cited criterion 11.9 alongside 7.1 for a button that JavaScript drives.
+Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the last two cases had nothing to read. The failed review with the plugin cited criterion 11.9 alongside 7.1 for a button that JavaScript drives: the `answer-guard` hook now sends such an answer back.
 
 ## Limits
 
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
 - **The tests run in jsdom, without CSS.** They cannot judge contrast, visible focus, zoom or what a screen reader actually says, and a visually hidden label passes them. The skill lists these points as checks to make by hand.
 - **The agent is read-only.** It has no `Write` or `Edit` tool, and a `PreToolUse` hook of the plugin only lets its `Bash` run the skill's scripts and `git diff`, `git log` or `git show`, each on its own. Claude Code ignores the hooks written in a plugin agent's own definition, so the hook is declared for the whole plugin and recognises the agent by its name.
+- **The answer guard reads the transcripts of the agent where Claude Code stores them.** Claude Code does not document that folder, next to the session's transcript. If it moves, the guard finds no inventory and lets every answer through.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
 
 ## Roadmap
