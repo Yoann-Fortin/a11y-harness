@@ -16,6 +16,7 @@ const TEST_RUNNER: TestTool = {
   binary: 'node_modules/.bin/runner',
   args: () => [],
   fileArgs: (testFile, reportFile) => ['run', testFile, reportFile],
+  env: (reportFile) => ({ RUNNER_REPORT: reportFile }),
   readReport: (report) => (report === FAILING_REPORT ? [{ name: 'labels the field', message: 'Unable to find the label' }] : []),
   countTests: (report) => (report === PASSING_REPORT || report === FAILING_REPORT ? 1 : 0),
 }

@@ -25,6 +25,7 @@ export type TestTool = {
   binary: string
   args: (plan: CheckPlan, reportFile: string) => string[]
   fileArgs: (testFile: string, reportFile: string) => string[]
+  env: (reportFile: string) => Record<string, string>
   readReport: (report: string) => FailingTest[]
   countTests: (report: string) => number
 }
@@ -44,6 +45,7 @@ export const VITEST: TestTool = {
     VITEST_EXCLUDED_TESTS[plan.standard],
   ],
   fileArgs: (testFile, reportFile) => ['run', testFile, '--reporter=json', `--outputFile=${reportFile}`],
+  env: () => ({}),
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
@@ -63,6 +65,7 @@ export const JEST: TestTool = {
     JEST_EXCLUDED_TESTS[plan.standard],
   ],
   fileArgs: (testFile, reportFile) => [testFile, '--json', `--outputFile=${reportFile}`],
+  env: () => ({}),
   readReport: readJestFormatReport,
   countTests: countJestFormatTests,
 }
