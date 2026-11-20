@@ -5,6 +5,9 @@ const FAILING_TESTS_RULE =
 const WRITE_TESTS_INSTRUCTION =
   'No test covers this component. Offer the user to write its accessibility tests with the a11y-test-writer skill for the chosen standard, and write them only with their agreement.'
 
+const TEST_RUNNER_OFFER =
+  'This package runs no tests, so nothing checks the accessibility of its components. Offer the user to add a test runner that also tests in a browser: the browser mode of Vitest, or Playwright Test with a component gallery. Explain the difference in one sentence, install nothing without their agreement, then offer the accessibility tests of the component with the a11y-test-writer skill.'
+
 export type LintError = {
   file: string
   line: number
@@ -41,6 +44,7 @@ export function formatFeedback(review: FileReview): string | null {
     review.failingTests.length > 0 ||
     review.toolFailures.length > 0 ||
     isUntested ||
+    review.withoutTestRunner ||
     review.holdsForm
   if (!hasFindings) {
     return null
@@ -49,6 +53,7 @@ export function formatFeedback(review: FileReview): string | null {
     ...review,
     ...(review.failingTests.length > 0 ? { failingTestsRule: FAILING_TESTS_RULE } : {}),
     ...(isUntested ? { instruction: WRITE_TESTS_INSTRUCTION } : {}),
+    ...(review.withoutTestRunner ? { testRunnerOffer: TEST_RUNNER_OFFER } : {}),
     ...(review.holdsForm ? { audit: AUDIT_REQUEST } : {}),
   })
 }
