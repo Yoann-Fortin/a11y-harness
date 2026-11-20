@@ -6,6 +6,7 @@ import {
   type RgaaReference,
   type WcagReference,
 } from './find-criterion.ts'
+import { type CriterionId, RGAA_STANDARD, type Standard } from './standard.ts'
 
 const UNKNOWN_CRITERION = 'unknown-criterion'
 const WRONG_LEVEL = 'wrong-level'
@@ -13,21 +14,20 @@ const QUOTE_MISMATCH = 'quote-mismatch'
 const UNRELATED_EVIDENCE = 'unrelated-evidence'
 const MISSING_CRITERION = 'missing-criterion'
 const UNOPENED_CRITERION = 'unopened-criterion'
-const RGAA_STANDARD = 'rgaa-4.1.2'
 const TECHNIQUE_ID_OPENING = '"id":"'
 const TECHNIQUE_ID_CLOSING = '"'
 const NO_BREAK_SPACES = ['\u00a0', '\u202f']
 const SPACE = ' '
 
 export type Finding = {
-  criterion?: string
+  criterion?: CriterionId
   level?: string
   quote: string
   evidence?: string[]
 }
 
 export type Report = {
-  standard: string
+  standard: Standard
   findings: Finding[]
 }
 
@@ -101,12 +101,12 @@ export function validateReport(report: Report, references: References): Problem[
     .flat()
 }
 
-export const missingCriteria = (report: Report, expected: string[]): Problem[] =>
+export const missingCriteria = (report: Report, expected: CriterionId[]): Problem[] =>
   expected
     .filter((criterion) => !report.findings.map((finding) => finding.criterion).includes(criterion))
     .map((criterion) => ({ criterion, problem: MISSING_CRITERION }))
 
-export const unopenedCriteria = (cited: string[], opened: string[], tableCriteria: string[]): Problem[] =>
+export const unopenedCriteria = (cited: CriterionId[], opened: CriterionId[], tableCriteria: CriterionId[]): Problem[] =>
   cited
     .filter((criterion) => tableCriteria.includes(criterion) && !opened.includes(criterion))
     .map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))

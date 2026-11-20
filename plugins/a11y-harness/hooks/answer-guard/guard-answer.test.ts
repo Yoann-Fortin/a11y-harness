@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import type { CriterionId, Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import { guardAnswer } from './guard-answer.ts'
 
 const INVENTORY = 'node "/plugins/a11y-harness/skills/a11y-component-audit/scripts/main.ts" inventory rgaa-4.1.2 src/Form.tsx'
 const TOGGLE_INVENTORY = '[{"element":"script-button","criteria":["7.1","7.3"]}]'
-const TABLE_CRITERIA = { 'rgaa-4.1.2': ['7.1', '7.3', '11.9'], 'wcag-2.2': ['4.1.2'] }
+const TABLE_CRITERIA: Record<Standard, CriterionId[]> = { 'rgaa-4.1.2': ['7.1', '7.3', '11.9'], 'wcag-2.2': ['4.1.2'] }
 
 const toolUse = (id: string, command: string) =>
   JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name: 'Bash', input: { command } }] } })

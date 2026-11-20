@@ -1,8 +1,8 @@
-const WCAG_STANDARD = 'wcag-2.2'
+import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
+
 const WCAG_VERSION = '2.2'
 const UNDERSTANDING_URL = 'https://www.w3.org/WAI/WCAG22/Understanding/'
 const UNDERSTANDING_EXTENSION = '.html'
-const RGAA_STANDARD = 'rgaa-4.1.2'
 const NUMBER_SEPARATOR = '.'
 const REQUIREMENT_SEPARATOR = ':'
 
@@ -23,7 +23,7 @@ export type WcagReference = {
 }
 
 export type WcagCriterion = {
-  standard: string
+  standard: Standard
   id: string
   handle: string
   title: string
@@ -49,7 +49,7 @@ export type RgaaReference = {
 }
 
 export type RgaaCriterion = {
-  standard: string
+  standard: Standard
   id: string
   title: string
   tests: Record<string, string[]>

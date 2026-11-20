@@ -2,6 +2,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { text } from 'node:stream/consumers'
 import type { CriteriaTable } from '../../skills/a11y-component-audit/scripts/inventory.ts'
+import { type CriterionId, RGAA_STANDARD, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import { guardAnswer } from './guard-answer.ts'
 
 const TEXT_ENCODING = 'utf8'
@@ -10,7 +11,6 @@ const SUBAGENTS_DIR = 'subagents'
 const LINE_BREAK = '\n'
 const SILENCE = ''
 const FORM_CRITERIA_FILE = join(import.meta.dirname, '../../skills/a11y-component-audit/reference/form-criteria.json')
-const STANDARDS = ['wcag-2.2', 'rgaa-4.1.2']
 
 type StopEvent = { transcript_path: string; last_assistant_message: string; stop_hook_active: boolean }
 
@@ -25,11 +25,12 @@ const subagentTranscripts = async (transcriptPath: string) => {
 
 const criteriaTable = async (): Promise<CriteriaTable> => JSON.parse(await readFile(FORM_CRITERIA_FILE, TEXT_ENCODING))
 
-const tableCriteria = async () => {
+const tableCriteria = async (): Promise<Record<Standard, CriterionId[]>> => {
   const table = await criteriaTable()
-  return Object.fromEntries(
-    STANDARDS.map((standard) => [standard, [...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? []))]]),
-  )
+  return {
+    [WCAG_STANDARD]: [...new Set(table.elements.flatMap(({ criteria }) => criteria[WCAG_STANDARD] ?? []))],
+    [RGAA_STANDARD]: [...new Set(table.elements.flatMap(({ criteria }) => criteria[RGAA_STANDARD] ?? []))],
+  }
 }
 
 const decisionFor = async (input: string) => {

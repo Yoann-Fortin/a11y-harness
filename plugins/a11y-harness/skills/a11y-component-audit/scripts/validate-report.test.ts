@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ActReference, RgaaReference, WcagReference } from './find-criterion.ts'
-import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
+import { type Finding, missingCriteria, type Report, unopenedCriteria, validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
 const RGAA_TITLE = 'Required\u202ftitle\u00a0?'
@@ -57,25 +57,25 @@ const ACT_REFERENCE: ActReference = {
   ],
 }
 const REFERENCES = { wcag: WCAG_REFERENCE, rgaa: RGAA_REFERENCE, act: ACT_REFERENCE }
-const WCAG_FINDING = { criterion: '3.3.2', level: 'A', quote: WCAG_TITLE }
-const RGAA_FINDING = { criterion: '11.10', quote: RGAA_TITLE }
+const WCAG_FINDING: Finding = { criterion: '3.3.2', level: 'A', quote: WCAG_TITLE }
+const RGAA_FINDING: Finding = { criterion: '11.10', quote: RGAA_TITLE }
 
 describe('validateReport', () => {
   it.each([
     ['an exact WCAG finding', WCAG_FINDING, []],
-    ['an unknown WCAG criterion', { ...WCAG_FINDING, criterion: '9.9.9' }, [{ criterion: '9.9.9', problem: 'unknown-criterion' }]],
+    ['an unknown WCAG criterion', { ...WCAG_FINDING, criterion: '9.9.9' as const }, [{ criterion: '9.9.9', problem: 'unknown-criterion' }]],
   ])('checks %s', (_, finding, expected) => {
     expect(validateReport({ standard: 'wcag-2.2', findings: [finding] }, REFERENCES)).toEqual(expected)
   })
 
   it('flags a WCAG level that differs from the official one', () => {
-    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, level: 'AA' }] }
+    const report: Report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, level: 'AA' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'wrong-level' }])
   })
 
   it('flags a quote that differs from the official title', () => {
-    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, quote: 'Labels are required.' }] }
+    const report: Report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, quote: 'Labels are required.' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'quote-mismatch' }])
   })
@@ -89,7 +89,7 @@ describe('validateReport', () => {
     ],
     [
       'a criterion that exists in WCAG but not in RGAA',
-      { ...RGAA_FINDING, criterion: '3.3.2' },
+      { ...RGAA_FINDING, criterion: '3.3.2' as const },
       [{ criterion: '3.3.2', problem: 'unknown-criterion' }],
     ],
   ])('checks %s against RGAA 4.1.2', (_, finding, expected) => {
@@ -97,7 +97,7 @@ describe('validateReport', () => {
   })
 
   it('accepts a finding left for manual review without a criterion', () => {
-    const report = { standard: 'wcag-2.2', findings: [{ quote: '' }] }
+    const report: Report = { standard: 'wcag-2.2', findings: [{ quote: '' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
@@ -107,19 +107,19 @@ describe('validateReport', () => {
     ['a prefix of a listed technique', 'G13'],
     ['words taken from a technique title', 'labels'],
   ])('flags %s as unrelated evidence', (_, evidence) => {
-    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: [evidence] }] }
+    const report: Report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: [evidence] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '3.3.2', problem: 'unrelated-evidence', evidence }])
   })
 
   it('accepts the techniques and failures listed for the criterion as evidence', () => {
-    const report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: ['G131', 'F82'] }] }
+    const report: Report = { standard: 'wcag-2.2', findings: [{ ...WCAG_FINDING, evidence: ['G131', 'F82'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
 
   it('accepts an approved ACT rule written for the criterion as evidence', () => {
-    const finding = { criterion: '4.1.2', level: 'A', quote: NAME_TITLE, evidence: ['e086e5'] }
+    const finding: Finding = { criterion: '4.1.2', level: 'A', quote: NAME_TITLE, evidence: ['e086e5'] }
 
     expect(validateReport({ standard: 'wcag-2.2', findings: [finding] }, REFERENCES)).toEqual([])
   })
@@ -128,25 +128,25 @@ describe('validateReport', () => {
     ['a test number that the criterion does not have', '11.10.9'],
     ['a test of another criterion', '11.1.1'],
   ])('flags %s as unrelated RGAA evidence', (_, evidence) => {
-    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: [evidence] }] }
+    const report: Report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: [evidence] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([{ criterion: '11.10', problem: 'unrelated-evidence', evidence }])
   })
 
   it('accepts the tests of the RGAA criterion as evidence', () => {
-    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['11.10.1'] }] }
+    const report: Report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['11.10.1'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
 
   it('accepts an RGAA quote typed with plain spaces where the official title has no-break spaces', () => {
-    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, quote: 'Required title ?' }] }
+    const report: Report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, quote: 'Required title ?' }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
 
   it('accepts the techniques and failures referenced by the RGAA criterion as evidence', () => {
-    const report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['H90', 'F81'] }] }
+    const report: Report = { standard: 'rgaa-4.1.2', findings: [{ ...RGAA_FINDING, evidence: ['H90', 'F81'] }] }
 
     expect(validateReport(report, REFERENCES)).toEqual([])
   })
@@ -154,7 +154,7 @@ describe('validateReport', () => {
 
 describe('missingCriteria', () => {
   it('flags a criterion of the inventory that the report does not rule on', () => {
-    const report = { standard: 'wcag-2.2', findings: [WCAG_FINDING] }
+    const report: Report = { standard: 'wcag-2.2', findings: [WCAG_FINDING] }
 
     expect(missingCriteria(report, ['3.3.2', '4.1.2'])).toEqual([{ criterion: '4.1.2', problem: 'missing-criterion' }])
   })

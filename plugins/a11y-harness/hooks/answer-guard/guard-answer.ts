@@ -1,3 +1,4 @@
+import type { CriterionId, Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import { unopenedCriteria } from '../../skills/a11y-component-audit/scripts/validate-report.ts'
 import { citedCriteria } from './cited-criteria.ts'
 import { openedCriteria } from './opened-criteria.ts'
@@ -13,7 +14,7 @@ const VERIFY_TESTS = 'Run verify-tests on each of them, with the conforming and 
 const WHAT_TO_DO =
   'Remove them from the answer: the audit only reports the criteria of its validated reports, never as a possibility.'
 
-const unopenedIn = (answer: string, opened: string[], standard: string, criteria: string[]) =>
+const unopenedIn = (answer: string, opened: CriterionId[], standard: Standard, criteria: CriterionId[]) =>
   opened.length === 0
     ? []
     : unopenedCriteria(citedCriteria(answer, standard), opened, criteria).map((problem) => problem.criterion)
@@ -21,13 +22,13 @@ const unopenedIn = (answer: string, opened: string[], standard: string, criteria
 export type AnswerCheck = {
   answer: string
   transcript: string[]
-  tableCriteria: Record<string, string[]>
+  tableCriteria: Record<Standard, CriterionId[]>
   formSignals: string[]
   stopHookActive: boolean
 }
 
 export const guardAnswer = ({ answer, transcript, tableCriteria, formSignals, stopHookActive }: AnswerCheck) => {
-  const unopened = Object.entries(tableCriteria).flatMap(([standard, criteria]) =>
+  const unopened = (Object.entries(tableCriteria) as [Standard, CriterionId[]][]).flatMap(([standard, criteria]) =>
     unopenedIn(answer, openedCriteria(transcript, standard), standard, criteria),
   )
   if (stopHookActive) {

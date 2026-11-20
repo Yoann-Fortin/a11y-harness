@@ -1,6 +1,7 @@
 import { basename, extname } from 'node:path'
 import type { FailingTest } from './format-feedback.ts'
-import type { CheckPlan, Standard } from './plan-checks.ts'
+import type { Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
+import type { CheckPlan } from './plan-checks.ts'
 import { countJestFormatTests, countPlaywrightTests, readJestFormatReport, readPlaywrightReport } from './read-reports.ts'
 
 const VITEST_NAME = 'vitest'

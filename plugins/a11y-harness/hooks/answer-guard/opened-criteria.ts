@@ -1,3 +1,5 @@
+import type { CriterionId, Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
+
 const INVENTORY_COMMAND = ' inventory '
 
 type Block = {
@@ -10,7 +12,7 @@ type Block = {
 }
 type Entry = { message?: { content?: Block[] | string } }
 type MessageEntry = { message: { content: Block[] } }
-type InventoryElement = { criteria: string[] }
+type InventoryElement = { criteria: CriterionId[] }
 
 export const blocksOf = (transcript: string[]) =>
   transcript
@@ -18,7 +20,7 @@ export const blocksOf = (transcript: string[]) =>
     .filter((entry): entry is MessageEntry => Array.isArray(entry.message?.content))
     .flatMap((entry) => entry.message.content)
 
-const inventoriedCriteria = (transcript: string[], standard: string) => {
+const inventoriedCriteria = (transcript: string[], standard: Standard) => {
   const blocks = blocksOf(transcript)
   const inventoryIds = blocks
     .filter((block) => String(block.input?.command).includes(`${INVENTORY_COMMAND}${standard} `))
@@ -29,7 +31,7 @@ const inventoriedCriteria = (transcript: string[], standard: string) => {
     .flatMap((element) => element.criteria)
 }
 
-export const openedCriteria = (transcript: string[], standard: string): string[] => {
+export const openedCriteria = (transcript: string[], standard: Standard): CriterionId[] => {
   try {
     return inventoriedCriteria(transcript, standard)
   } catch {

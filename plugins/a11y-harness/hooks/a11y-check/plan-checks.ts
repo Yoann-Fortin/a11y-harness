@@ -1,12 +1,9 @@
 import { extname, sep } from 'node:path'
+import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 
 const WATCHED_TOOLS = ['Write', 'Edit']
 const COMPONENT_EXTENSIONS = ['.tsx', '.jsx']
 const VARIANTS_FOLDER = `${sep}a11y-variants${sep}`
-const WCAG_STANDARD = 'wcag-2.2'
-const RGAA_STANDARD = 'rgaa-4.1.2'
-
-export type Standard = typeof WCAG_STANDARD | typeof RGAA_STANDARD
 
 export type ToolEvent = {
   tool_name: string
