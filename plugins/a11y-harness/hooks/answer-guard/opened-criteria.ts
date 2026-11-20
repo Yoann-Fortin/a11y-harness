@@ -5,7 +5,7 @@ type Block = {
   id?: string
   name?: string
   tool_use_id?: string
-  input?: { command?: string }
+  input?: { command?: string; file_path?: string; skill?: string }
   content?: string
 }
 type Entry = { message?: { content?: Block[] | string } }
