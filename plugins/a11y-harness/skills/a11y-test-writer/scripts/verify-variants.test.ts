@@ -14,6 +14,8 @@ const PLAN = {
 }
 
 const RUNNER_CRASH = 'the test runner crashed'
+const BACKUP = `${COMPONENT}.a11y-backup`
+const MISSING_FILE = 'ENOENT: no such file or directory'
 
 const fakeProject = (passesOn: string[]) => {
   const files: Record<string, string> = { [COMPONENT]: ORIGINAL, [WITH_LABEL]: LABELLED }
@@ -21,9 +23,17 @@ const fakeProject = (passesOn: string[]) => {
   return {
     files,
     tested,
-    readText: async (path: string) => files[path] ?? '',
+    readText: async (path: string) => {
+      if (files[path] === undefined) {
+        throw new Error(MISSING_FILE)
+      }
+      return files[path]
+    },
     writeText: async (path: string, content: string) => {
       files[path] = content
+    },
+    removeFile: async (path: string) => {
+      delete files[path]
     },
     runTests: async () => {
       tested.push(files[COMPONENT] ?? '')
@@ -65,5 +75,15 @@ describe('verifyVariants', () => {
 
     await expect(verifyVariants(PLAN, project)).rejects.toThrow(RUNNER_CRASH)
     expect(project.files[COMPONENT]).toBe(ORIGINAL)
+  })
+
+  it('restores the component that a stopped verification left in place, from its backup, then removes the backup', async () => {
+    const project = fakeProject([LABELLED])
+    project.files[COMPONENT] = LABELLED
+    project.files[BACKUP] = ORIGINAL
+
+    await verifyVariants(PLAN, project)
+
+    expect([project.files[COMPONENT], project.files[BACKUP]]).toEqual([ORIGINAL, undefined])
   })
 })

@@ -8,6 +8,7 @@ export type VariantPlan = {
 export type ProjectPorts = {
   readText: (path: string) => Promise<string>
   writeText: (path: string, content: string) => Promise<void>
+  removeFile: (path: string) => Promise<void>
   runTests: () => Promise<boolean>
 }
 

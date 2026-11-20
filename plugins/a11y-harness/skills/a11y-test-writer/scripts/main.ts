@@ -24,6 +24,7 @@ const NO_SOURCE = ''
 
 const readText = (path: string) => readFile(path, TEXT_ENCODING)
 const writeText = (path: string, content: string) => writeFile(path, content, TEXT_ENCODING)
+const removeFile = (path: string) => rm(path, { force: true })
 
 const verifyTestFile = async (testFile: TestFile, component: string, variantArgs: string[]) => {
   const faults = testFileProblems(await readText(testFile).catch(() => NO_SOURCE))
@@ -41,7 +42,7 @@ const verifyTestFile = async (testFile: TestFile, component: string, variantArgs
     const tools = { run: runCommand, readText, reportFile: join(reportDir, REPORT_FILE), testRunners }
     return await verifyVariants(
       { component, variants: variantsOf(variantArgs) },
-      { readText, writeText, runTests: () => passesTestFile(testFile, cwd, tools) },
+      { readText, writeText, removeFile, runTests: () => passesTestFile(testFile, cwd, tools) },
     )
   } finally {
     await rm(reportDir, { recursive: true, force: true })
