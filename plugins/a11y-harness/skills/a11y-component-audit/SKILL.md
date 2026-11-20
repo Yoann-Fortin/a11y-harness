@@ -39,6 +39,13 @@ Run each command on its own, starting with `node` and written as above: no shell
    - `evidence`: for RGAA, the tests you applied or techniques listed in the criterion's references; for WCAG, techniques, failures or ACT rules listed for that success criterion.
    - Leave out what a reading of the code cannot settle, such as contrast, visible focus or target size, unless the browser tests of the component settle it: then run them and rule from their result.
 
+## Before answering
+
+- [ ] Every criterion that `inventory` printed has a finding, failed or compliant.
+- [ ] Every title is copied from `lookup`, character for character.
+- [ ] `validate` printed `[]` for the report, or you show the problems it still prints.
+- [ ] What the code cannot settle is listed under « To check manually », with the browser tests that would settle it.
+
 ## Answer
 
 Answer in the user's language, with:
