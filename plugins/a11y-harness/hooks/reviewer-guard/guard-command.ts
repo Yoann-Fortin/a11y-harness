@@ -3,7 +3,7 @@ const HOOK_EVENT = 'PreToolUse'
 const DENY_DECISION = 'deny'
 const READ_ONLY_REASON =
   'The a11y-reviewer agent is read-only: it may only run the node commands of the a11y-component-audit skill, and git diff, git log or git show without --output, each on its own.'
-const SINGLE_QUOTED = /'[^']*'/g
+const SINGLE_QUOTED = /'(?:[^']|'\\'')*'/g
 const SHELL_OPERATOR = /[;&|<>`$()]/
 const OUTPUT_OPTION = /--output/
 const READ_ONLY_GIT = /^git (?:diff|log|show) /
