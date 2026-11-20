@@ -17,6 +17,7 @@ export type ProjectPorts = {
 export async function verifyVariants(plan: VariantPlan, project: ProjectPorts) {
   const backup = `${plan.component}${BACKUP_SUFFIX}`
   const original = await project.readText(backup).catch(() => project.readText(plan.component))
+  await project.writeText(backup, original)
   const contents = await Promise.all(plan.variants.map(({ file }) => project.readText(file)))
   const runs: VariantRun[] = []
   try {
