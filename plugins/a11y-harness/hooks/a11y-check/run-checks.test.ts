@@ -78,6 +78,7 @@ describe('runChecks', () => {
       failingTests: [FAILING_TEST],
       toolFailures: [{ tool: 'linter', message: 'command not found' }],
       untestedBy: [],
+      withoutTestRunner: false,
     })
   })
 
@@ -108,6 +109,7 @@ describe('runChecks', () => {
       failingTests: [],
       toolFailures: [{ tool: 'runner', message: 'command not found' }],
       untestedBy: [],
+      withoutTestRunner: false,
     })
   })
 
@@ -117,5 +119,13 @@ describe('runChecks', () => {
     const results = await runChecks(PLAN, tools)
 
     expect(results.untestedBy).toEqual(['runner'])
+  })
+
+  it('reports a package that runs no test runner', async () => {
+    const tools = { ...fakeTools({ [LINTER_PATH]: OUTPUT('') }), testRunners: [] }
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(results.withoutTestRunner).toBe(true)
   })
 })
