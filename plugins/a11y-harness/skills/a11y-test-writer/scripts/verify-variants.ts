@@ -1,5 +1,7 @@
 import { problemsOf, type VariantRun } from './judge-variants.ts'
 
+const BACKUP_SUFFIX = '.a11y-backup'
+
 export type VariantPlan = {
   component: string
   variants: { file: string; kind: VariantRun['kind'] }[]
@@ -13,7 +15,8 @@ export type ProjectPorts = {
 }
 
 export async function verifyVariants(plan: VariantPlan, project: ProjectPorts) {
-  const original = await project.readText(plan.component)
+  const backup = `${plan.component}${BACKUP_SUFFIX}`
+  const original = await project.readText(backup).catch(() => project.readText(plan.component))
   const contents = await Promise.all(plan.variants.map(({ file }) => project.readText(file)))
   const runs: VariantRun[] = []
   try {
@@ -23,6 +26,7 @@ export async function verifyVariants(plan: VariantPlan, project: ProjectPorts) {
     }
   } finally {
     await project.writeText(plan.component, original)
+    await project.removeFile(backup)
   }
   return problemsOf(runs)
 }
