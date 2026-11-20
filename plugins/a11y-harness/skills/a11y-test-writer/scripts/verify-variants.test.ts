@@ -86,4 +86,20 @@ describe('verifyVariants', () => {
 
     expect([project.files[COMPONENT], project.files[BACKUP]]).toEqual([ORIGINAL, undefined])
   })
+
+  it('keeps a backup of the original component while the variants run', async () => {
+    const backups: (string | undefined)[] = []
+    const project = fakeProject([LABELLED])
+    const tracked = {
+      ...project,
+      runTests: async () => {
+        backups.push(project.files[BACKUP])
+        return project.runTests()
+      },
+    }
+
+    await verifyVariants(PLAN, tracked)
+
+    expect(backups).toEqual([ORIGINAL, ORIGINAL])
+  })
 })
