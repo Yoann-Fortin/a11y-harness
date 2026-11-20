@@ -11,12 +11,13 @@ const TRANSCRIPT_EXTENSION = '.jsonl'
 const SUBAGENTS_DIR = 'subagents'
 const LINE_BREAK = '\n'
 const SILENCE = ''
+const NO_TEXT = ''
 const FORM_CRITERIA_FILE = join(import.meta.dirname, '../../skills/a11y-component-audit/reference/form-criteria.json')
 
 type StopEvent = { transcript_path: string; last_assistant_message: string; stop_hook_active: boolean }
 
 const readLines = async (path: string) =>
-  (await readFile(path, TEXT_ENCODING).catch(() => '')).split(LINE_BREAK).filter((line) => line.trim() !== '')
+  (await readFile(path, TEXT_ENCODING).catch(() => NO_TEXT)).split(LINE_BREAK).filter((line) => line.trim() !== NO_TEXT)
 
 const subagentTranscripts = async (transcriptPath: string) => {
   const dir = join(transcriptPath.slice(0, -TRANSCRIPT_EXTENSION.length), SUBAGENTS_DIR)

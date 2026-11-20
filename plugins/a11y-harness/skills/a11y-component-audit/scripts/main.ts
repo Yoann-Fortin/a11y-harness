@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
 import { type CriteriaTableFile, criteriaTableFrom, inventoryOf } from './inventory.ts'
-import type { Standard } from './standard.ts'
+import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
 import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
@@ -25,8 +25,8 @@ const readReport = (argument: string) =>
   argument.startsWith(INLINE_REPORT_START) ? JSON.parse(argument) : readJson(argument)
 
 const FINDERS: Record<string, (id: string) => object[]> = {
-  'wcag-2.2': (id) => findWcagCriteria(readReference(WCAG_FILE), id),
-  'rgaa-4.1.2': (id) =>
+  [WCAG_STANDARD]: (id) => findWcagCriteria(readReference(WCAG_FILE), id),
+  [RGAA_STANDARD]: (id) =>
     findRgaaCriteria(readReference(RGAA_FILE), id).map((criterion) => ({
       ...criterion,
       methodologies: findRgaaMethodologies(readReference(RGAA_METHODOLOGIES_FILE), criterion),

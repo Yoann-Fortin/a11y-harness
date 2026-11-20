@@ -17,6 +17,8 @@ const REPORT_DIR_PREFIX = 'a11y-verify-'
 const REPORT_FILE = 'report.json'
 const CONFORMING_FLAG = '--conforming'
 const FAULTY_FLAG = '--faulty'
+const CONFORMING_KIND = 'conforming'
+const FAULTY_KIND = 'faulty'
 const NO_TEST_RUNNER = [{ problem: 'no-test-runner' }]
 const SUCCESS_EXIT_CODE = 0
 const FAILURE_EXIT_CODE = 1
@@ -26,10 +28,10 @@ const readText = (path: string) => readFile(path, TEXT_ENCODING)
 const writeText = (path: string, content: string) => writeFile(path, content, TEXT_ENCODING)
 
 const variantsOf = (args: string[]) => {
-  let kind: VariantPlan['variants'][number]['kind'] = 'conforming'
+  let kind: VariantPlan['variants'][number]['kind'] = CONFORMING_KIND
   return args.flatMap((arg) => {
     if (arg === CONFORMING_FLAG || arg === FAULTY_FLAG) {
-      kind = arg === CONFORMING_FLAG ? 'conforming' : 'faulty'
+      kind = arg === CONFORMING_FLAG ? CONFORMING_KIND : FAULTY_KIND
       return []
     }
     return [{ file: arg, kind }]
