@@ -6,6 +6,7 @@ import {
   findRgaaMethodologies,
   findWcagCriteria,
   type RgaaReference,
+  type WcagReference,
 } from './find-criterion.ts'
 
 const LABELS_TECHNIQUES = {
@@ -15,7 +16,7 @@ const LABELS_TECHNIQUES = {
 
 const ALL_VERSIONS = ['2.0', '2.1', '2.2']
 
-const WCAG_REFERENCE = {
+const WCAG_REFERENCE: WcagReference = {
   principles: [
     {
       guidelines: [

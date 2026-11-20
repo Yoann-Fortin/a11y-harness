@@ -1,4 +1,4 @@
-import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
+import { RGAA_STANDARD, type Standard, WCAG_STANDARD, type WcagReferenceLevel } from './standard.ts'
 
 const WCAG_VERSION = '2.2'
 const UNDERSTANDING_URL = 'https://www.w3.org/WAI/WCAG22/Understanding/'
@@ -13,7 +13,7 @@ type WcagSuccessCriterion = {
   num: string
   handle: string
   title: string
-  level: string
+  level: WcagReferenceLevel
   versions: string[]
   techniques?: WcagTechniques
 }
@@ -27,7 +27,7 @@ export type WcagCriterion = {
   id: string
   handle: string
   title: string
-  level: string
+  level: WcagReferenceLevel
   understanding: string
   techniques: WcagTechniques
 }

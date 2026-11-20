@@ -6,7 +6,7 @@ import {
   type RgaaReference,
   type WcagReference,
 } from './find-criterion.ts'
-import { type CriterionId, RGAA_STANDARD, type Standard } from './standard.ts'
+import { type CriterionId, RGAA_STANDARD, type Standard, type WcagLevel } from './standard.ts'
 
 const UNKNOWN_CRITERION = 'unknown-criterion'
 const WRONG_LEVEL = 'wrong-level'
@@ -21,7 +21,7 @@ const SPACE = ' '
 
 export type Finding = {
   criterion?: CriterionId
-  level?: string
+  level?: WcagLevel
   quote: string
   evidence?: string[]
 }
