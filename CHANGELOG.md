@@ -19,7 +19,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 #### Project
 
-- Domain types shared across the plugin for the standards, criterion ids, problem codes, transcript blocks and component and test files.
+- Domain types shared across the plugin for the standards, criterion ids, problem codes, transcript blocks, component and test files, and the form signals, compiled once from the criteria table.
 - Root pnpm workspace with the plugin's development tools (Vitest, Stryker, Biome, TypeScript), a single lockfile and a single Biome configuration.
 - `CLAUDE.md` with the project layout and commands, and a rule file scoped to the playground tests.
 - GitHub Actions workflow: type checking, lint and tests of the plugin on Node 22.18 and 24, validation of the marketplace and plugin manifests, tests and build of the sandbox, and a 100% mutation score in both places.
