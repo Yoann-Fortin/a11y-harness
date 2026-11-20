@@ -18,7 +18,7 @@ Run each command on its own, starting with `node` and written as above: no shell
 
 1. **Standard.** Audit against the standard the user names. When none is named, audit against WCAG 2.2 AA and say so.
 2. **Scope.** The audit covers forms only, for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. Find the file that holds the form and read it, then the components it renders inside the form. When the code holds no form, answer that the audit only covers forms for now, and stop.
-3. **Criteria.** Run `inventory` on the form file and the files of the components inside it, and rule on every criterion it prints. When the code is pasted instead of saved in a file, read [reference/form-criteria.json](reference/form-criteria.json) and match its signals yourself. Then add the criteria the code touches beyond forms, such as images.
+3. **Criteria.** Run `inventory` on the form file and the files of the components inside it, and rule on every criterion it prints. When the code is pasted instead of saved in a file, read [reference/form-criteria.json](reference/form-criteria.json) and match its signals yourself. Rule on nothing beyond the form: the audit does not check it yet.
 4. **Verdicts.** When the component has form fields, buttons or status messages, read [reference/forms.md](reference/forms.md) first: it records rulings checked against the official texts, with their sources. For a React component, read [reference/react.md](reference/react.md) too: it records the defects that come from how React renders, to report as failures. Then run `lookup` for each criterion and rule from the official text only:
    - RGAA: apply the methodology of each test, step by step, and give the test number that decides the verdict.
    - WCAG: read the success criterion, then its sufficient techniques and documented failures.
@@ -37,7 +37,7 @@ Run each command on its own, starting with `node` and written as above: no shell
    - `quote`: the `title` printed by `lookup`, copied character for character.
    - `level`: for WCAG only, the level printed by `lookup`.
    - `evidence`: for RGAA, the tests you applied or techniques listed in the criterion's references; for WCAG, techniques, failures or ACT rules listed for that success criterion.
-   - Leave out what a reading of the code cannot settle: contrast, visible focus, zoom, screen reader rendering.
+   - Leave out what a reading of the code cannot settle, such as contrast, visible focus or target size, unless the browser tests of the component settle it: then run them and rule from their result.
 
 ## Answer
 
@@ -46,4 +46,4 @@ Answer in the user's language, with:
 1. **Verdict**: compliant or not, against which standard.
 2. **Failures**, one per criterion: number and official title, level (WCAG) or deciding test (RGAA), the code that fails, why according to the official text, and the fixes the standard accepts. When several fixes are accepted, list them and let the developer choose: it is a design decision. Apply a fix only when the user asks for it or agrees to it.
 3. **Compliant criteria** you checked, in one line each.
-4. **To check manually**: what the code alone cannot settle, without a verdict.
+4. **To check manually**: what neither the code nor the component's browser tests settle, without a verdict, and the browser tests that would settle it.

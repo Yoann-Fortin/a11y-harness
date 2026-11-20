@@ -92,6 +92,14 @@ The hook follows a light hexagonal architecture:
 | `read-reports.ts` | Anti-corruption layer: turns each tool's report, and the package dependencies, into domain types |
 | `main.ts` | Composition root: reads the event, the plugin option and the package dependencies, wires the adapters |
 
+The two other hooks keep the same split, with a pure function in the domain and a `main.ts` that reads the event:
+
+| File | Role |
+| --- | --- |
+| `reviewer-guard/guard-command.ts` | Domain: allows a command of the `a11y-reviewer` agent only when it is a script of the audit skill or a read-only git command |
+| `answer-guard/cited-criteria.ts`, `answer-guard/opened-criteria.ts` | Domain: the criteria the final answer cites, and those the inventories of the transcript opened |
+| `answer-guard/guard-answer.ts` | Use case: sends the answer back when it cites a criterion that no inventory opened |
+
 The skills keep the same split in their scripts:
 
 | File | Role |
