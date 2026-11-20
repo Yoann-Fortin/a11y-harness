@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
-import { type CriteriaTableFile, criteriaTableFrom, inventoryOf } from './inventory.ts'
+import { criteriaOf, criteriaTableFrom, inventoryOf } from './inventory.ts'
 import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
 import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
 
@@ -44,10 +44,7 @@ const inventoryCriteria = (components: string[], standard: Standard) => [
   ),
 ]
 
-const tableCriteria = (standard: Standard) => {
-  const table: CriteriaTableFile = readJson(FORM_CRITERIA_FILE)
-  return [...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? []))]
-}
+const tableCriteria = (standard: Standard) => criteriaOf(readJson(FORM_CRITERIA_FILE), standard)
 
 const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }

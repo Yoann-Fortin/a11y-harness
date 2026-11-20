@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { text } from 'node:stream/consumers'
-import { type CriteriaTableFile, criteriaTableFrom } from '../../skills/a11y-component-audit/scripts/inventory.ts'
+import { type CriteriaTableFile, criteriaOf, criteriaTableFrom } from '../../skills/a11y-component-audit/scripts/inventory.ts'
 import { type CriterionId, RGAA_STANDARD, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import { guardAnswer } from './guard-answer.ts'
 import { transcriptOf } from './transcript.ts'
@@ -27,24 +27,22 @@ const subagentTranscripts = async (transcriptPath: string) => {
 
 const criteriaTable = async (): Promise<CriteriaTableFile> => JSON.parse(await readFile(FORM_CRITERIA_FILE, TEXT_ENCODING))
 
-const tableCriteria = async (): Promise<Record<Standard, CriterionId[]>> => {
-  const table = await criteriaTable()
-  return {
-    [WCAG_STANDARD]: [...new Set(table.elements.flatMap(({ criteria }) => criteria[WCAG_STANDARD] ?? []))],
-    [RGAA_STANDARD]: [...new Set(table.elements.flatMap(({ criteria }) => criteria[RGAA_STANDARD] ?? []))],
-  }
-}
+const tableCriteria = (table: CriteriaTableFile): Record<Standard, CriterionId[]> => ({
+  [WCAG_STANDARD]: criteriaOf(table, WCAG_STANDARD),
+  [RGAA_STANDARD]: criteriaOf(table, RGAA_STANDARD),
+})
 
 const decisionFor = async (input: string) => {
   try {
     const event: StopEvent = JSON.parse(input)
     const files = [event.transcript_path, ...(await subagentTranscripts(event.transcript_path))]
     const transcript = transcriptOf((await Promise.all(files.map(readLines))).flat())
+    const table = await criteriaTable()
     return guardAnswer({
       answer: event.last_assistant_message,
       transcript,
-      tableCriteria: await tableCriteria(),
-      formSignals: criteriaTableFrom(await criteriaTable()).form.signals,
+      tableCriteria: tableCriteria(table),
+      formSignals: criteriaTableFrom(table).form.signals,
       stopHookActive: event.stop_hook_active,
     })
   } catch {
