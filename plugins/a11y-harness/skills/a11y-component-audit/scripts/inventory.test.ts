@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type CriteriaTable, type FormElement, holdsForm, inventoryOf } from './inventory.ts'
+import { type CriteriaTable, criteriaTableFrom, type FormElement, holdsForm, inventoryOf } from './inventory.ts'
 
 const WCAG = 'wcag-2.2'
 const FORM_FIELD: FormElement = { id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2'] } }
@@ -45,5 +45,19 @@ describe('holdsForm', () => {
 
   it.each(['<fieldset>', '<div role="group">'])('finds no form in %s', (source) => {
     expect(holdsForm(TABLE, source)).toBe(false)
+  })
+})
+
+describe('criteriaTableFrom', () => {
+  it('compiles every signal of the table file once, and keeps the ids and criteria of its elements', () => {
+    const file = {
+      form: { signals: ['<form', 'role="form"'] },
+      elements: [{ id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2' as const] } }],
+    }
+
+    expect(criteriaTableFrom(file)).toEqual({
+      form: { signals: [/<form/, /role="form"/] },
+      elements: [{ id: 'form-field', signals: [/<input/, /<textarea/], criteria: { [WCAG]: ['3.3.2'] } }],
+    })
   })
 })

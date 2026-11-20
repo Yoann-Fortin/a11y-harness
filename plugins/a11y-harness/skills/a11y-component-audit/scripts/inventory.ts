@@ -6,6 +6,18 @@ export type FormElement = {
   criteria: Partial<Record<Standard, CriterionId[]>>
 }
 
+export type CriteriaTableFile = {
+  form: { signals: string[] }
+  elements: { id: string; signals: string[]; criteria: Partial<Record<Standard, CriterionId[]>> }[]
+}
+
+export type CompiledCriteriaTable = {
+  form: { signals: RegExp[] }
+  elements: { id: string; signals: RegExp[]; criteria: Partial<Record<Standard, CriterionId[]>> }[]
+}
+
+export const criteriaTableFrom = (_file: CriteriaTableFile): CompiledCriteriaTable => ({ form: { signals: [] }, elements: [] })
+
 export type CriteriaTable = {
   form: { signals: string[] }
   elements: FormElement[]
