@@ -49,7 +49,7 @@ When a test runner finds no test related to the changed component, the hook asks
 
 The audit only covers forms for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. When Claude writes or edits a file that holds a form, the hook asks for its audit even if every check passes.
 
-When Claude's final answer cites a criterion of the table that the inventory of the audited form did not open, a `Stop` hook, `answer-guard`, sends the answer back once: the audit reports the criteria of its validated reports, never one more as a possibility. It also sends back an answer that rules on a form Claude read without running any audit inventory, towards the skill or, for several components, the agent.
+When Claude's final answer cites a criterion of the table that the inventory of the audited form did not open, a `Stop` hook, `answer-guard`, sends the answer back once: the audit reports the criteria of its validated reports, never one more as a possibility. It also sends back an answer that rules on a form Claude read without running any audit inventory, towards the skill or, for several components, the agent. And it sends back the answer of a session of `a11y-test-writer` that wrote test files without checking them with `verify-tests`.
 
 The skills and the agent need nothing else: ask Claude to audit a form, to write the accessibility tests of a component, or to review the forms of a folder or a branch.
 
@@ -154,7 +154,7 @@ On 20 November 2026, with the 19 cases of the suite, Claude Code 2.1.326, this c
 
 Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the test writing cases had nothing to read. The WCAG review timed out in four runs out of six under four parallel runs; run again on its own, it passed 2 runs out of 3 with the plugin and 2 out of 3 without, and the failed run with the plugin reviewed the files itself instead of handing them to the agent.
 
-After this series, `verify-tests` started to review the test file itself, the `answer-guard` hook started to send back an answer on a form read without any audit inventory, and the test writer started to focus a field before checking a text passage. Run again one at a time with the plugin, the two review cases passed 6 runs out of 6, and the test writing cases 2 out of 3 under WCAG 2.2 and 2 out of 3 under RGAA 4.1.2.
+After this series, `verify-tests` started to review the test file itself, the `answer-guard` hook started to send back an answer on a form read without any audit inventory, or with tests that `verify-tests` never checked, and the test writer started to focus a field before checking a text passage. Run again one at a time with the plugin, the two review cases passed 6 runs out of 6, and the test writing cases 3 out of 3 under WCAG 2.2 and 1 out of 3 under RGAA 4.1.2. The RGAA case varied from 0 to 2 runs out of 3 across the runs of the day: its grader fails a test that rejects a conforming technique, which `verify-tests` would catch in a project whose test runner is installed, but not in the evaluation sandbox, where it can only answer `no-test-runner`.
 
 ## Limits
 
@@ -170,6 +170,7 @@ After this series, `verify-tests` started to review the test file itself, the `a
 - A generic set of tests, shipped with the plugin, that the hook runs on any component that renders without props.
 - An agent that drives a real browser over a whole page, beyond the components that have tests.
 - A hook that refuses a report until `validate` accepts it.
+- Evaluation sandboxes that install the test runners, so that `verify-tests` checks the written tests against their variants during the evaluations too: without them, it can only answer `no-test-runner`.
 - Oxlint as a linter, and a plugin option to choose the tools instead of detecting them.
 - When the project already uses Stryker, a mutation run of the accessibility tests on the component, reporting only the survivors that touch accessibility attributes (`aria-*`, `role`, `label`, `htmlFor`).
 - Reference files for modals, menus and comboboxes.
