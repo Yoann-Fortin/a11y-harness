@@ -104,4 +104,12 @@ describe('verify-tests, end to end on the playground', () => {
     },
     END_TO_END_TIME_LIMIT_MS,
   )
+
+  it('reports a test file that is not one, before it reads anything', async () => {
+    const { stdout } = await execFileAsync(process.execPath, [SCRIPTS, 'verify-tests', COMPONENT, COMPONENT, '--faulty', COMPONENT]).catch(
+      (error: { stdout: string }) => error,
+    )
+
+    expect(JSON.parse(stdout)).toEqual([{ problem: 'not-a-test-file' }])
+  })
 })
