@@ -129,4 +129,18 @@ describe('runChecks', () => {
 
     expect(results.withoutTestRunner).toBe(true)
   })
+
+  it('reports a linter whose report cannot be read as a tool failure, instead of stopping', async () => {
+    const unreadable: LintTool = {
+      ...LINTER,
+      readReport: () => {
+        throw new SyntaxError('Unexpected end of JSON input')
+      },
+    }
+    const tools = { ...fakeTools({ [LINTER_PATH]: OUTPUT(''), [RUNNER_PATH]: OUTPUT('') }), linters: [unreadable] }
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(results.toolFailures).toEqual([{ tool: 'linter', message: 'its report could not be read' }])
+  })
 })
