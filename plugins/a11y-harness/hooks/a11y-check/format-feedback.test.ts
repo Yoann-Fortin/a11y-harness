@@ -35,6 +35,15 @@ describe('formatFeedback', () => {
     expect(readFeedback(formatFeedback(results))).toEqual(results)
   })
 
+  it('asks to offer the browser mode of Vitest or Playwright Test, with the agreement of the user, when the package runs no test runner', () => {
+    const results = { ...NO_RESULTS, withoutTestRunner: true }
+
+    expect(readFeedback(formatFeedback(results))).toEqual({
+      ...results,
+      testRunnerOffer: expect.stringMatching(/browser mode of Vitest.*Playwright Test.*agreement/),
+    })
+  })
+
   it('asks for accessibility tests written with the test-writing skill when no test covers the file', () => {
     const results = { ...NO_RESULTS, untestedBy: ['vitest'] }
 

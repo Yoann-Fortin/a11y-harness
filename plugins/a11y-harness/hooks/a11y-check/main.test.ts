@@ -81,13 +81,16 @@ describe('a11y-check hook, end to end on the playground', () => {
   )
 
   it(
-    'stays silent in a package that uses none of the supported tools',
+    'offers a test runner that tests in a browser to a package that uses none of the supported ones',
     async () => {
       await mkdir(BARE_PACKAGE_DIR, { recursive: true })
       await writeFile(join(BARE_PACKAGE_DIR, 'package.json'), '{}')
       await writeFile(BARE_COMPONENT, FIXTURE_COMPONENT)
 
-      expect(await runHook(BARE_COMPONENT)).toBe('')
+      const output = JSON.parse(await runHook(BARE_COMPONENT))
+
+      expect(output.decision).toBe('block')
+      expect(JSON.parse(output.reason)).toMatchObject({ withoutTestRunner: true, testRunnerOffer: expect.any(String) })
     },
     END_TO_END_TIME_LIMIT_MS,
   )
