@@ -9,6 +9,8 @@ const EMAIL_AUTOCOMPLETE = 'email'
 const PASSWORD_FIELD_NAME = 'password'
 const PASSWORD_LABEL = 'Mot de passe'
 const PASSWORD_AUTOCOMPLETE = 'current-password'
+const SHOWN_PASSWORD_TYPE = 'text'
+const HIDDEN_PASSWORD_TYPE = 'password'
 const SUBMIT_LABEL = 'Se connecter'
 const EMAIL_REQUIRED_ERROR = 'Saisissez votre adresse e-mail'
 const EMAIL_FORMAT_ERROR = 'Saisissez une adresse e-mail valide, par exemple nom@domaine.fr'
@@ -61,7 +63,7 @@ export function LoginForm() {
       <label htmlFor={passwordFieldId}>{PASSWORD_LABEL}</label>
       <input
         id={passwordFieldId}
-        type={isPasswordVisible ? 'text' : 'password'}
+        type={isPasswordVisible ? SHOWN_PASSWORD_TYPE : HIDDEN_PASSWORD_TYPE}
         name={PASSWORD_FIELD_NAME}
         autoComplete={PASSWORD_AUTOCOMPLETE}
         aria-describedby={passwordErrorId}

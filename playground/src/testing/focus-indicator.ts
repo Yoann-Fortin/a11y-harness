@@ -1,6 +1,7 @@
 import { userEvent } from 'vitest/browser'
 
 const PSEUDO_ELEMENTS = [null, '::before', '::after']
+const EVERY_ELEMENT = '*'
 const NO_OUTLINE = 'none'
 const NO_OUTLINE_WIDTH = '0px'
 const PROPERTY_SEPARATOR = '|'
@@ -38,7 +39,7 @@ type FocusedAppearance = { element: Element; appearance: string }
 
 const tabSequenceWithin = async (container: Element) => {
   const reached: FocusedAppearance[] = []
-  for (const _ of container.querySelectorAll('*')) {
+  for (const _ of container.querySelectorAll(EVERY_ELEMENT)) {
     await userEvent.tab()
     const focused = document.activeElement
     if (focused === null || !container.contains(focused) || reached.some(({ element }) => element === focused)) {
@@ -51,7 +52,7 @@ const tabSequenceWithin = async (container: Element) => {
 
 export const elementsWithoutVisibleFocus = async (container: Element) => {
   const unfocused = new Map(
-    Array.from(container.querySelectorAll('*')).map((element) => [element, appearanceWithin(element, container)]),
+    Array.from(container.querySelectorAll(EVERY_ELEMENT)).map((element) => [element, appearanceWithin(element, container)]),
   )
   const reached = await tabSequenceWithin(container)
   return reached
