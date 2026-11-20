@@ -1,13 +1,10 @@
 import { basename } from 'node:path'
-import type { TestFile } from '../a11y-check/files.ts'
+import { isTestFile, type TestFile } from '../a11y-check/files.ts'
 import type { Transcript } from './transcript.ts'
 
 const WRITE_TOOL = 'Write'
 const TEST_WRITER_SKILL = 'a11y-test-writer'
 const VERIFY_COMMAND = ' verify-tests '
-const TEST_FILE = /\.(?:test|spec)\.[jt]sx?$/
-
-const isTestFile = (file: string): file is TestFile => TEST_FILE.test(file)
 
 export const unverifiedTestFiles = (transcript: Transcript): TestFile[] => {
   const usedTestWriter = transcript.some((block) => String({ ...block.input }.skill).endsWith(TEST_WRITER_SKILL))
