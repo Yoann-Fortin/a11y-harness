@@ -2,11 +2,11 @@
 
 A Claude Code plugin that checks the accessibility of React components against WCAG 2.2 AA, or against the French RGAA 4.1.2.
 
-It adds four things to Claude Code:
+It adds three hooks, two skills and an agent to Claude Code. The main ones:
 
 - **A hook, `a11y-check`.** After Claude writes or edits a `.tsx` or `.jsx` file, it runs the project's linter and the related tests, then hands the failures back to Claude, who fixes them before going on. When no test covers the component, it asks Claude to offer its accessibility tests to the user. When the file holds a form, it asks Claude to audit the form with the skill. Claude writes tests and applies fixes only with the agreement of the user: the team decides. When existing tests fail, Claude changes the new code, not the tests, unless a test freezes a behaviour the standard does not accept: then it asks the user first and explains why.
 - **A skill, `a11y-component-audit`.** It audits a form, with the components rendered inside it, and quotes every criterion from the official texts bundled with it. It first lists, from a table of form elements and the criteria they open, every criterion the component calls for. A check rejects any report whose criterion, level, title or evidence is not in those texts, or that leaves out one of those criteria.
-- **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them. A `verify-tests` command checks it: it runs the tests on one variant of the component per conforming technique, and on the faulty component, and reports every variant they misjudge.
+- **A skill, `a11y-test-writer`.** It writes the accessibility tests of a component for the chosen standard, with Testing Library: they state what the standard requires, accept every conforming technique, and fail until the component meets them. What depends on rendering, such as visible focus, target size or contrast, is tested in a browser when the project runs tests in one. A `verify-tests` command checks it: it runs the tests on one variant of the component per conforming technique, and on the faulty component, and reports every variant they misjudge.
 - **An agent, `a11y-reviewer`.** It reviews the forms of several components, a folder or the changes of a branch with the skill, without editing any file.
 
 ## Install
@@ -62,6 +62,10 @@ pnpm install
 ```
 
 ```bash
+pnpm --dir playground exec playwright install chromium-headless-shell
+```
+
+```bash
 pnpm --dir playground test
 ```
 
@@ -69,7 +73,7 @@ pnpm --dir playground test
 pnpm --dir playground test:rgaa
 ```
 
-The first command passes, the second fails on 11.10. In a Claude Code session with the plugin, an edit of `LoginForm.tsx` makes the hook ask for the audit of the form under both standards, and under RGAA 4.1.2 it also names the failing tests.
+Both run the jsdom tests and the browser tests in Chromium. The first passes, the second fails on 11.10. In a Claude Code session with the plugin, an edit of `LoginForm.tsx` makes the hook ask for the audit of the form under both standards, and under RGAA 4.1.2 it also names the failing tests.
 
 ## How it is built
 
@@ -83,7 +87,7 @@ The hook follows a light hexagonal architecture:
 | `run-command.ts` | Adapter: runs a tool, keeps its output on failure, reports a missing tool or a timeout |
 | `find-package-root.ts` | Adapter: finds the package that holds the component |
 | `run-checks.ts` | Adapter: runs each chosen linter and test runner |
-| `lint-tools.ts`, `test-tools.ts` | Adapters: the command and report of Biome, ESLint, Vitest and Jest |
+| `lint-tools.ts`, `test-tools.ts` | Adapters: the command and report of Biome, ESLint, Vitest, Jest and Playwright Test |
 | `choose-tools.ts` | Factory: chooses those tools from the dependencies of the package |
 | `read-reports.ts` | Anti-corruption layer: turns each tool's report, and the package dependencies, into domain types |
 | `main.ts` | Composition root: reads the event, the plugin option and the package dependencies, wires the adapters |
@@ -97,7 +101,7 @@ The skills keep the same split in their scripts:
 | `a11y-component-audit/scripts/validate-report.ts` | Domain: rejects a report that misquotes a criterion or leaves one of the inventory out |
 | `a11y-test-writer/scripts/judge-variants.ts` | Domain: flags a conforming variant that the tests reject, or a faulty one they accept |
 | `a11y-test-writer/scripts/verify-variants.ts` | Use case: puts each variant in place of the component, runs the tests, puts the component back |
-| `a11y-test-writer/scripts/run-test-file.ts` | Adapter: runs a test file with the Vitest or Jest of the package |
+| `a11y-test-writer/scripts/run-test-file.ts` | Adapter: runs a test file with the first test runner of the package that runs it |
 | `main.ts` of each skill | Composition root: the `lookup`, `validate`, `inventory` and `verify-tests` commands |
 
 The skill bundles the official texts it quotes, unmodified, with their sources and licences in [`NOTICE.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/standards/NOTICE.md): WCAG 2.2 and the ACT rules mapping from the W3C, the RGAA 4.1.2 criteria and test methodology from the DINUM. Its rulings on forms, buttons and status messages, each with its source, are in [`reference/forms.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/forms.md).
@@ -139,7 +143,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 ## Limits
 
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
-- **The tests run in jsdom, without CSS.** They cannot judge contrast, visible focus, zoom or what a screen reader actually says, and a visually hidden label passes them. The skill lists these points as checks to make by hand.
+- **Not everything can be tested.** Without a test runner that works in a browser, the tests run in jsdom, without CSS: they cannot judge contrast or visible focus, and a visually hidden label passes them. Zoom, reflow and what a screen reader actually says are never tested. The skill lists these points as checks to make by hand.
 - **The agent is read-only.** It has no `Write` or `Edit` tool, and a `PreToolUse` hook of the plugin only lets its `Bash` run the skill's scripts and `git diff`, `git log` or `git show`, each on its own. Claude Code ignores the hooks written in a plugin agent's own definition, so the hook is declared for the whole plugin and recognises the agent by its name.
 - **The answer guard reads the transcripts of the agent where Claude Code stores them.** Claude Code does not document that folder, next to the session's transcript. If it moves, the guard finds no inventory and lets every answer through.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
@@ -148,7 +152,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 
 - Skills to fix a defect by offering the fixes the standard accepts, to fill a complete RGAA audit grid for a page, and to write the accessibility statement the RGAA requires.
 - A generic set of tests, shipped with the plugin, that the hook runs on any component that renders without props.
-- An agent that drives a real browser, for what jsdom cannot see.
+- An agent that drives a real browser over a whole page, beyond the components that have tests.
 - A hook that refuses a report until `validate` accepts it.
 - Oxlint as a linter, and a plugin option to choose the tools instead of detecting them.
 - When the project already uses Stryker, a mutation run of the accessibility tests on the component, reporting only the survivors that touch accessibility attributes (`aria-*`, `role`, `label`, `htmlFor`).
