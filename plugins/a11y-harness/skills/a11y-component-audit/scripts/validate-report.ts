@@ -26,6 +26,14 @@ export type Finding = {
   evidence?: string[]
 }
 
+type ProblemCode =
+  | typeof UNKNOWN_CRITERION
+  | typeof WRONG_LEVEL
+  | typeof QUOTE_MISMATCH
+  | typeof UNRELATED_EVIDENCE
+  | typeof MISSING_CRITERION
+  | typeof UNOPENED_CRITERION
+
 export type Report = {
   standard: Standard
   findings: Finding[]
@@ -38,19 +46,19 @@ export type References = {
 }
 
 export type Problem = {
-  criterion: string
-  problem: string
+  criterion: CriterionId
+  problem: ProblemCode
   evidence?: string
 }
 
-type CheckedFinding = Finding & { criterion: string }
+type CheckedFinding = Finding & { criterion: CriterionId }
 
 type Checks = Problem[][]
 
 const unknownCriterion = (finding: CheckedFinding, officials: object[]): Problem[] =>
   officials.length === 0 ? [{ criterion: finding.criterion, problem: UNKNOWN_CRITERION }] : []
 
-const mismatch = (finding: CheckedFinding, isExact: boolean, problem: string): Problem[] =>
+const mismatch = (finding: CheckedFinding, isExact: boolean, problem: ProblemCode): Problem[] =>
   isExact ? [] : [{ criterion: finding.criterion, problem }]
 
 const unrelatedEvidence = (finding: CheckedFinding, isRelated: (item: string) => boolean): Problem[] =>

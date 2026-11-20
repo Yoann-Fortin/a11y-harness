@@ -2,13 +2,17 @@ const CONFORMING = 'conforming'
 const CONFORMING_VARIANT_REJECTED = 'conforming-variant-rejected'
 const FAULTY_VARIANT_ACCEPTED = 'faulty-variant-accepted'
 
+type VariantProblem = typeof CONFORMING_VARIANT_REJECTED | typeof FAULTY_VARIANT_ACCEPTED
+
 export type VariantRun = {
   variant: string
   kind: 'conforming' | 'faulty'
   passed: boolean
 }
 
-export const problemsOf = (runs: VariantRun[]) =>
+export type VariantVerdict = { variant: string; problem: VariantProblem }
+
+export const problemsOf = (runs: VariantRun[]): VariantVerdict[] =>
   runs
     .filter(({ kind, passed }) => passed !== (kind === CONFORMING))
     .map(({ variant, kind }) => ({

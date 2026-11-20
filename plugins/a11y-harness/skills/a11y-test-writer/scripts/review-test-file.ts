@@ -7,7 +7,9 @@ const ASSERTION = /\bexpect\(/
 const ROLE_WITHOUT_NAME_PROBLEM = 'role-query-without-name'
 const ASSERTION_IN_LOOP_PROBLEM = 'assertion-in-loop-or-condition'
 
-export type TestFileProblem = { problem: string; line: number }
+type TestFileProblemCode = typeof ROLE_WITHOUT_NAME_PROBLEM | typeof ASSERTION_IN_LOOP_PROBLEM
+
+export type TestFileProblem = { problem: TestFileProblemCode; line: number }
 
 const depthChangeOf = (text: string) => text.split(OPENING_BRACE).length - text.split(CLOSING_BRACE).length
 
@@ -20,10 +22,10 @@ const holdsAssertion = (lines: string[], start: number) =>
 
 export const testFileProblems = (source: string): TestFileProblem[] => {
   const lines = source.split(LINE_BREAK)
-  return lines.flatMap((text, index) => [
-    ...(ROLE_QUERY_WITHOUT_NAME.test(text) ? [{ problem: ROLE_WITHOUT_NAME_PROBLEM, line: index + 1 }] : []),
+  return lines.flatMap((text, index): TestFileProblem[] => [
+    ...(ROLE_QUERY_WITHOUT_NAME.test(text) ? [{ problem: ROLE_WITHOUT_NAME_PROBLEM, line: index + 1 } satisfies TestFileProblem] : []),
     ...(LOOP_OR_CONDITION.test(text) && holdsAssertion(lines, index)
-      ? [{ problem: ASSERTION_IN_LOOP_PROBLEM, line: index + 1 }]
+      ? [{ problem: ASSERTION_IN_LOOP_PROBLEM, line: index + 1 } satisfies TestFileProblem]
       : []),
   ])
 }
