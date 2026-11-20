@@ -6,7 +6,7 @@ import {
   type RgaaReference,
   type WcagReference,
 } from './find-criterion.ts'
-import { type CriterionId, RGAA_STANDARD, type Standard, type WcagLevel } from './standard.ts'
+import { type CriterionId, RGAA_STANDARD, type Standard, WCAG_STANDARD, type WcagLevel } from './standard.ts'
 
 const UNKNOWN_CRITERION = 'unknown-criterion'
 const WRONG_LEVEL = 'wrong-level'
@@ -101,11 +101,17 @@ const rgaaChecks = (finding: CheckedFinding, { rgaa }: References): Checks => {
   ]
 }
 
+const STANDARD_CHECKS = [
+  { standard: WCAG_STANDARD, checks: wcagChecks },
+  { standard: RGAA_STANDARD, checks: rgaaChecks },
+]
+
 export function validateReport(report: Report, references: References): Problem[] {
-  const checksOf = report.standard === RGAA_STANDARD ? rgaaChecks : wcagChecks
   return report.findings
     .filter((finding): finding is CheckedFinding => finding.criterion !== undefined)
-    .flatMap((finding) => checksOf(finding, references))
+    .flatMap((finding) =>
+      STANDARD_CHECKS.filter(({ standard }) => standard === report.standard).flatMap(({ checks }) => checks(finding, references)),
+    )
     .flat()
 }
 

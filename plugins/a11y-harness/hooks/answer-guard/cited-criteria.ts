@@ -1,10 +1,12 @@
-import { type CriterionId, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
+import { type CriterionId, RGAA_STANDARD, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 
 const STANDARD_VERSION = /(?:RGAA|WCAG) \d\.\d/
-const RGAA_CRITERION = /\d{1,2}\.\d{1,2}/g
-const WCAG_CRITERION = /\d\.\d\.\d/g
+const CRITERION_PATTERNS: Record<Standard, RegExp> = {
+  [WCAG_STANDARD]: /\d\.\d\.\d/g,
+  [RGAA_STANDARD]: /\d{1,2}\.\d{1,2}/g,
+}
 
 export const citedCriteria = (answer: string, standard: Standard): CriterionId[] =>
   answer
     .split(STANDARD_VERSION)
-    .flatMap((part) => (part.match(standard === WCAG_STANDARD ? WCAG_CRITERION : RGAA_CRITERION) ?? []) as CriterionId[])
+    .flatMap((part) => (part.match(CRITERION_PATTERNS[standard]) ?? []) as CriterionId[])
