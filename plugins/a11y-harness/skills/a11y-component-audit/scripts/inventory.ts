@@ -38,4 +38,6 @@ export const criteriaOf = (table: CriteriaTableFile, standard: Standard): Criter
   ...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? [])),
 ]
 
-export const inventoriedCriteria = (_table: CriteriaTable, _sources: string[], _standard: Standard): CriterionId[] => []
+export const inventoriedCriteria = (table: CriteriaTable, sources: string[], standard: Standard): CriterionId[] => [
+  ...new Set(inventoryOf(table, sources, standard).flatMap(({ criteria }) => criteria ?? [])),
+]
