@@ -1,5 +1,5 @@
 import { extname, sep } from 'node:path'
-import { STANDARDS, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
+import { type Standard, standardOf, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import type { ComponentFile } from './files.ts'
 
 const WATCHED_TOOLS = ['Write', 'Edit']
@@ -27,5 +27,5 @@ export function planChecks(event: ToolEvent, requestedStandard?: string): CheckP
     WATCHED_TOOLS.includes(event.tool_name) &&
     isComponentFile(filePath) &&
     !filePath.includes(VARIANTS_FOLDER)
-  return isWatched ? { filePath, cwd: event.cwd, standard: STANDARDS.find((standard) => standard === requestedStandard) ?? DEFAULT_STANDARD } : null
+  return isWatched ? { filePath, cwd: event.cwd, standard: standardOf(String(requestedStandard)) ?? DEFAULT_STANDARD } : null
 }
