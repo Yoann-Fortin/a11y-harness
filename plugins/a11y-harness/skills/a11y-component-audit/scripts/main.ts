@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
 import { criteriaTableFrom, inventoryFor, inventoryOf } from './inventory.ts'
-import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
+import { RGAA_STANDARD, standardOf, WCAG_STANDARD } from './standard.ts'
 import { reportProblems } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
@@ -46,14 +46,18 @@ const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   return { output: problems, failed: problems.length > 0 }
 }
 
-const inventory = ([standard = '', ...components]: string[]): Outcome => ({
-  output: inventoryOf(formCriteriaTable(), components.map(readSource), standard as Standard),
-  failed: false,
-})
+const NO_OUTCOME: Outcome = { output: null, failed: true }
+
+const inventory = ([standardArgument = '', ...components]: string[]): Outcome => {
+  const standard = standardOf(standardArgument)
+  return standard === null
+    ? NO_OUTCOME
+    : { output: inventoryOf(formCriteriaTable(), components.map(readSource), standard), failed: false }
+}
 
 const COMMANDS: Record<string, (args: string[]) => Outcome> = { lookup: lookUp, validate, inventory }
 
 const [command = '', ...args] = process.argv.slice(2)
-const outcome = COMMANDS[command]?.(args) ?? { output: null, failed: true }
+const outcome = COMMANDS[command]?.(args) ?? NO_OUTCOME
 process.exitCode = outcome.failed ? FAILURE_EXIT_CODE : SUCCESS_EXIT_CODE
 process.stdout.write(JSON.stringify(outcome.output))
