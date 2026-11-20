@@ -43,7 +43,10 @@ export const inventoriedCriteria = (table: CriteriaTable, sources: string[], sta
 ]
 
 export const inventoryFor = (
-  _table: CriteriaTable,
-  _sources: string[],
-  _standard: Standard,
-): { opened: CriterionId[]; tableCriteria: CriterionId[] } => ({ opened: [], tableCriteria: [] })
+  table: CriteriaTable,
+  sources: string[],
+  standard: Standard,
+): { opened: CriterionId[]; tableCriteria: CriterionId[] } => ({
+  opened: inventoriedCriteria(table, sources, standard),
+  tableCriteria: sources.length === 0 ? [] : criteriaOf(table, standard),
+})
