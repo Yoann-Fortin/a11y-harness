@@ -34,10 +34,16 @@ export const inventoryOf = (table: CriteriaTable, sources: string[], standard: S
     .filter(({ signals }) => holdsForm(table, sources[0]) && sources.some((source) => matchesAny(signals, source)))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
 
-export const criteriaOf = (table: CriteriaTableFile, standard: Standard): CriterionId[] => [
+export const criteriaOf = (table: Pick<CriteriaTableFile, 'elements'> | CriteriaTable, standard: Standard): CriterionId[] => [
   ...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? [])),
 ]
 
 export const inventoriedCriteria = (table: CriteriaTable, sources: string[], standard: Standard): CriterionId[] => [
   ...new Set(inventoryOf(table, sources, standard).flatMap(({ criteria }) => criteria ?? [])),
 ]
+
+export const inventoryFor = (
+  _table: CriteriaTable,
+  _sources: string[],
+  _standard: Standard,
+): { opened: CriterionId[]; tableCriteria: CriterionId[] } => ({ opened: [], tableCriteria: [] })
