@@ -34,6 +34,12 @@ describe('guardCommand', () => {
     expect(guardCommand(bashCall(`rm -rf src ${SCRIPTS} lookup rgaa-4.1.2 11.1`, REVIEWER))).not.toBeNull()
   })
 
+  it('lets the reviewer validate a report whose quote holds an apostrophe escaped as the skill asks, before parentheses', () => {
+    const report = `{"standard":"rgaa-4.1.2","findings":[{"criterion":"11.1","quote":"l'\\''étiquette (hors cas particuliers) ?"}]}`
+
+    expect(guardCommand(bashCall(`${SCRIPTS} validate '${report}' src/Form.tsx`, REVIEWER))).toBeNull()
+  })
+
   it('lets the reviewer validate a report given inline, whose quotes hold parentheses', () => {
     const report = '{"standard":"rgaa-4.1.2","findings":[{"criterion":"11.10","quote":"(hors cas particuliers) ?"}]}'
 
