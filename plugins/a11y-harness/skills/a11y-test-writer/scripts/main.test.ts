@@ -83,4 +83,25 @@ describe('verify-tests, end to end on the playground', () => {
 
     expect(JSON.parse(stdout)).toEqual([{ problem: 'no-test-runner' }])
   })
+
+  it(
+    'flags the faults of the test file itself before it runs any variant',
+    async () => {
+      await writeFixture(NAMED_BY_ARIA_LABEL, SHOWS_ITS_LABEL.replace('render(<Filter />)', "render(<Filter />)\n  screen.getAllByRole('textbox')"), LABELLED)
+
+      const { stdout } = await execFileAsync(process.execPath, [
+        SCRIPTS,
+        'verify-tests',
+        TEST_FILE,
+        COMPONENT,
+        '--conforming',
+        WITH_LABEL,
+        '--faulty',
+        COMPONENT,
+      ]).catch((error: { stdout: string }) => error)
+
+      expect(JSON.parse(stdout)).toEqual([{ problem: 'role-query-without-name', line: 7 }])
+    },
+    END_TO_END_TIME_LIMIT_MS,
+  )
 })
