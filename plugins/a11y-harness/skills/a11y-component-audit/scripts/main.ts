@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
-import { type CriteriaTable, inventoryOf } from './inventory.ts'
+import { type CriteriaTableFile, criteriaTableFrom, inventoryOf } from './inventory.ts'
 import type { Standard } from './standard.ts'
 import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
 
@@ -40,12 +40,12 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
 
 const inventoryCriteria = (components: string[], standard: Standard) => [
   ...new Set(
-    inventoryOf(readJson(FORM_CRITERIA_FILE), components.map(readSource), standard).flatMap(({ criteria }) => criteria ?? []),
+    inventoryOf(criteriaTableFrom(readJson(FORM_CRITERIA_FILE)), components.map(readSource), standard).flatMap(({ criteria }) => criteria ?? []),
   ),
 ]
 
 const tableCriteria = (standard: Standard) => {
-  const table: CriteriaTable = readJson(FORM_CRITERIA_FILE)
+  const table: CriteriaTableFile = readJson(FORM_CRITERIA_FILE)
   return [...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? []))]
 }
 
@@ -63,7 +63,7 @@ const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
 }
 
 const inventory = ([standard = '', ...components]: string[]): Outcome => ({
-  output: inventoryOf(readJson(FORM_CRITERIA_FILE), components.map(readSource), standard as Standard),
+  output: inventoryOf(criteriaTableFrom(readJson(FORM_CRITERIA_FILE)), components.map(readSource), standard as Standard),
   failed: false,
 })
 

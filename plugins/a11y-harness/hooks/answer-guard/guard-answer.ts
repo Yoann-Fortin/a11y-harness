@@ -24,7 +24,7 @@ export type AnswerCheck = {
   answer: string
   transcript: Transcript
   tableCriteria: Record<Standard, CriterionId[]>
-  formSignals: string[]
+  formSignals: RegExp[]
   stopHookActive: boolean
 }
 

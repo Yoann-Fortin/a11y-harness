@@ -12,7 +12,7 @@ const toolUse = (id: string, command: string) =>
 const toolResult = (id: string, content: string) =>
   JSON.stringify({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content }] } })
 const AUDITED_TOGGLE = [toolUse('toolu_1', INVENTORY), toolResult('toolu_1', TOGGLE_INVENTORY)]
-const FORM_SIGNALS = ['role="form"', '<form']
+const FORM_SIGNALS = [/role="form"/, /<form/]
 const readUse = (id: string, filePath: string) =>
   JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name: 'Read', input: { file_path: filePath } }] } })
 const toolCall = (id: string, name: string, input: Record<string, string>) =>

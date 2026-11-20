@@ -1,34 +1,31 @@
 import type { CriterionId, Standard } from './standard.ts'
 
-export type FormElement = {
-  id: string
-  signals: string[]
-  criteria: Partial<Record<Standard, CriterionId[]>>
-}
+type ElementCriteria = Partial<Record<Standard, CriterionId[]>>
 
 export type CriteriaTableFile = {
   form: { signals: string[] }
-  elements: { id: string; signals: string[]; criteria: Partial<Record<Standard, CriterionId[]>> }[]
+  elements: { id: string; signals: string[]; criteria: ElementCriteria }[]
 }
 
-export type CompiledCriteriaTable = {
+export type FormElement = {
+  id: string
+  signals: RegExp[]
+  criteria: ElementCriteria
+}
+
+export type CriteriaTable = {
   form: { signals: RegExp[] }
-  elements: { id: string; signals: RegExp[]; criteria: Partial<Record<Standard, CriterionId[]>> }[]
+  elements: FormElement[]
 }
 
 const patternsOf = (signals: string[]) => signals.map((signal) => new RegExp(signal))
 
-export const criteriaTableFrom = (file: CriteriaTableFile): CompiledCriteriaTable => ({
+export const criteriaTableFrom = (file: CriteriaTableFile): CriteriaTable => ({
   form: { signals: patternsOf(file.form.signals) },
   elements: file.elements.map((element) => ({ ...element, signals: patternsOf(element.signals) })),
 })
 
-export type CriteriaTable = {
-  form: { signals: string[] }
-  elements: FormElement[]
-}
-
-const matchesAny = (signals: string[], source: string) => signals.some((signal) => new RegExp(signal).test(source))
+const matchesAny = (signals: RegExp[], source: string) => signals.some((signal) => signal.test(source))
 
 export const holdsForm = (table: CriteriaTable, source: string) => matchesAny(table.form.signals, source)
 

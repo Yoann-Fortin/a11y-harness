@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { findRgaaCriteria, findWcagCriteria } from './find-criterion.ts'
-import { holdsForm, inventoryOf } from './inventory.ts'
+import { criteriaTableFrom, holdsForm, inventoryOf } from './inventory.ts'
 
 const TABLE_FILE = join(import.meta.dirname, '../reference/form-criteria.json')
 const STANDARDS_DIR = join(import.meta.dirname, '../reference/standards')
@@ -13,11 +13,12 @@ const TEXT_ENCODING = 'utf8'
 const WCAG = 'wcag-2.2'
 
 const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
-const table = readJson(TABLE_FILE)
+const tableFile = readJson(TABLE_FILE)
+const table = criteriaTableFrom(tableFile)
 const wcag = readJson(join(STANDARDS_DIR, WCAG_FILE))
 const rgaa = readJson(join(STANDARDS_DIR, RGAA_FILE))
 const criteriaOf = (standard: string): string[] =>
-  table.elements.flatMap(({ criteria }: { criteria: Record<string, string[]> }) => criteria[standard])
+  tableFile.elements.flatMap(({ criteria }: { criteria: Record<string, string[]> }) => criteria[standard])
 const elementsIn = (source: string) => inventoryOf(table, [`<form>${source}</form>`], WCAG).map(({ element }) => element)
 
 const FORMS = ['<form onSubmit={handleSubmit}>', '<form noValidate onSubmit={handleSubmit}>', '<section role="form" aria-label="Contact">', "<div role='form'>"]

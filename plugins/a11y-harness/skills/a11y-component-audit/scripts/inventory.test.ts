@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { type CriteriaTable, criteriaTableFrom, type FormElement, holdsForm, inventoryOf } from './inventory.ts'
+import { type CriteriaTableFile, criteriaTableFrom, holdsForm, inventoryOf } from './inventory.ts'
 
 const WCAG = 'wcag-2.2'
-const FORM_FIELD: FormElement = { id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2'] } }
-const SUBMIT_BUTTON: FormElement = { id: 'submit-button', signals: ['<button'], criteria: { [WCAG]: ['4.1.2'] } }
-const PASSWORD_FIELD: FormElement = { id: 'password-field', signals: ['<input[^>]*type="password"'], criteria: { [WCAG]: ['3.3.8'] } }
+const FORM_FIELD: CriteriaTableFile['elements'][number] = { id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2'] } }
+const SUBMIT_BUTTON: CriteriaTableFile['elements'][number] = { id: 'submit-button', signals: ['<button'], criteria: { [WCAG]: ['4.1.2'] } }
+const PASSWORD_FIELD: CriteriaTableFile['elements'][number] = { id: 'password-field', signals: ['<input[^>]*type="password"'], criteria: { [WCAG]: ['3.3.8'] } }
 const FORM = { signals: ['<form', 'role="form"'] }
-const TABLE: CriteriaTable = { form: FORM, elements: [FORM_FIELD, SUBMIT_BUTTON] }
+const TABLE = criteriaTableFrom({ form: FORM, elements: [FORM_FIELD, SUBMIT_BUTTON] })
 
 describe('inventoryOf', () => {
   it('lists an element whose signal the source matches, with the criteria of the chosen standard', () => {
@@ -24,7 +24,7 @@ describe('inventoryOf', () => {
   it('reads each signal as a regular expression', () => {
     const source = '<form><input name="secret" type="password" /></form>'
 
-    expect(inventoryOf({ form: FORM, elements: [PASSWORD_FIELD] }, [source], WCAG)).toEqual([{ element: 'password-field', criteria: ['3.3.8'] }])
+    expect(inventoryOf(criteriaTableFrom({ form: FORM, elements: [PASSWORD_FIELD] }), [source], WCAG)).toEqual([{ element: 'password-field', criteria: ['3.3.8'] }])
   })
 
   it('lists nothing in a source that holds no form', () => {

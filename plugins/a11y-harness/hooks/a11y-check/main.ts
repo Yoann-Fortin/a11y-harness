@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { text } from 'node:stream/consumers'
-import { holdsForm } from '../../skills/a11y-component-audit/scripts/inventory.ts'
+import { criteriaTableFrom, holdsForm } from '../../skills/a11y-component-audit/scripts/inventory.ts'
 import { chooseTools } from './choose-tools.ts'
 import { findPackageRoot } from './find-package-root.ts'
 import { handleEvent } from './handle-event.ts'
@@ -33,7 +33,7 @@ const output = await handleEvent(await text(process.stdin), process.env[STANDARD
       reportFile: join(reportDir, REPORT_FILE),
       ...chooseTools(await dependenciesOf(plan.cwd)),
     }),
-  holdsForm: async (plan) => holdsForm(JSON.parse(await readText(FORM_CRITERIA_FILE)), await readText(plan.filePath)),
+  holdsForm: async (plan) => holdsForm(criteriaTableFrom(JSON.parse(await readText(FORM_CRITERIA_FILE))), await readText(plan.filePath)),
 })
 await rm(reportDir, { recursive: true, force: true })
 process.stdout.write(output)
