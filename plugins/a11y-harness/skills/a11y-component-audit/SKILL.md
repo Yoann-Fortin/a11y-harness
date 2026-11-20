@@ -12,7 +12,7 @@ Every criterion, test, level and technique you cite comes from the official refe
 - **Check a report**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" validate '<report>'`, with the report as JSON on one line between single quotes, where an apostrophe `'` is written `'\''`. It prints `[]` when every citation matches the official texts, or the list of problems.
 - **List the criteria a component opens**: `node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" inventory <standard> <form file> <component files>`, the file that holds the form first, then the files of the components rendered inside it. It finds their form elements with the signals of [reference/form-criteria.json](reference/form-criteria.json), and prints each element with the criteria it opens. It prints `[]` when the first file holds no form.
 
-Run each command on its own, starting with `node` and written as above: no shell variable, loop or pipe, which the permission rules would refuse.
+Run each command on its own, starting with `node` and written as above: no shell variable, loop or pipe, which the permission rules would refuse. The commands need Node.js 22.18 or later, which runs TypeScript without a build step. When `node` is missing, or fails on a `.ts` file, tell the user and stop: never rule from memory instead.
 
 ## Method
 
@@ -23,7 +23,7 @@ Run each command on its own, starting with `node` and written as above: no shell
    - RGAA: apply the methodology of each test, step by step, and give the test number that decides the verdict.
    - WCAG: read the success criterion, then its sufficient techniques and documented failures.
    - Report only what the standard requires. A criterion fails when the official text requires what the code lacks; a missing good practice that the standard does not require is not reported.
-5. **Report.** Write one finding per criterion you rule on, failed or compliant, and run `validate` until it prints `[]`. Pass the form file and the files of the components inside it after the report: `validate` then also rejects a report that leaves out a criterion of their inventory, or that cites a criterion of the table that their inventory did not open, such as 11.9 without a button that submits the form.
+5. **Report.** Write one finding per criterion you rule on, failed or compliant, and run `validate` until it prints `[]`. When it still prints problems after three runs, stop: show them to the user, give no verdict on those criteria, and never change a finding only so that `validate` accepts it. Pass the form file and the files of the components inside it after the report: `validate` then also rejects a report that leaves out a criterion of their inventory, or that cites a criterion of the table that their inventory did not open, such as 11.9 without a button that submits the form.
 
    ```json
    {

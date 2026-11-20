@@ -30,6 +30,32 @@ A test must not fail a solution the standard accepts. Before you write an assert
 - **Repeated errors under React (WCAG 4.1.3, RGAA 7.5.2).** React leaves an alert region untouched when its text does not change, so test a second identical submission too: watch the alert regions with a `MutationObserver` that collects its records in its callback, and expect a change in them, or focus moved to the errors.
 - **A toggle button.** Its state may be exposed by `aria-pressed` or by a name that changes; accept both.
 
+## Example
+
+A test from the login form of the plugin's playground, in `LoginForm.test.tsx` because WCAG 4.1.3 and RGAA 7.5.2 share the requirement. `emailField`, `passwordField` and `submitButton` find each element by its role and accessible name. The test accepts both conforming ways: an alert region present before the submission, or the focus moved to a field in error.
+
+```tsx
+const ERROR_SUMMARY = /le formulaire contient des erreurs/i
+const ALERT_REGION_SELECTOR = '[role="alert"], [aria-live="assertive"]'
+
+const alertRegions = () => Array.from(document.querySelectorAll(ALERT_REGION_SELECTOR))
+
+const announcesErrors = (regionsBeforeSubmission: Element[]) =>
+  regionsBeforeSubmission.some(
+    (region) => region.isConnected && ERROR_SUMMARY.test(region.textContent ?? ''),
+  ) || [emailField(), passwordField()].some((field) => field === document.activeElement)
+
+it('announces the errors through an alert region present before submission, or moves focus to them', async () => {
+  const user = userEvent.setup()
+  render(<LoginForm />)
+  const regionsBeforeSubmission = alertRegions()
+
+  await user.click(submitButton())
+
+  expect(announcesErrors(regionsBeforeSubmission)).toBe(true)
+})
+```
+
 ## Cover every case
 
 - **Each case on its own.** For a requirement that depends on what the user enters, test each case separately, for every requirement it touches: each required field left empty while the others are filled, a malformed value, and the case with no error, where nothing is flagged or announced. Errors that must be announced (4.1.3, 7.5.2) are tested in each of these cases too, not only when every field is empty. A message shown only when every field is empty, or a field always flagged, passes a test that only submits an empty form.
