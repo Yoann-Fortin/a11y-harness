@@ -124,3 +124,7 @@ export const unopenedCriteria = (cited: CriterionId[], opened: CriterionId[], ta
   cited
     .filter((criterion) => tableCriteria.includes(criterion) && !opened.includes(criterion))
     .map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))
+
+export type Inventory = { opened: CriterionId[]; tableCriteria: CriterionId[] }
+
+export const reportProblems = (_report: Report, _references: References, _inventory: Inventory): Problem[] => []

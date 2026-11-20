@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ActReference, RgaaReference, WcagReference } from './find-criterion.ts'
-import { type Finding, missingCriteria, type Report, unopenedCriteria, validateReport } from './validate-report.ts'
+import { type Finding, missingCriteria, type Report, reportProblems, unopenedCriteria, validateReport } from './validate-report.ts'
 
 const WCAG_TITLE = 'Labels or instructions are provided when content requires user input.'
 const RGAA_TITLE = 'Required\u202ftitle\u00a0?'
@@ -171,5 +171,21 @@ describe('unopenedCriteria', () => {
 
   it('leaves alone a criterion outside the criteria table, such as one about images', () => {
     expect(unopenedCriteria(['1.1'], ['7.1'], ['7.1', '11.9'])).toEqual([])
+  })
+})
+
+describe('reportProblems', () => {
+  it('adds the problems of the inventory to those of the official texts, and none for an empty inventory', () => {
+    const report: Report = { standard: 'rgaa-4.1.2', findings: [RGAA_FINDING, { ...RGAA_FINDING, criterion: '3.3.2' }] }
+    const inventory = { opened: ['11.1' as const], tableCriteria: ['11.1' as const, '11.10' as const] }
+
+    expect([reportProblems(report, REFERENCES, inventory), reportProblems(report, REFERENCES, { opened: [], tableCriteria: [] })]).toEqual([
+      [
+        { criterion: '3.3.2', problem: 'unknown-criterion' },
+        { criterion: '11.1', problem: 'missing-criterion' },
+        { criterion: '11.10', problem: 'unopened-criterion' },
+      ],
+      [{ criterion: '3.3.2', problem: 'unknown-criterion' }],
+    ])
   })
 })
