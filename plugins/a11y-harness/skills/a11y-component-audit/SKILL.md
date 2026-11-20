@@ -37,7 +37,26 @@ Run each command on its own, starting with `node` and written as above: no shell
    - `quote`: the `title` printed by `lookup`, copied character for character.
    - `level`: for WCAG only, the level printed by `lookup`.
    - `evidence`: for RGAA, the tests you applied or techniques listed in the criterion's references; for WCAG, techniques, failures or ACT rules listed for that success criterion.
-   - Leave out what a reading of the code cannot settle, such as contrast, visible focus or target size, unless the browser tests of the component settle it: then run them and rule from their result.
+   - Leave out what a reading of the code cannot settle, such as contrast, visible focus or target size, unless the browser tests of the component settle it: then run them, with the user's permission, and rule from their result. The a11y-reviewer agent does not run them: it lists those points to check manually.
+
+## Examples
+
+- « Audit the accessibility of `LoginForm.tsx` »: no standard is named, so audit against WCAG 2.2 AA and say so. Run `inventory wcag-2.2` on `LoginForm.tsx` and the files of the components it renders inside the form, then `lookup` each criterion it prints.
+- « Is this JSX accessible under RGAA? », with the code pasted: there is no file for `inventory`, so match the signals of [reference/form-criteria.json](reference/form-criteria.json) yourself.
+- « Check `Header.tsx` »: the file holds no form, so answer that the audit only covers forms for now, and stop.
+
+A WCAG report, with the `level` field that RGAA reports leave out, checked against the inventory of the form and of the component it renders:
+
+```json
+{
+  "standard": "wcag-2.2",
+  "findings": [
+    { "criterion": "3.3.2", "quote": "<title printed by lookup, copied verbatim>", "level": "A", "evidence": ["H44"] }
+  ]
+}
+```
+
+`node "${CLAUDE_PLUGIN_ROOT}/skills/a11y-component-audit/scripts/main.ts" validate '<report>' LoginForm.tsx EmailField.tsx`
 
 ## Before answering
 
