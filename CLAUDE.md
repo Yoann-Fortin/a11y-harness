@@ -15,9 +15,10 @@ Accessibility plugin for Claude Code, for React: a hook that feeds lint and acce
 Run `pnpm install` once at the root.
 
 - `pnpm test`, `pnpm test:mutation`, `pnpm lint`, `pnpm typecheck`: plugin tests, Stryker, Biome and TypeScript at the root
-- `pnpm --dir playground test`, `pnpm --dir playground test:mutation`, `pnpm --dir playground build`: the same checks for the sandbox, against WCAG 2.2
+- `pnpm --dir playground exec playwright install chromium-headless-shell`: once, for the browser tests of the sandbox
+- `pnpm --dir playground test`, `pnpm --dir playground test:mutation`, `pnpm --dir playground build`: the same checks for the sandbox, against WCAG 2.2, with its jsdom tests and its browser tests in Chromium
 - `pnpm --dir playground test:rgaa`: the sandbox tests against RGAA 4.1.2; the login form fails RGAA 11.10 on purpose, to show the two verdicts
-- Stryker fails below a 100% mutation score in both places. In the sandbox it runs the tests of both standards, except the intended RGAA 11.10.1 and 11.10.2 failure
+- Stryker fails below a 100% mutation score in both places. In the sandbox it runs the jsdom tests of both standards, except the intended RGAA 11.10.1 and 11.10.2 failure: the browser tests check CSS, which Stryker does not mutate
 - `claude plugin validate .`: marketplace and plugin manifests
 
 ## Before each commit

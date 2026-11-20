@@ -98,7 +98,8 @@ The two other hooks keep the same split, with a pure function in the domain and 
 | --- | --- |
 | `reviewer-guard/guard-command.ts` | Domain: allows a command of the `a11y-reviewer` agent only when it is a script of the audit skill or a read-only git command |
 | `answer-guard/cited-criteria.ts`, `answer-guard/opened-criteria.ts` | Domain: the criteria the final answer cites, and those the inventories of the transcript opened |
-| `answer-guard/guard-answer.ts` | Use case: sends the answer back when it cites a criterion that no inventory opened |
+| `answer-guard/read-forms.ts`, `answer-guard/unverified-tests.ts` | Domain: whether Claude read a form, and the test files written in a test-writing session that no `verify-tests` command named |
+| `answer-guard/guard-answer.ts` | Use case: sends the answer back when it cites a criterion that no inventory opened, rules on a form without an audit, or comes with unchecked tests |
 
 The skills keep the same split in their scripts:
 
@@ -114,7 +115,7 @@ The skills keep the same split in their scripts:
 
 The skill bundles the official texts it quotes, unmodified, with their sources and licences in [`NOTICE.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/standards/NOTICE.md): WCAG 2.2 and the ACT rules mapping from the W3C, the RGAA 4.1.2 criteria and test methodology from the DINUM. Its rulings on forms, buttons and status messages, each with its source, are in [`reference/forms.md`](plugins/a11y-harness/skills/a11y-component-audit/reference/forms.md).
 
-Everything was written test-first, one test at a time. Stryker requires a 100% mutation score in both places, and each mutant was replayed to check that a failing assertion kills it, not a crash.
+Everything was written test-first, one test at a time: each test failed on an assertion before the code that makes it pass. Stryker requires a 100% mutation score in both places, and each mutant was replayed to check that a failing assertion kills it, not a crash.
 
 The [CI workflow](.github/workflows/ci.yml) runs on each push to `main` and each pull request: type checking, lint and tests on Node 22.18 and 24, the validation of both manifests, the sandbox tests and build, and Stryker in both places.
 
