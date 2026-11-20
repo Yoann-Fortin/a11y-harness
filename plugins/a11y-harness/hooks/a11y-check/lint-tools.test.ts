@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import type { CheckPlan } from './plan-checks.ts'
 import { BIOME, ESLINT } from './lint-tools.ts'
 
-const PLAN = { filePath: '/project/src/Form.tsx', cwd: '/project', standard: 'wcag-2.2' as const }
+const PLAN: CheckPlan = { filePath: '/project/src/Form.tsx', cwd: '/project', standard: 'wcag-2.2' }
 const BIOME_REPORT = JSON.stringify({
   diagnostics: [
     {

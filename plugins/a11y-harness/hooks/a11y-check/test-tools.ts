@@ -1,6 +1,7 @@
 import { basename, extname } from 'node:path'
 import type { FailingTest } from './format-feedback.ts'
 import type { Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
+import type { TestFile } from './files.ts'
 import type { CheckPlan } from './plan-checks.ts'
 import { countJestFormatTests, countPlaywrightTests, readJestFormatReport, readPlaywrightReport } from './read-reports.ts'
 
@@ -45,7 +46,7 @@ export type TestTool = {
   package: string
   binary: string
   args: (plan: CheckPlan, reportFile: string) => string[]
-  fileArgs: (testFile: string, reportFile: string) => string[]
+  fileArgs: (testFile: TestFile, reportFile: string) => string[]
   env: (reportFile: string) => Record<string, string>
   readReport: (report: string) => FailingTest[]
   countTests: (report: string) => number

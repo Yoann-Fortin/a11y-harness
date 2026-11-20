@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import type { CheckPlan } from './plan-checks.ts'
 import { JEST, PLAYWRIGHT, VITEST } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const REPORT_FILE = '/tmp/a11y-check/vitest.json'
 const TEST_FILE = '/project/src/Form.wcag.test.tsx'
-const WCAG_PLAN = { filePath: FILE, cwd: '/project', standard: 'wcag-2.2' as const }
+const WCAG_PLAN: CheckPlan = { filePath: FILE, cwd: '/project', standard: 'wcag-2.2' }
 const TEST_REPORT = JSON.stringify({
   testResults: [
     {

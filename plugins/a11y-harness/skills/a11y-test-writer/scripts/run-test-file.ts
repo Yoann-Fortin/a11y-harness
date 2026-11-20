@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import type { RunCommand } from '../../../hooks/a11y-check/run-checks.ts'
+import type { TestFile } from '../../../hooks/a11y-check/files.ts'
 import type { TestTool } from '../../../hooks/a11y-check/test-tools.ts'
 
 const TEST_RUN_TIME_LIMIT_MS = 120_000
@@ -12,7 +13,7 @@ export type TestFileTools = {
   testRunners: TestTool[]
 }
 
-async function verdictOf(testRunner: TestTool, testFile: string, cwd: string, tools: TestFileTools) {
+async function verdictOf(testRunner: TestTool, testFile: TestFile, cwd: string, tools: TestFileTools) {
   const output = await tools.run(
     join(cwd, testRunner.binary),
     testRunner.fileArgs(testFile, tools.reportFile),
@@ -31,7 +32,7 @@ async function verdictOf(testRunner: TestTool, testFile: string, cwd: string, to
   }
 }
 
-export async function passesTestFile(testFile: string, cwd: string, tools: TestFileTools) {
+export async function passesTestFile(testFile: TestFile, cwd: string, tools: TestFileTools) {
   for (const testRunner of tools.testRunners) {
     const verdict = await verdictOf(testRunner, testFile, cwd, tools)
     if (verdict !== NO_VERDICT) {

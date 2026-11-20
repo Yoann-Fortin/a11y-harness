@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { chooseTools } from '../../../hooks/a11y-check/choose-tools.ts'
+import type { TestFile } from '../../../hooks/a11y-check/files.ts'
 import { findPackageRoot } from '../../../hooks/a11y-check/find-package-root.ts'
 import { readDependencies } from '../../../hooks/a11y-check/read-reports.ts'
 import { runCommand } from '../../../hooks/a11y-check/run-command.ts'
@@ -51,7 +52,7 @@ const verifyTests = async ([testFile = '', component = '', ...variantArgs]: stri
     const tools = { run: runCommand, readText, reportFile: join(reportDir, REPORT_FILE), testRunners }
     return await verifyVariants(
       { component, variants: variantsOf(variantArgs) },
-      { readText, writeText, runTests: () => passesTestFile(testFile, cwd, tools) },
+      { readText, writeText, runTests: () => passesTestFile(testFile as TestFile, cwd, tools) },
     )
   } finally {
     await rm(reportDir, { recursive: true, force: true })

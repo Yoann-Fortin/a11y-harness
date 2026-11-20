@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { CheckPlan } from './plan-checks.ts'
 import type { LintTool } from './lint-tools.ts'
 import { runChecks } from './run-checks.ts'
 import type { CommandResult } from './run-command.ts'
@@ -6,7 +7,7 @@ import type { TestTool } from './test-tools.ts'
 
 const FILE = '/project/src/Form.tsx'
 const PROJECT_DIR = '/project'
-const PLAN = { filePath: FILE, cwd: PROJECT_DIR, standard: 'wcag-2.2' as const }
+const PLAN: CheckPlan = { filePath: FILE, cwd: PROJECT_DIR, standard: 'wcag-2.2' }
 const REPORT_FILE = '/tmp/a11y-check/report.json'
 const LINT_OUTPUT = 'lint output'
 const TEST_REPORT = 'test report'
