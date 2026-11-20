@@ -6,6 +6,7 @@ import type { CommandResult } from './run-command.ts'
 import type { TestTool } from './test-tools.ts'
 
 const TOOL_TIME_LIMIT_MS = 60_000
+const UNREADABLE_REPORT = 'its report could not be read'
 
 export type RunCommand = (
   command: string,
@@ -31,7 +32,11 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
   for (const linter of tools.linters) {
     const output = await tools.run(join(plan.cwd, linter.binary), linter.args(plan), plan.cwd, TOOL_TIME_LIMIT_MS)
     if (output.ok) {
-      lintErrors.push(...linter.readReport(output.stdout))
+      try {
+        lintErrors.push(...linter.readReport(output.stdout))
+      } catch {
+        toolFailures.push({ tool: linter.name, message: UNREADABLE_REPORT })
+      }
     } else {
       toolFailures.push({ tool: linter.name, message: output.failure })
     }
