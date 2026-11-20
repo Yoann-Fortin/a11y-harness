@@ -13,9 +13,10 @@ const depthChangeOf = (text: string) => text.split(OPENING_BRACE).length - text.
 
 const depthAfter = (lines: string[]) => lines.reduce((depth, text) => depth + depthChangeOf(text), 0)
 
-const blockFrom = (lines: string[]) => lines.slice(0, lines.findIndex((_, index) => depthAfter(lines.slice(0, index + 1)) <= 0) + 1)
+const blockLengthOf = (lines: string[]) => lines.findIndex((_, index) => depthAfter(lines.slice(0, index + 1)) <= 0) + 1
 
-const holdsAssertion = (lines: string[], start: number) => blockFrom(lines.slice(start)).some((text) => ASSERTION.test(text))
+const holdsAssertion = (lines: string[], start: number) =>
+  lines.slice(start, start + blockLengthOf(lines.slice(start))).some((text) => ASSERTION.test(text))
 
 export const testFileProblems = (source: string): TestFileProblem[] => {
   const lines = source.split(LINE_BREAK)
