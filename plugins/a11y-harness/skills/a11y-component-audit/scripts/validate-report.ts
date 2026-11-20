@@ -120,11 +120,26 @@ export const missingCriteria = (report: Report, expected: CriterionId[]): Proble
     .filter((criterion) => !report.findings.map((finding) => finding.criterion).includes(criterion))
     .map((criterion) => ({ criterion, problem: MISSING_CRITERION }))
 
-export const unopenedCriteria = (cited: CriterionId[], opened: CriterionId[], tableCriteria: CriterionId[]): Problem[] =>
+export const unopenedCriteria = (
+  cited: (CriterionId | undefined)[],
+  opened: CriterionId[],
+  tableCriteria: CriterionId[],
+): Problem[] =>
   cited
-    .filter((criterion) => tableCriteria.includes(criterion) && !opened.includes(criterion))
+    .filter(
+      (criterion): criterion is CriterionId =>
+        tableCriteria.some((inTable) => inTable === criterion) && !opened.some((inInventory) => inInventory === criterion),
+    )
     .map((criterion) => ({ criterion, problem: UNOPENED_CRITERION }))
 
 export type Inventory = { opened: CriterionId[]; tableCriteria: CriterionId[] }
 
-export const reportProblems = (_report: Report, _references: References, _inventory: Inventory): Problem[] => []
+export const reportProblems = (report: Report, references: References, inventory: Inventory): Problem[] => [
+  ...validateReport(report, references),
+  ...missingCriteria(report, inventory.opened),
+  ...unopenedCriteria(
+    report.findings.map(({ criterion }) => criterion),
+    inventory.opened,
+    inventory.tableCriteria,
+  ),
+]
