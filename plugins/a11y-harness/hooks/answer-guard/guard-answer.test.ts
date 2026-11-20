@@ -64,4 +64,13 @@ describe('guardAnswer', () => {
       reason: expect.stringMatching(/a11y-component-audit[\s\S]*a11y-reviewer/),
     })
   })
+
+  it('only counts the files Claude read, not a form printed by another tool', () => {
+    const answer = 'The submit button of the form fails 11.9.'
+    const printedForm = [toolUse('toolu_3', 'grep -r form src'), toolResult('toolu_3', 'src/Form.tsx: <form onSubmit={submit}>')]
+
+    expect(
+      guardAnswer({ answer, transcript: printedForm, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
+    ).toBeNull()
+  })
 })
