@@ -34,4 +34,6 @@ export const inventoryOf = (table: CriteriaTable, sources: string[], standard: S
     .filter(({ signals }) => holdsForm(table, sources[0]) && sources.some((source) => matchesAny(signals, source)))
     .map((element) => ({ element: element.id, criteria: element.criteria[standard] }))
 
-export const criteriaOf = (_table: CriteriaTableFile, _standard: Standard): CriterionId[] => []
+export const criteriaOf = (table: CriteriaTableFile, standard: Standard): CriterionId[] => [
+  ...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? [])),
+]
