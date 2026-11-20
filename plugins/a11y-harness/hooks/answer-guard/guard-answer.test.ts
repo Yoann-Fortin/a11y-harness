@@ -13,6 +13,12 @@ const AUDITED_TOGGLE = [toolUse('toolu_1', INVENTORY), toolResult('toolu_1', TOG
 const FORM_SIGNALS = ['role="form"', '<form']
 const readUse = (id: string, filePath: string) =>
   JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name: 'Read', input: { file_path: filePath } }] } })
+const toolCall = (id: string, name: string, input: Record<string, string>) =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id, name, input }] } })
+const WROTE_TESTS = [
+  toolCall('toolu_4', 'Skill', { skill: 'a11y-harness:a11y-test-writer' }),
+  toolCall('toolu_5', 'Write', { file_path: '/project/src/Filter.wcag.test.tsx', content: 'it()' }),
+]
 const READ_FORM = [readUse('toolu_2', 'src/Form.tsx'), toolResult('toolu_2', '1\t<form onSubmit={submit}>')]
 
 describe('guardAnswer', () => {
@@ -72,5 +78,17 @@ describe('guardAnswer', () => {
     expect(
       guardAnswer({ answer, transcript: printedForm, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
     ).toBeNull()
+  })
+
+  it('sends back the answer of a session that wrote accessibility tests without checking them with verify-tests', () => {
+    const decision = guardAnswer({
+      answer: 'I wrote the tests of the filter.',
+      transcript: WROTE_TESTS,
+      tableCriteria: TABLE_CRITERIA,
+      formSignals: FORM_SIGNALS,
+      stopHookActive: false,
+    })
+
+    expect(decision).toMatchObject({ decision: 'block', reason: expect.stringMatching(/without being checked[\s\S]*Filter\.wcag\.test\.tsx[\s\S]*Run verify-tests/) })
   })
 })
