@@ -154,6 +154,8 @@ On 20 November 2026, with the 19 cases of the suite, Claude Code 2.1.326, this c
 
 Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the test writing cases had nothing to read. The WCAG review timed out in four runs out of six under four parallel runs; run again on its own, it passed 2 runs out of 3 with the plugin and 2 out of 3 without, and the failed run with the plugin reviewed the files itself instead of handing them to the agent.
 
+After this series, `verify-tests` started to review the test file itself, the `answer-guard` hook started to send back an answer on a form read without any audit inventory, and the test writer started to focus a field before checking a text passage. Run again one at a time with the plugin, the two review cases passed 6 runs out of 6, and the test writing cases 2 out of 3 under WCAG 2.2 and 2 out of 3 under RGAA 4.1.2.
+
 ## Limits
 
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.

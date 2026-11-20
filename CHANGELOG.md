@@ -17,6 +17,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - The audit skill rules on nothing beyond the form, and settles contrast, visible focus or target size from the component's browser tests when it has some. The test writer's method names its stylesheet variants and every test runner `verify-tests` uses.
 - `a11y-check` no longer leaves alone a package without a test runner: it asks Claude to offer the team the browser mode of Vitest or Playwright Test, and to install either only with their agreement.
 - `verify-tests` first reviews the test file, and rejects a query by role without an accessible name or an assertion inside a loop or a condition, with its line.
+- The test writer focuses a field before checking that a text passage linked to it is shown, so that a passage made visible on focus passes RGAA 11.1.3.
 - `reviewer-guard` hook (PreToolUse on Bash): keeps the `a11y-reviewer` agent read-only by denying any command but the audit skill's `node` commands and `git diff`, `git log` or `git show`, run on their own and without `--output`.
 - `answer-guard` hook (Stop): sends Claude's final answer back once when it cites a criterion of the criteria table that the inventory of the audited form did not open, reading the inventories in the session's transcript and in its agents' transcripts.
 - `answer-guard` also sends back once an answer that rules on criteria of a form Claude read without any audit inventory, towards the audit skill or the `a11y-reviewer` agent.
