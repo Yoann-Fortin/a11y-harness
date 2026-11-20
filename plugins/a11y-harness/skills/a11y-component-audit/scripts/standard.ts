@@ -10,3 +10,5 @@ export type WcagLevel = 'A' | 'AA' | 'AAA'
 export type WcagReferenceLevel = WcagLevel | ''
 
 export type CriterionId = `${number}.${number}` | `${number}.${number}.${number}`
+
+export const standardOf = (_value: string): Standard | null => null
