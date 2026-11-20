@@ -16,7 +16,12 @@ export type CompiledCriteriaTable = {
   elements: { id: string; signals: RegExp[]; criteria: Partial<Record<Standard, CriterionId[]>> }[]
 }
 
-export const criteriaTableFrom = (_file: CriteriaTableFile): CompiledCriteriaTable => ({ form: { signals: [] }, elements: [] })
+const patternsOf = (signals: string[]) => signals.map((signal) => new RegExp(signal))
+
+export const criteriaTableFrom = (file: CriteriaTableFile): CompiledCriteriaTable => ({
+  form: { signals: patternsOf(file.form.signals) },
+  elements: file.elements.map((element) => ({ ...element, signals: patternsOf(element.signals) })),
+})
 
 export type CriteriaTable = {
   form: { signals: string[] }
