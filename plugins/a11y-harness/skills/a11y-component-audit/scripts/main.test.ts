@@ -84,6 +84,12 @@ describe('skill scripts, on the official reference files', () => {
     })
   })
 
+  it('fails on a standard it does not support, instead of listing elements without criteria', async () => {
+    const component = await writeComponent(LOGIN_FIELD)
+
+    await expect(run('inventory', 'wcag-2.1', component)).rejects.toMatchObject({ code: FAILURE_EXIT_CODE, stdout: 'null' })
+  })
+
   it('lists the elements of the components rendered inside the form', async () => {
     const form = await writeComponent(LOGIN_FIELD)
     const toggle = await writeComponent(TOGGLE)
