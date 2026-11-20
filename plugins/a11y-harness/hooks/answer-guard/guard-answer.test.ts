@@ -102,4 +102,21 @@ describe('guardAnswer', () => {
 
     expect([guardAnswer({ ...check, transcript: withoutSkill }), guardAnswer({ ...check, transcript: checked })]).toEqual([null, null])
   })
+
+  it('only counts the test files written in a session of the test-writing skill and never named in a verify-tests command', () => {
+    const check = { answer: 'Done.', tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }
+    const otherSkill = [toolCall('toolu_7', 'Skill', { skill: 'a11y-harness:a11y-component-audit' }), WROTE_TESTS[1]]
+    const notTests = [
+      WROTE_TESTS[0],
+      toolCall('toolu_8', 'Read', { file_path: '/project/src/Filter.test.tsx' }),
+      toolCall('toolu_9', 'Write', { file_path: '/project/src/Filter.test.tsx.bak' }),
+      toolResult('toolu_9', 'File created'),
+    ]
+    const onlyNamed = [...WROTE_TESTS, toolUse('toolu_10', 'cat src/Filter.wcag.test.tsx')]
+    const plainTestFile = [WROTE_TESTS[0], toolCall('toolu_11', 'Write', { file_path: '/project/src/Filter.test.ts' })]
+
+    expect(
+      [otherSkill, notTests, onlyNamed, plainTestFile].map((transcript) => guardAnswer({ ...check, transcript })?.decision ?? null),
+    ).toEqual([null, null, 'block', 'block'])
+  })
 })
