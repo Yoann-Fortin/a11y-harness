@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type CriteriaTableFile, criteriaOf, criteriaTableFrom, holdsForm, inventoryOf } from './inventory.ts'
+import { type CriteriaTableFile, criteriaOf, criteriaTableFrom, holdsForm, inventoriedCriteria, inventoryOf } from './inventory.ts'
 
 const WCAG = 'wcag-2.2'
 const FORM_FIELD: CriteriaTableFile['elements'][number] = { id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2'] } }
@@ -74,5 +74,20 @@ describe('criteriaOf', () => {
     }
 
     expect(criteriaOf(file, WCAG)).toEqual(['3.3.2', '4.1.2'])
+  })
+})
+
+describe('inventoriedCriteria', () => {
+  it('lists once each criterion that the elements found in the sources open', () => {
+    const table = criteriaTableFrom({
+      form: FORM,
+      elements: [
+        { id: 'form-field', signals: ['<input'], criteria: { [WCAG]: ['3.3.2', '4.1.2'] } },
+        { id: 'submit-button', signals: ['<button'], criteria: { [WCAG]: ['4.1.2'] } },
+        { id: 'required-field', signals: ['required'], criteria: { 'rgaa-4.1.2': ['11.10'] } },
+      ],
+    })
+
+    expect(inventoriedCriteria(table, ['<form><input required /><button>OK</button></form>'], WCAG)).toEqual(['3.3.2', '4.1.2'])
   })
 })
