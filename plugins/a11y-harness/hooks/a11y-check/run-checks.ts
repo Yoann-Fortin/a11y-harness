@@ -54,5 +54,5 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
       toolFailures.push({ tool: testRunner.name, message: output.failure })
     }
   }
-  return { lintErrors, failingTests, toolFailures, untestedBy }
+  return { lintErrors, failingTests, toolFailures, untestedBy, withoutTestRunner: tools.testRunners.length === 0 }
 }

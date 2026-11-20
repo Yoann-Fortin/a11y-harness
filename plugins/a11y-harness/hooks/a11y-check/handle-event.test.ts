@@ -4,7 +4,7 @@ import { handleEvent } from './handle-event.ts'
 import type { CheckPlan } from './plan-checks.ts'
 
 const SESSION_DIR = '/repo'
-const NO_RESULTS: CheckResults = { lintErrors: [], failingTests: [], toolFailures: [], untestedBy: [] }
+const NO_RESULTS: CheckResults = { lintErrors: [], failingTests: [], toolFailures: [], untestedBy: [], withoutTestRunner: false }
 const COMPONENT_PATH = '/repo/playground/src/Form.tsx'
 const FINDINGS: CheckResults = {
   ...NO_RESULTS,

@@ -27,6 +27,7 @@ export type CheckResults = {
   failingTests: FailingTest[]
   toolFailures: ToolFailure[]
   untestedBy: string[]
+  withoutTestRunner: boolean
 }
 
 export type FileReview = CheckResults & {
