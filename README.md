@@ -35,7 +35,7 @@ echo '{"standard":"rgaa-4.1.2"}' | claude plugin configure a11y-harness@a11y-har
 
 ## Use it in a project
 
-The hook runs the tools of the package that holds the component, chosen from the dependencies in its `package.json`: Biome or ESLint to lint the file, Vitest, Jest or Playwright Test to run the tests related to it. A package that uses none of them is left alone. The tests of the other standard are left out:
+The hook runs the tools of the package that holds the component, chosen from the dependencies in its `package.json`: Biome or ESLint to lint the file, Vitest, Jest or Playwright Test to run the tests related to it. When the package uses none of these test runners, the hook asks Claude to offer the team one that also tests in a browser, the browser mode of Vitest or Playwright Test, and to install it only with their agreement. The tests of the other standard are left out:
 
 | Test file | Runs under WCAG 2.2 | Runs under RGAA 4.1.2 |
 | --- | --- | --- |
@@ -151,7 +151,7 @@ Without the plugin, Claude never wrote the tests of a standard in their own file
 ## Limits
 
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
-- **Not everything can be tested.** Without a test runner that works in a browser, the tests run in jsdom, without CSS: they cannot judge contrast or visible focus, and a visually hidden label passes them. Zoom, reflow and what a screen reader actually says are never tested. The skill lists these points as checks to make by hand.
+- **What a screen reader says is not tested.** The tests check the accessibility tree that assistive technologies read, and, in a browser, what depends on rendering. The skill writes no test yet for zoom (1.4.4) or reflow (1.4.10), though a browser could check them: it lists them, with what a screen reader actually announces, as checks to make by hand.
 - **The agent is read-only.** It has no `Write` or `Edit` tool, and a `PreToolUse` hook of the plugin only lets its `Bash` run the skill's scripts and `git diff`, `git log` or `git show`, each on its own. Claude Code ignores the hooks written in a plugin agent's own definition, so the hook is declared for the whole plugin and recognises the agent by its name.
 - **The answer guard reads the transcripts of the agent where Claude Code stores them.** Claude Code does not document that folder, next to the session's transcript. If it moves, the guard finds no inventory and lets every answer through.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
