@@ -49,7 +49,7 @@ When a test runner finds no test related to the changed component, the hook asks
 
 The audit only covers forms for now: a `<form>` element or an element with `role="form"`, as the RGAA glossary defines a form, with the components rendered inside it. When Claude writes or edits a file that holds a form, the hook asks for its audit even if every check passes.
 
-When Claude's final answer cites a criterion of the table that the inventory of the audited form did not open, a `Stop` hook, `answer-guard`, sends the answer back once: the audit reports the criteria of its validated reports, never one more as a possibility.
+When Claude's final answer cites a criterion of the table that the inventory of the audited form did not open, a `Stop` hook, `answer-guard`, sends the answer back once: the audit reports the criteria of its validated reports, never one more as a possibility. It also sends back an answer that rules on a form Claude read without running any audit inventory, towards the skill or, for several components, the agent.
 
 The skills and the agent need nothing else: ask Claude to audit a form, to write the accessibility tests of a component, or to review the forms of a folder or a branch.
 
