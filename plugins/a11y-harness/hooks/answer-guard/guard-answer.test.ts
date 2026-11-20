@@ -91,4 +91,15 @@ describe('guardAnswer', () => {
 
     expect(decision).toMatchObject({ decision: 'block', reason: expect.stringMatching(/without being checked[\s\S]*Filter\.wcag\.test\.tsx[\s\S]*Run verify-tests/) })
   })
+
+  it('lets through the tests written without the test-writing skill, and the ones verify-tests checked', () => {
+    const check = { answer: 'Done.', tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }
+    const withoutSkill = WROTE_TESTS.slice(1)
+    const checked = [
+      ...WROTE_TESTS,
+      toolUse('toolu_6', 'node "/plugins/a11y-harness/skills/a11y-test-writer/scripts/main.ts" verify-tests src/Filter.wcag.test.tsx src/Filter.tsx'),
+    ]
+
+    expect([guardAnswer({ ...check, transcript: withoutSkill }), guardAnswer({ ...check, transcript: checked })]).toEqual([null, null])
+  })
 })
