@@ -6,6 +6,7 @@ import { chooseTools } from '../../../hooks/a11y-check/choose-tools.ts'
 import { findPackageRoot } from '../../../hooks/a11y-check/find-package-root.ts'
 import { readDependencies } from '../../../hooks/a11y-check/read-reports.ts'
 import { runCommand } from '../../../hooks/a11y-check/run-command.ts'
+import { testFileProblems } from './review-test-file.ts'
 import { passesTestFile } from './run-test-file.ts'
 import { type VariantPlan, verifyVariants } from './verify-variants.ts'
 
@@ -18,6 +19,7 @@ const FAULTY_FLAG = '--faulty'
 const NO_TEST_RUNNER = [{ problem: 'no-test-runner' }]
 const SUCCESS_EXIT_CODE = 0
 const FAILURE_EXIT_CODE = 1
+const NO_SOURCE = ''
 
 const readText = (path: string) => readFile(path, TEXT_ENCODING)
 const writeText = (path: string, content: string) => writeFile(path, content, TEXT_ENCODING)
@@ -34,6 +36,10 @@ const variantsOf = (args: string[]) => {
 }
 
 const verifyTests = async ([testFile = '', component = '', ...variantArgs]: string[]) => {
+  const faults = testFileProblems(await readText(testFile).catch(() => NO_SOURCE))
+  if (faults.length > 0) {
+    return faults
+  }
   const cwd = findPackageRoot(component, existsSync) ?? process.cwd()
   const dependencies = await readText(join(cwd, PACKAGE_FILE)).then(readDependencies, () => [])
   const testRunners = chooseTools(dependencies).testRunners.filter((testRunner) => existsSync(join(cwd, testRunner.binary)))
