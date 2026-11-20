@@ -1,37 +1,21 @@
 import type { CriterionId, Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
+import type { Transcript } from './transcript.ts'
 
 const INVENTORY_COMMAND = ' inventory '
 
-type Block = {
-  type: string
-  id?: string
-  name?: string
-  tool_use_id?: string
-  input?: { command?: string; file_path?: string; skill?: string }
-  content?: string
-}
-type Entry = { message?: { content?: Block[] | string } }
-type MessageEntry = { message: { content: Block[] } }
 type InventoryElement = { criteria: CriterionId[] }
 
-export const blocksOf = (transcript: string[]) =>
-  transcript
-    .map((line): Entry => JSON.parse(line))
-    .filter((entry): entry is MessageEntry => Array.isArray(entry.message?.content))
-    .flatMap((entry) => entry.message.content)
-
-const inventoriedCriteria = (transcript: string[], standard: Standard) => {
-  const blocks = blocksOf(transcript)
-  const inventoryIds = blocks
+const inventoriedCriteria = (transcript: Transcript, standard: Standard) => {
+  const inventoryIds = transcript
     .filter((block) => String(block.input?.command).includes(`${INVENTORY_COMMAND}${standard} `))
     .map((block) => block.id)
-  return blocks
+  return transcript
     .filter((block) => inventoryIds.includes(block.tool_use_id))
     .flatMap((block): InventoryElement[] => JSON.parse(String(block.content)))
     .flatMap((element) => element.criteria)
 }
 
-export const openedCriteria = (transcript: string[], standard: Standard): CriterionId[] => {
+export const openedCriteria = (transcript: Transcript, standard: Standard): CriterionId[] => {
   try {
     return inventoriedCriteria(transcript, standard)
   } catch {

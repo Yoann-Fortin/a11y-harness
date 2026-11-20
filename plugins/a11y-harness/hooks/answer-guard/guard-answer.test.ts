@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CriterionId, Standard } from '../../skills/a11y-component-audit/scripts/standard.ts'
-import { guardAnswer } from './guard-answer.ts'
+import { type AnswerCheck, guardAnswer } from './guard-answer.ts'
+import { transcriptOf } from './transcript.ts'
 
 const INVENTORY = 'node "/plugins/a11y-harness/skills/a11y-component-audit/scripts/main.ts" inventory rgaa-4.1.2 src/Form.tsx'
 const TOGGLE_INVENTORY = '[{"element":"script-button","criteria":["7.1","7.3"]}]'
@@ -22,43 +23,46 @@ const WROTE_TESTS = [
 ]
 const READ_FORM = [readUse('toolu_2', 'src/Form.tsx'), toolResult('toolu_2', '1\t<form onSubmit={submit}>')]
 
+const guard = (check: Omit<AnswerCheck, 'transcript'> & { transcript: string[] }) =>
+  guardAnswer({ ...check, transcript: transcriptOf(check.transcript) })
+
 describe('guardAnswer', () => {
   it('sends back an answer that cites a criterion of the table that the inventory did not open', () => {
     const answer = 'The toggle fails 7.1, and many auditors would also fail 11.9.'
 
     expect(
-      guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
+      guard({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
     ).toMatchObject({ decision: 'block', reason: expect.stringContaining('11.9') })
   })
 
   it('lets an answer through when the inventory opened every criterion it cites', () => {
     const answer = 'The toggle fails 7.1, test 7.1.1.'
 
-    expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })).toBeNull()
+    expect(guard({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })).toBeNull()
   })
 
   it('lets the answer through when Claude is already answering a first block', () => {
     const answer = 'Many auditors would also fail 11.9.'
 
-    expect(guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: true })).toBeNull()
+    expect(guard({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: true })).toBeNull()
   })
 
   it('lets through the answer of a session that ran no inventory', () => {
     const answer = 'Criterion 11.9 of the RGAA covers the buttons of a form.'
 
-    expect(guardAnswer({ answer, transcript: [], tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })).toBeNull()
+    expect(guard({ answer, transcript: [], tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })).toBeNull()
   })
 
   it('tells Claude why the answer is sent back and what to do', () => {
     const answer = 'Many auditors would also fail 11.9.'
-    const decision = guardAnswer({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })
+    const decision = guard({ answer, transcript: AUDITED_TOGGLE, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false })
 
     expect(decision?.reason).toMatch(/inventory[\s\S]*11\.9[\s\S]*remove/i)
   })
 
   it('sends back an answer that rules on a form it read without any audit inventory, towards the skill or the agent', () => {
     const answer = 'The submit button of the form fails 11.9.'
-    const decision = guardAnswer({
+    const decision = guard({
       answer,
       transcript: READ_FORM,
       tableCriteria: TABLE_CRITERIA,
@@ -77,12 +81,12 @@ describe('guardAnswer', () => {
     const printedForm = [toolUse('toolu_3', 'grep -r form src'), toolResult('toolu_3', 'src/Form.tsx: <form onSubmit={submit}>')]
 
     expect(
-      guardAnswer({ answer, transcript: printedForm, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
+      guard({ answer, transcript: printedForm, tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
     ).toBeNull()
   })
 
   it('sends back the answer of a session that wrote accessibility tests without checking them with verify-tests', () => {
-    const decision = guardAnswer({
+    const decision = guard({
       answer: 'I wrote the tests of the filter.',
       transcript: WROTE_TESTS,
       tableCriteria: TABLE_CRITERIA,
@@ -101,7 +105,7 @@ describe('guardAnswer', () => {
       toolUse('toolu_6', 'node "/plugins/a11y-harness/skills/a11y-test-writer/scripts/main.ts" verify-tests src/Filter.wcag.test.tsx src/Filter.tsx'),
     ]
 
-    expect([guardAnswer({ ...check, transcript: withoutSkill }), guardAnswer({ ...check, transcript: checked })]).toEqual([null, null])
+    expect([guard({ ...check, transcript: withoutSkill }), guard({ ...check, transcript: checked })]).toEqual([null, null])
   })
 
   it('only counts the test files written in a session of the test-writing skill and never named in a verify-tests command', () => {
@@ -117,7 +121,7 @@ describe('guardAnswer', () => {
     const plainTestFile = [WROTE_TESTS[0], toolCall('toolu_11', 'Write', { file_path: '/project/src/Filter.test.ts' })]
 
     expect(
-      [otherSkill, notTests, onlyNamed, plainTestFile].map((transcript) => guardAnswer({ ...check, transcript })?.decision ?? null),
+      [otherSkill, notTests, onlyNamed, plainTestFile].map((transcript) => guard({ ...check, transcript })?.decision ?? null),
     ).toEqual([null, null, 'block', 'block'])
   })
 })

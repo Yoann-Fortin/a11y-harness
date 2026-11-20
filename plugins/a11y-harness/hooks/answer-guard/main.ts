@@ -4,6 +4,7 @@ import { text } from 'node:stream/consumers'
 import type { CriteriaTable } from '../../skills/a11y-component-audit/scripts/inventory.ts'
 import { type CriterionId, RGAA_STANDARD, type Standard, WCAG_STANDARD } from '../../skills/a11y-component-audit/scripts/standard.ts'
 import { guardAnswer } from './guard-answer.ts'
+import { transcriptOf } from './transcript.ts'
 
 const TEXT_ENCODING = 'utf8'
 const TRANSCRIPT_EXTENSION = '.jsonl'
@@ -37,7 +38,7 @@ const decisionFor = async (input: string) => {
   try {
     const event: StopEvent = JSON.parse(input)
     const files = [event.transcript_path, ...(await subagentTranscripts(event.transcript_path))]
-    const transcript = (await Promise.all(files.map(readLines))).flat()
+    const transcript = transcriptOf((await Promise.all(files.map(readLines))).flat())
     return guardAnswer({
       answer: event.last_assistant_message,
       transcript,

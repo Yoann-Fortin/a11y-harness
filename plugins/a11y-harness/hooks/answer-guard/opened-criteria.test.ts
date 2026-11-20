@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { openedCriteria } from './opened-criteria.ts'
+import { transcriptOf } from './transcript.ts'
 
 const RGAA = 'rgaa-4.1.2'
 const INVENTORY_COMMAND = 'node "/plugins/a11y-harness/skills/a11y-component-audit/scripts/main.ts" inventory rgaa-4.1.2 src/Form.tsx'
@@ -16,7 +17,7 @@ describe('openedCriteria', () => {
   it('lists the criteria that an inventory run in the transcript opened', () => {
     const transcript = [toolUse('toolu_1', INVENTORY_COMMAND), toolResult('toolu_1', FIELD_INVENTORY)]
 
-    expect(openedCriteria(transcript, RGAA)).toEqual(['11.1', '11.2'])
+    expect(openedCriteria(transcriptOf(transcript), RGAA)).toEqual(['11.1', '11.2'])
   })
 
   it('leaves out the results of the other commands', () => {
@@ -27,18 +28,20 @@ describe('openedCriteria', () => {
       toolResult('toolu_2', FIELD_INVENTORY),
     ]
 
-    expect(openedCriteria(transcript, RGAA)).toEqual(['11.1', '11.2'])
+    expect(openedCriteria(transcriptOf(transcript), RGAA)).toEqual(['11.1', '11.2'])
   })
 
   it('leaves out an inventory run for the other standard', () => {
     const wcagInventory = INVENTORY_COMMAND.replace('rgaa-4.1.2', 'wcag-2.2')
     const transcript = [toolUse('toolu_1', wcagInventory), toolResult('toolu_1', '[{"element":"form-field","criteria":["3.3.2"]}]')]
 
-    expect(openedCriteria(transcript, RGAA)).toEqual([])
+    expect(openedCriteria(transcriptOf(transcript), RGAA)).toEqual([])
   })
 
-  it('reads no criterion from a transcript it cannot parse, so that the answer goes through', () => {
-    expect(openedCriteria(['{"type":"assistant","message":', toolResult('toolu_1', FIELD_INVENTORY)], RGAA)).toEqual([])
+  it('reads no criterion from an inventory result it cannot parse, so that the answer goes through', () => {
+    const transcript = [toolUse('toolu_1', INVENTORY_COMMAND), toolResult('toolu_1', 'Error: no such file src/Form.tsx')]
+
+    expect(openedCriteria(transcriptOf(transcript), RGAA)).toEqual([])
   })
 
   it('reads past the lines that hold no message, such as the prompt or a summary', () => {
@@ -49,6 +52,6 @@ describe('openedCriteria', () => {
       toolResult('toolu_1', FIELD_INVENTORY),
     ]
 
-    expect(openedCriteria(transcript, RGAA)).toEqual(['11.1', '11.2'])
+    expect(openedCriteria(transcriptOf(transcript), RGAA)).toEqual(['11.1', '11.2'])
   })
 })

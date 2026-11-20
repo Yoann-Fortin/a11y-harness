@@ -3,6 +3,7 @@ import { unopenedCriteria } from '../../skills/a11y-component-audit/scripts/vali
 import { citedCriteria } from './cited-criteria.ts'
 import { openedCriteria } from './opened-criteria.ts'
 import { readsAForm } from './read-forms.ts'
+import type { Transcript } from './transcript.ts'
 import { unverifiedTestFiles } from './unverified-tests.ts'
 
 const BLOCK_DECISION = 'block'
@@ -21,7 +22,7 @@ const unopenedIn = (answer: string, opened: CriterionId[], standard: Standard, c
 
 export type AnswerCheck = {
   answer: string
-  transcript: string[]
+  transcript: Transcript
   tableCriteria: Record<Standard, CriterionId[]>
   formSignals: string[]
   stopHookActive: boolean
