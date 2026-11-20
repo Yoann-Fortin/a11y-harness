@@ -128,25 +128,31 @@ claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" 
 
 `--scaffold` copies the components the agent reviews into each run, `--allow-tools` lets the skills run their scripts and write the tests, and `--no-publish` keeps the report on your machine. Run it from a clean Claude Code profile (`CLAUDE_CONFIG_DIR`), so that no personal configuration skews the results.
 
-On the morning of 18 November 2026, with the 13 cases of the time, Claude Code 2.1.326, this command and `--runs 3`, Claude passed 38 runs out of 39 with the plugin, and 16 out of 39 without it. The suite has since grown to 18 cases, and its isolated fields now sit inside a form: the table will be refreshed with a new series.
+On 20 November 2026, with the 19 cases of the suite, Claude Code 2.1.326, this command, `--runs 3` and `-j 4`, Claude passed 54 runs out of 57 with the plugin, and 19 out of 57 without it. The hook that offers a test runner to a package without one came after this series; no case covers it yet.
 
 | Case | Standard | With the plugin | Without |
 | --- | --- | --- | --- |
-| Field named only by a placeholder | WCAG 2.2 | 3/3 | 1/3 |
+| Field named only by a placeholder | WCAG 2.2 | 3/3 | 0/3 |
 | Field named only by `aria-label` | RGAA 4.1.2 | 3/3 | 2/3 |
-| Search field and adjacent button | RGAA 4.1.2 | 3/3 | 2/3 |
+| Search field and adjacent button | RGAA 4.1.2 | 3/3 | 1/3 |
 | Field named only by `title` | WCAG 2.2 | 3/3 | 3/3 |
-| Field named only by `title` | RGAA 4.1.2 | 3/3 | 2/3 |
+| Field named only by `title` | RGAA 4.1.2 | 3/3 | 1/3 |
 | Login form | WCAG 2.2 | 3/3 | 0/3 |
-| Login form | RGAA 4.1.2 | 3/3 | 1/3 |
+| Login form | RGAA 4.1.2 | 3/3 | 0/3 |
+| Email field left to native validation | WCAG 2.2 | 3/3 | 2/3 |
+| Email field left to native validation | RGAA 4.1.2 | 3/3 | 0/3 |
+| Repeated error not announced again by React | WCAG 2.2 | 3/3 | 2/3 |
+| Repeated error not announced again by React | RGAA 4.1.2 | 3/3 | 1/3 |
 | Icon-only button without a name | WCAG 2.2 | 3/3 | 3/3 |
 | Icon-only button without a name | RGAA 4.1.2 | 3/3 | 0/3 |
-| Review of three components (agent) | WCAG 2.2 | 3/3 | 2/3 |
-| Review of three components (agent) | RGAA 4.1.2 | 2/3 | 0/3 |
+| A form written by Claude gets audited | WCAG 2.2 | 3/3 | 3/3 |
+| Review of three components (agent) | WCAG 2.2 | 1/3 | 1/3 |
+| Review of three components (agent) | RGAA 4.1.2 | 3/3 | 0/3 |
 | Tests written for a component | WCAG 2.2 | 3/3 | 0/3 |
-| Tests written for a component | RGAA 4.1.2 | 3/3 | 0/3 |
+| Tests written for a component | RGAA 4.1.2 | 2/3 | 0/3 |
+| Browser tests written for a form and its stylesheet | WCAG 2.2 | 3/3 | 0/3 |
 
-Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the last two cases had nothing to read. The failed review with the plugin cited criterion 11.9 alongside 7.1 for a button that JavaScript drives: the `answer-guard` hook now sends such an answer back.
+Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the test writing cases had nothing to read. The WCAG review timed out in four runs out of six under four parallel runs; run again on its own, it passed 2 runs out of 3 with the plugin and 2 out of 3 without, and the failed run with the plugin reviewed the files itself instead of handing them to the agent.
 
 ## Limits
 

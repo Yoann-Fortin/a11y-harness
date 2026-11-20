@@ -24,7 +24,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - `a11y-test-writer` writes the tests that depend on rendering, such as visible focus, target size, contrast and label position, in a browser when the package runs tests in one, with the browser mode of Vitest or Playwright Test, and checks them against variants of the stylesheet. Evaluation case `write-browser-tests-wcag`.
 - `a11y-reviewer` agent: reviews the forms of several components, a folder or the changes of a branch with the audit skill, without changing any file.
 - GitHub Actions workflow: type checking, lint and tests of the plugin on Node 22.18 and 24, validation of the marketplace and plugin manifests, tests and build of the sandbox, and a 100% mutation score in both places.
-- README: installation, choice of standard, the two verdicts of the playground, architecture, evaluations, limits and roadmap.
+- README: installation, choice of standard, the two verdicts of the playground, architecture, evaluations with the series of 20 November 2026 (54 runs out of 57 with the plugin, 19 without), limits and roadmap.
 - Browser tests in the playground: a `browser` Vitest project runs the `*.browser.*test.tsx` files in Chromium through Playwright, next to the `jsdom` project, and both leave out the tests of the other standard.
 - A stylesheet for the playground login form, as a design would hand it over, with the eye icon inside the password field.
 - Browser test for the login form against WCAG 2.5.8: every target is at least 24 by 24 CSS pixels, or spaced as the criterion allows. The design's 16 pixel eye icon failed it, and its button now has a 4 pixel padding. Stryker leaves the browser tests out, since it does not mutate CSS.
