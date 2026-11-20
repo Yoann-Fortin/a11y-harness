@@ -50,10 +50,14 @@ export async function runChecks(plan: CheckPlan, tools: Tools): Promise<CheckRes
       testRunner.env(tools.reportFile),
     )
     if (output.ok) {
-      const report = await tools.readText(tools.reportFile)
-      failingTests.push(...testRunner.readReport(report))
-      if (testRunner.countTests(report) === 0) {
-        untestedBy.push(testRunner.name)
+      try {
+        const report = await tools.readText(tools.reportFile)
+        failingTests.push(...testRunner.readReport(report))
+        if (testRunner.countTests(report) === 0) {
+          untestedBy.push(testRunner.name)
+        }
+      } catch {
+        toolFailures.push({ tool: testRunner.name, message: UNREADABLE_REPORT })
       }
     } else {
       toolFailures.push({ tool: testRunner.name, message: output.failure })
