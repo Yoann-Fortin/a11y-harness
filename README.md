@@ -81,6 +81,7 @@ The hook follows a light hexagonal architecture:
 
 | File | Role |
 | --- | --- |
+| `files.ts` | Domain: the component and test file types |
 | `plan-checks.ts` | Domain: decides whether an event needs checks, and against which standard |
 | `format-feedback.ts` | Domain: turns the check results into the feedback Claude reads |
 | `handle-event.ts` | Use case: from the event to the decision |
@@ -97,6 +98,7 @@ The two other hooks keep the same split, with a pure function in the domain and 
 | File | Role |
 | --- | --- |
 | `reviewer-guard/guard-command.ts` | Domain: allows a command of the `a11y-reviewer` agent only when it is a script of the audit skill or a read-only git command |
+| `answer-guard/transcript.ts` | Anti-corruption layer: turns the transcript lines into typed blocks, once |
 | `answer-guard/cited-criteria.ts`, `answer-guard/opened-criteria.ts` | Domain: the criteria the final answer cites, and those the inventories of the transcript opened |
 | `answer-guard/read-forms.ts`, `answer-guard/unverified-tests.ts` | Domain: whether Claude read a form, and the test files written in a test-writing session that no `verify-tests` command named |
 | `answer-guard/guard-answer.ts` | Use case: sends the answer back when it cites a criterion that no inventory opened, rules on a form without an audit, or comes with unchecked tests |
@@ -105,6 +107,7 @@ The skills keep the same split in their scripts:
 
 | File | Role |
 | --- | --- |
+| `a11y-component-audit/scripts/standard.ts` | Domain: the standard and criterion id types shared by the whole plugin |
 | `a11y-component-audit/scripts/find-criterion.ts` | Domain: finds a criterion, its tests and methodology in the official texts |
 | `a11y-component-audit/scripts/inventory.ts` | Domain: finds the form and its elements in the code, with the criteria each one opens |
 | `a11y-component-audit/scripts/validate-report.ts` | Domain: rejects a report that misquotes a criterion or leaves one of the inventory out |
