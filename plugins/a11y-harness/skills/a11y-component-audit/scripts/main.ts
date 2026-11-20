@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { findRgaaCriteria, findRgaaMethodologies, findWcagCriteria } from './find-criterion.ts'
-import { criteriaOf, criteriaTableFrom, inventoriedCriteria, inventoryOf } from './inventory.ts'
+import { criteriaTableFrom, inventoryFor, inventoryOf } from './inventory.ts'
 import { RGAA_STANDARD, type Standard, WCAG_STANDARD } from './standard.ts'
-import { missingCriteria, unopenedCriteria, validateReport } from './validate-report.ts'
+import { reportProblems } from './validate-report.ts'
 
 const REFERENCE_DIR = join(import.meta.dirname, '../reference/standards')
 const WCAG_FILE = 'wcag-2.2.json'
@@ -21,6 +21,7 @@ type Outcome = { output: unknown; failed: boolean }
 const readJson = (path: string) => JSON.parse(readFileSync(path, TEXT_ENCODING))
 const readReference = (file: string) => readJson(join(REFERENCE_DIR, file))
 const readSource = (path: string) => readFileSync(path, TEXT_ENCODING)
+const formCriteriaTable = () => criteriaTableFrom(readJson(FORM_CRITERIA_FILE))
 const readReport = (argument: string) =>
   argument.startsWith(INLINE_REPORT_START) ? JSON.parse(argument) : readJson(argument)
 
@@ -38,26 +39,15 @@ const lookUp = ([standard = '', id = '']: string[]): Outcome => {
   return { output: criterion, failed: criterion === null }
 }
 
-const inventoryCriteria = (components: string[], standard: Standard) =>
-  inventoriedCriteria(criteriaTableFrom(readJson(FORM_CRITERIA_FILE)), components.map(readSource), standard)
-
-const tableCriteria = (standard: Standard) => criteriaOf(readJson(FORM_CRITERIA_FILE), standard)
-
 const validate = ([reportArgument = '', ...components]: string[]): Outcome => {
   const references = { wcag: readReference(WCAG_FILE), rgaa: readReference(RGAA_FILE), act: readReference(ACT_FILE) }
   const report = readReport(reportArgument)
-  const opened = inventoryCriteria(components, report.standard)
-  const cited = report.findings.flatMap(({ criterion }: { criterion?: string }) => (criterion === undefined ? [] : [criterion]))
-  const problems = [
-    ...validateReport(report, references),
-    ...missingCriteria(report, opened),
-    ...(components.length > 0 ? unopenedCriteria(cited, opened, tableCriteria(report.standard)) : []),
-  ]
+  const problems = reportProblems(report, references, inventoryFor(formCriteriaTable(), components.map(readSource), report.standard))
   return { output: problems, failed: problems.length > 0 }
 }
 
 const inventory = ([standard = '', ...components]: string[]): Outcome => ({
-  output: inventoryOf(criteriaTableFrom(readJson(FORM_CRITERIA_FILE)), components.map(readSource), standard as Standard),
+  output: inventoryOf(formCriteriaTable(), components.map(readSource), standard as Standard),
   failed: false,
 })
 
