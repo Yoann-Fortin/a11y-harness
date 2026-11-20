@@ -11,4 +11,4 @@ export type WcagReferenceLevel = WcagLevel | ''
 
 export type CriterionId = `${number}.${number}` | `${number}.${number}.${number}`
 
-export const standardOf = (_value: string): Standard | null => null
+export const standardOf = (value: string): Standard | null => STANDARDS.find((standard) => standard === value) ?? null
