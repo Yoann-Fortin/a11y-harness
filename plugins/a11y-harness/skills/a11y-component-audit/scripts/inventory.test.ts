@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type CriteriaTableFile, criteriaTableFrom, holdsForm, inventoryOf } from './inventory.ts'
+import { type CriteriaTableFile, criteriaOf, criteriaTableFrom, holdsForm, inventoryOf } from './inventory.ts'
 
 const WCAG = 'wcag-2.2'
 const FORM_FIELD: CriteriaTableFile['elements'][number] = { id: 'form-field', signals: ['<input', '<textarea'], criteria: { [WCAG]: ['3.3.2'] } }
@@ -59,5 +59,20 @@ describe('criteriaTableFrom', () => {
       form: { signals: [/<form/, /role="form"/] },
       elements: [{ id: 'form-field', signals: [/<input/, /<textarea/], criteria: { [WCAG]: ['3.3.2'] } }],
     })
+  })
+})
+
+describe('criteriaOf', () => {
+  it('lists once each criterion that the elements of the table open for the chosen standard', () => {
+    const file: CriteriaTableFile = {
+      form: FORM,
+      elements: [
+        { id: 'form-field', signals: ['<input'], criteria: { [WCAG]: ['3.3.2', '4.1.2'], 'rgaa-4.1.2': ['11.1'] } },
+        { id: 'submit-button', signals: ['<button'], criteria: { [WCAG]: ['4.1.2'] } },
+        { id: 'required-field', signals: ['required'], criteria: { 'rgaa-4.1.2': ['11.10'] } },
+      ],
+    }
+
+    expect(criteriaOf(file, WCAG)).toEqual(['3.3.2', '4.1.2'])
   })
 })
