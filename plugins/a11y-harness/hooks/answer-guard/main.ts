@@ -23,8 +23,10 @@ const subagentTranscripts = async (transcriptPath: string) => {
   return files.filter((file) => file.endsWith(TRANSCRIPT_EXTENSION)).map((file) => join(dir, file))
 }
 
+const criteriaTable = async (): Promise<CriteriaTable> => JSON.parse(await readFile(FORM_CRITERIA_FILE, TEXT_ENCODING))
+
 const tableCriteria = async () => {
-  const table: CriteriaTable = JSON.parse(await readFile(FORM_CRITERIA_FILE, TEXT_ENCODING))
+  const table = await criteriaTable()
   return Object.fromEntries(
     STANDARDS.map((standard) => [standard, [...new Set(table.elements.flatMap(({ criteria }) => criteria[standard] ?? []))]]),
   )
@@ -39,6 +41,7 @@ const decisionFor = async (input: string) => {
       answer: event.last_assistant_message,
       transcript,
       tableCriteria: await tableCriteria(),
+      formSignals: (await criteriaTable()).form.signals,
       stopHookActive: event.stop_hook_active,
     })
   } catch {
