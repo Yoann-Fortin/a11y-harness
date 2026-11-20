@@ -1,6 +1,6 @@
 # a11y-harness
 
-Accessibility plugin for Claude Code, for React: a hook that feeds lint and accessibility test failures back to Claude, a component audit skill and a read-only reviewer agent. Target standard: WCAG 2.2 AA by default, or RGAA 4.1.2 through the plugin's `standard` option.
+Accessibility plugin for Claude Code, for React forms: hooks that feed lint and accessibility test failures back to Claude and check its answers, an audit skill, a test-writing skill and a read-only reviewer agent. Target standard: WCAG 2.2 AA by default, or RGAA 4.1.2 through the plugin's `standard` option.
 
 ## Layout
 

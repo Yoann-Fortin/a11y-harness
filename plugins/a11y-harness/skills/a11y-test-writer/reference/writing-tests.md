@@ -46,7 +46,7 @@ jsdom has no CSS, so a requirement that depends on rendering is tested in a brow
 - **The browser mode of Vitest**, when its config has a project with `browser.enabled`. Write the tests in the files that project includes, read from the config, and keep the families: `Component.browser.test.tsx`, `Component.browser.wcag.test.tsx` and `Component.browser.rgaa.test.tsx` when it includes `*.browser.*test.tsx`. Render with `vitest-browser-react`, find elements with its `getByRole`, and move the focus with `userEvent` from `vitest/browser`, which drives a real keyboard.
 - **Playwright Test**, when the package depends on `@playwright/test` and its config points `baseURL` at a component gallery. Write `Component.spec.tsx`, `Component.wcag.spec.tsx` or `Component.rgaa.spec.tsx` in its `testDir`, named after the component so that the a11y-check hook finds them, and mount a story of the component with the `mount` fixture: `Component.story.tsx` next to it, one export per state. Write the story when there is none. Move the focus with `page.keyboard.press('Tab')`.
 
-Without either, list these requirements in your answer as checks to make by hand, instead of writing a test that cannot fail. Zoom, reflow and what a screen reader says stay checks by hand in every case.
+Without either, offer the team to add one, the browser mode of Vitest or Playwright Test, and install it only with their agreement. Until then, list these requirements in your answer as checks to make by hand, instead of writing a test that cannot fail. Zoom, reflow and what a screen reader says stay checks by hand in every case.
 
 Test each requirement on what the browser renders, whatever technique meets it:
 

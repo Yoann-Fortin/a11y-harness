@@ -1,5 +1,5 @@
 {
-  "description": "Checks the accessibility of a React component after Claude writes or edits it, keeps the a11y-reviewer agent read-only, and sends back an answer that cites a criterion the audit did not open",
+  "description": "Checks the accessibility of a React component after Claude writes or edits it, keeps the a11y-reviewer agent read-only, and sends back an answer that cites a criterion the audit did not open, rules on a form without an audit, or comes with tests that verify-tests never checked",
   "hooks": {
     "PostToolUse": [
       {

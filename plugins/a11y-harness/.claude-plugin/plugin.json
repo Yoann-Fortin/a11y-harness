@@ -1,6 +1,6 @@
 {
   "name": "a11y-harness",
-  "description": "Accessibility harness for React: a hook that feeds lint and accessibility test failures back to Claude, a component audit skill and a read-only reviewer agent, for WCAG 2.2 or RGAA 4.1.2",
+  "description": "Accessibility harness for React forms: hooks that feed lint and accessibility test failures back to Claude and check its answers, an audit skill, a test-writing skill and a read-only reviewer agent, for WCAG 2.2 AA or RGAA 4.1.2",
   "version": "0.1.0",
   "author": {
     "name": "Yoann Fortin"

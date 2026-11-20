@@ -124,7 +124,7 @@ The [CI workflow](.github/workflows/ci.yml) runs on each push to `main` and each
 
 ## Evaluations
 
-The skill and the agent have evaluation cases in `plugins/a11y-harness/evals`, run with and without the plugin:
+The skills, the agent and the `a11y-check` hook have evaluation cases in `plugins/a11y-harness/evals`, run with and without the plugin:
 
 ```bash
 claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" Write --no-publish
@@ -165,7 +165,7 @@ After this series, `verify-tests` started to review the test file itself, the `a
 - **Conformance is not accessibility.** The audit reports conformance only: what the standard requires, never a good practice it does not require. WCAG accepts compromises: a target of 24 by 24 CSS pixels meets 2.5.8 at level AA, where 2.5.5 asks for 44 at level AAA.
 - **What a screen reader says is not tested.** The tests check the accessibility tree that assistive technologies read, and, in a browser, what depends on rendering. The skill writes no test yet for zoom (1.4.4) or reflow (1.4.10), though a browser could check them: it lists them, with what a screen reader actually announces, as checks to make by hand.
 - **The agent is read-only.** It has no `Write` or `Edit` tool, and a `PreToolUse` hook of the plugin only lets its `Bash` run the skill's scripts and `git diff`, `git log` or `git show`, each on its own. Claude Code ignores the hooks written in a plugin agent's own definition, so the hook is declared for the whole plugin and recognises the agent by its name.
-- **The answer guard reads the transcripts of the agent where Claude Code stores them.** Claude Code does not document that folder, next to the session's transcript. If it moves, the guard finds no inventory and lets every answer through.
+- **The answer guard reads the transcripts of the agent where Claude Code stores them.** Claude Code does not document that folder, next to the session's transcript. If it moves, the guard no longer sees the agent's inventories: it lets through an answer that cites a criterion they did not open, and may send back once an answer it then takes for unaudited.
 - **The WCAG references of the RGAA are WCAG 2.1.** The skill says so when it quotes them, and never presents them as WCAG 2.2 criteria.
 
 ## Roadmap
