@@ -110,9 +110,10 @@ The skills keep the same split in their scripts:
 | `a11y-component-audit/scripts/standard.ts` | Domain: the standard and criterion id types shared by the whole plugin |
 | `a11y-component-audit/scripts/find-criterion.ts` | Domain: finds a criterion, its tests and methodology in the official texts |
 | `a11y-component-audit/scripts/inventory.ts` | Domain: finds the form and its elements in the code, with the criteria each one opens |
-| `a11y-component-audit/scripts/validate-report.ts` | Domain: rejects a report that misquotes a criterion or leaves one of the inventory out |
+| `a11y-component-audit/scripts/validate-report.ts` | Domain: rejects a report that misquotes a criterion, leaves one of the inventory out or cites one it did not open |
 | `a11y-test-writer/scripts/judge-variants.ts` | Domain: flags a conforming variant that the tests reject, or a faulty one they accept |
 | `a11y-test-writer/scripts/verify-variants.ts` | Use case: puts each variant in place of the component, runs the tests, puts the component back |
+| `a11y-test-writer/scripts/variant-arguments.ts` | Anti-corruption layer: reads the variant files of the command line with their kind |
 | `a11y-test-writer/scripts/run-test-file.ts` | Adapter: runs a test file with the first test runner of the package that runs it |
 | `main.ts` of each skill | Composition root: the `lookup`, `validate`, `inventory` and `verify-tests` commands |
 
