@@ -143,4 +143,17 @@ describe('runChecks', () => {
 
     expect(results.toolFailures).toEqual([{ tool: 'linter', message: 'its report could not be read' }])
   })
+
+  it('reports a test runner whose report cannot be read as a tool failure, instead of stopping', async () => {
+    const tools = {
+      ...fakeTools({ [LINTER_PATH]: OUTPUT(''), [RUNNER_PATH]: OUTPUT('') }),
+      readText: async () => {
+        throw new Error('ENOENT: no such file or directory')
+      },
+    }
+
+    const results = await runChecks(PLAN, tools)
+
+    expect(results.toolFailures).toEqual([{ tool: 'runner', message: 'its report could not be read' }])
+  })
 })
