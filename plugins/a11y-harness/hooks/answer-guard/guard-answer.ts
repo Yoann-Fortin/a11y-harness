@@ -29,9 +29,11 @@ export type AnswerCheck = {
 }
 
 export const guardAnswer = ({ answer, transcript, tableCriteria, formSignals, stopHookActive }: AnswerCheck) => {
+  const standards = Object.keys(tableCriteria) as Standard[]
   const unopened = (Object.entries(tableCriteria) as [Standard, CriterionId[]][]).flatMap(([standard, criteria]) =>
     unopenedIn(answer, openedCriteria(transcript, standard), standard, criteria),
   )
+  const inventoried = standards.some((standard) => openedCriteria(transcript, standard).length > 0)
   if (stopHookActive) {
     return null
   }
@@ -42,5 +44,5 @@ export const guardAnswer = ({ answer, transcript, tableCriteria, formSignals, st
   if (unverified.length > 0) {
     return { decision: BLOCK_DECISION, reason: `${UNVERIFIED_REASON} ${unverified.join()}. ${VERIFY_TESTS}` }
   }
-  return readsAForm(transcript, formSignals) ? { decision: BLOCK_DECISION, reason: UNAUDITED_REASON } : null
+  return !inventoried && readsAForm(transcript, formSignals) ?{ decision: BLOCK_DECISION, reason: UNAUDITED_REASON } : null
 }
