@@ -76,6 +76,14 @@ describe('guardAnswer', () => {
     })
   })
 
+  it('lets through an answer on a form that Claude read and an audit inventoried', () => {
+    const answer = 'The toggle of the form fails 7.1, test 7.1.1.'
+
+    expect(
+      guard({ answer, transcript: [...READ_FORM, ...AUDITED_TOGGLE], tableCriteria: TABLE_CRITERIA, formSignals: FORM_SIGNALS, stopHookActive: false }),
+    ).toBeNull()
+  })
+
   it('only counts the files Claude read, not a form printed by another tool', () => {
     const answer = 'The submit button of the form fails 11.9.'
     const printedForm = [toolUse('toolu_3', 'grep -r form src'), toolResult('toolu_3', 'src/Form.tsx: <form onSubmit={submit}>')]
