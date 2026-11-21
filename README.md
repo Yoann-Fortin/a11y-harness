@@ -133,33 +133,31 @@ claude plugin eval plugins/a11y-harness --scaffold --allow-tools "Bash(node:*)" 
 
 `--scaffold` copies the components the agent reviews into each run, `--allow-tools` lets the skills run their scripts and write the tests, and `--no-publish` keeps the report on your machine. Run it from a clean Claude Code profile (`CLAUDE_CONFIG_DIR`), so that no personal configuration skews the results.
 
-On 20 November 2026, with the 19 cases of the suite, Claude Code 2.1.326, this command, `--runs 3` and `-j 4`, Claude passed 54 runs out of 57 with the plugin, and 19 out of 57 without it. The hook that offers a test runner to a package without one came after this series; no case covers it yet.
+On 21 November 2026, with the 19 cases of the suite, Claude Code 2.1.326, this command, `--runs 3` and `-j 2`, in a single series, Claude passed 56 runs out of 57 with the plugin, and 24 out of 57 without it. No case covers yet the hook that offers a test runner to a package without one.
 
 | Case | Standard | With the plugin | Without |
 | --- | --- | --- | --- |
-| Field named only by a placeholder | WCAG 2.2 | 3/3 | 0/3 |
+| Field named only by a placeholder | WCAG 2.2 | 3/3 | 1/3 |
 | Field named only by `aria-label` | RGAA 4.1.2 | 3/3 | 2/3 |
-| Search field and adjacent button | RGAA 4.1.2 | 3/3 | 1/3 |
+| Search field and adjacent button | RGAA 4.1.2 | 2/3 | 3/3 |
 | Field named only by `title` | WCAG 2.2 | 3/3 | 3/3 |
-| Field named only by `title` | RGAA 4.1.2 | 3/3 | 1/3 |
+| Field named only by `title` | RGAA 4.1.2 | 3/3 | 2/3 |
 | Login form | WCAG 2.2 | 3/3 | 0/3 |
-| Login form | RGAA 4.1.2 | 3/3 | 0/3 |
-| Email field left to native validation | WCAG 2.2 | 3/3 | 2/3 |
+| Login form | RGAA 4.1.2 | 3/3 | 1/3 |
+| Email field left to native validation | WCAG 2.2 | 3/3 | 3/3 |
 | Email field left to native validation | RGAA 4.1.2 | 3/3 | 0/3 |
 | Repeated error not announced again by React | WCAG 2.2 | 3/3 | 2/3 |
-| Repeated error not announced again by React | RGAA 4.1.2 | 3/3 | 1/3 |
+| Repeated error not announced again by React | RGAA 4.1.2 | 3/3 | 0/3 |
 | Icon-only button without a name | WCAG 2.2 | 3/3 | 3/3 |
 | Icon-only button without a name | RGAA 4.1.2 | 3/3 | 0/3 |
 | A form written by Claude gets audited | WCAG 2.2 | 3/3 | 3/3 |
-| Review of three components (agent) | WCAG 2.2 | 1/3 | 1/3 |
+| Review of three components (agent) | WCAG 2.2 | 3/3 | 1/3 |
 | Review of three components (agent) | RGAA 4.1.2 | 3/3 | 0/3 |
 | Tests written for a component | WCAG 2.2 | 3/3 | 0/3 |
-| Tests written for a component | RGAA 4.1.2 | 2/3 | 0/3 |
+| Tests written for a component | RGAA 4.1.2 | 3/3 | 0/3 |
 | Browser tests written for a form and its stylesheet | WCAG 2.2 | 3/3 | 0/3 |
 
-Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the test writing cases had nothing to read. The WCAG review timed out in four runs out of six under four parallel runs; run again on its own, it passed 2 runs out of 3 with the plugin and 2 out of 3 without, and the failed run with the plugin reviewed the files itself instead of handing them to the agent.
-
-After this series, `verify-tests` started to review the test file itself, the `answer-guard` hook started to send back an answer on a form read without any audit inventory, or with tests that `verify-tests` never checked, and the test writer started to focus a field before checking a text passage. Run again one at a time with the plugin, the two review cases passed 6 runs out of 6, and the test writing cases 3 out of 3 under WCAG 2.2 and 1 out of 3 under RGAA 4.1.2. The RGAA case varied from 0 to 2 runs out of 3 across the runs of the day: its grader fails a test that rejects a conforming technique, which `verify-tests` would catch in a project whose test runner is installed, but not in the evaluation sandbox, where it can only answer `no-test-runner`.
+In the failed run with the plugin, the commands of the skill were denied, so Claude could not run the inventory and answered without a verdict. Without the plugin, Claude never wrote the tests of a standard in their own file, so the grader of the test writing cases had nothing to read. The runs without the plugin vary from one series to the next: the first series, on 20 November with four parallel runs, gave 19 out of 57. Four parallel runs also made some runs time out, hence `-j 2`.
 
 ## Limits
 
